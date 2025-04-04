@@ -1,0 +1,65 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.4' apply false // apply false는 플러그인을 로드만 하고 적용하지는 않음
+    id 'io.spring.dependency-management' version '1.1.3' apply false
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+allprojects {
+    group = 'com.nova.anonymousplanet' // ✅ 네이밍 일관성 유지
+    version = '1.0.0'
+
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management' // ✅ root프로젝트에서만 적용하기 때문에 선언 필요
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:3.4.4"
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:2024.0.1"
+        }
+    }
+
+    dependencies {
+        // Lombok 공통 적용
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+    }
+}
+
+// ✅ Spring Boot가 필요한 모듈에서 개별 적용 (예: discovery-server, gateway 등)
+/**
+project(':nova-discovery-server') {
+    apply plugin: 'org.springframework.boot'
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter'
+    }
+}
+
+project(':nova-gateway') {
+    apply plugin: 'org.springframework.boot'
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter'
+    }
+}
+ */

@@ -1,0 +1,4 @@
+rootProject.name = 'nova-api'
+include 'common:nova-common'
+findProject(':common:nova-common')?.name = 'nova-common'
+
