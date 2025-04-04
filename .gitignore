@@ -1,0 +1,38 @@
+# 🌱 Gradle 관련 파일
+.gradle/
+build/
+out/
+!gradle/wrapper/gradle-wrapper.jar
+
+# 🌱 프로젝트 설정 파일 (IntelliJ)
+.idea/
+*.iml
+*.iws
+
+# 🌱 로그 파일
+logs/
+*.log
+*.out
+*.err
+hs_err_pid*
+
+# 🌱 환경 설정 파일 (민감 정보 포함 가능)
+application*.yml
+application*.properties
+.env
+
+# 🌱 캐시 & 임시 파일
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# 🌱 Linux / macOS 관련
+*.bak
+*.seed
+*.pid
+*.gz
+*.zip
+*.tar
+*.rar
+*.7z
