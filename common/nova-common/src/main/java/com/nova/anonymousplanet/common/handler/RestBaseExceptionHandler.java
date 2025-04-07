@@ -2,8 +2,8 @@ package com.nova.anonymousplanet.common.handler;
 
 
 import com.nova.anonymousplanet.common.constant.ErrorCode;
-import com.nova.anonymousplanet.common.dto.common.response.ErrorSet;
-import com.nova.anonymousplanet.common.dto.common.response.RestEmptyResponse;
+import com.nova.anonymousplanet.common.dto.response.ErrorSet;
+import com.nova.anonymousplanet.common.dto.response.RestEmptyResponse;
 import com.nova.anonymousplanet.common.exception.ApplicationException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.util.Collections;
 import java.util.List;
 
-
+/**
+ * 기본 Exception 적용 각 서비스에서 해당 클래스 상속 받아서 사용
+ */
 @Slf4j
 public abstract class RestBaseExceptionHandler {
 

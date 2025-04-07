@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.common.dto.common.response;
+package com.nova.anonymousplanet.common.dto.response;
 
 import lombok.AccessLevel;
 import lombok.Getter;

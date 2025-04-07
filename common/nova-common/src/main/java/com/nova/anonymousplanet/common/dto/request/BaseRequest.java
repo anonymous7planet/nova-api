@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.common.dto.common.request;
+package com.nova.anonymousplanet.common.dto.request;
 
 import lombok.Getter;
 
