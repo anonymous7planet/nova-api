@@ -1,5 +1,6 @@
 # 🌱 Gradle 관련 파일
 .gradle/
+gradle/
 build/
 out/
 !gradle/wrapper/gradle-wrapper.jar
@@ -17,9 +18,9 @@ logs/
 hs_err_pid*
 
 # 🌱 환경 설정 파일 (민감 정보 포함 가능)
-application*.yml
-application*.properties
-.env
+#application*.yml
+#application*.properties
+#.env
 
 # 🌱 캐시 & 임시 파일
 .DS_Store

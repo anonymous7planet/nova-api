@@ -1,4 +1,6 @@
 rootProject.name = 'nova-api'
 include 'common:nova-common'
 findProject(':common:nova-common')?.name = 'nova-common'
+include 'infra:nova-config-server'
+findProject(':infra:nova-config-server')?.name = 'nova-config-server'
 
