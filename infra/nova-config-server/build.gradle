@@ -1,0 +1,35 @@
+jar {
+    enabled = false
+}
+
+dependencies {
+    /**
+     * Spring Cloud Config Server
+     */
+    implementation 'org.springframework.cloud:spring-cloud-config-server'
+
+    /**
+     * Spring Cloud Eureka Client
+     */
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+    /**
+     * Spring Cloud Bus
+     */
+    // Spring Cloud Starter Bus Kafka
+    // Kafka로 bus-refresh 메세지를 전송하여 Config Client들에게 모두 변경된 설정 정보가 적용될 수 있도록 한다.
+    implementation 'org.springframework.cloud:spring-cloud-starter-bus-kafka'
+
+    implementation 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
+
+    /**
+     * Spring Cloud 기타 사용
+     */
+    // Spring Cloud Starter Actuator
+    // health 및 refresh 처리를 위해 필요한 monitor dependency가 있다면, actuator의 refresh나 bus-refresh는 사용하지 않음
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // Spring Cloud Config Monitor
+    // bus-refresh가 가능한 /monitor 엔드포인트를 생성해준다.
+    implementation 'org.springframework.cloud:spring-cloud-config-monitor'
+}

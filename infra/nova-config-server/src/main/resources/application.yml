@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: nova-config-server
+  profiles:
+    group:
+      default:
+        - local
+      local:
+        - local
+      dev:
+        - dev
+      prod:
+        - prod
