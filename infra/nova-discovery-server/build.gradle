@@ -4,14 +4,15 @@ jar {
 
 dependencies {
     /**
-     * Spring Cloud Config Server
+     * Spring Cloud Eureka Server
      */
-    implementation 'org.springframework.cloud:spring-cloud-config-server'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+
 
     /**
-     * Spring Cloud Eureka Client
+     * Spring Cloud Config Client
      */
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
 
     /**
      * Spring Cloud Bus
@@ -21,14 +22,21 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-bus-kafka'
     implementation 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
 
+
     /**
      * Spring Cloud 기타 사용
      */
+    // Spring Cloud Bootstrap
+    // 현재 사용 용도는 마이크로 서비스 모듈에서 컨피그 서버 정보를 유레카 서버에 등록된 서비스 아이디로 설정하기 위해서 사용
+    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+
     // Spring Cloud Starter Actuator
     // health 및 refresh 처리를 위해 필요한 monitor dependency가 있다면, actuator의 refresh나 bus-refresh는 사용하지 않음
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-    // Spring Cloud Config Monitor
-    // bus-refresh가 가능한 /monitor 엔드포인트를 생성해준다.
-    implementation 'org.springframework.cloud:spring-cloud-config-monitor'
+    // Spring Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // Spring Tomcat
+    // implementation 'org.springframework.boot:spring-boot-starter-tomcat'
 }

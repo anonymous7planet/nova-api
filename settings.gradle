@@ -3,4 +3,6 @@ include 'common:nova-common'
 findProject(':common:nova-common')?.name = 'nova-common'
 include 'infra:nova-config-server'
 findProject(':infra:nova-config-server')?.name = 'nova-config-server'
+include 'infra:nova-discovery-server'
+findProject(':infra:nova-discovery-server')?.name = 'nova-discovery-server'
 
