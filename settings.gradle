@@ -5,4 +5,6 @@ include 'infra:nova-config-server'
 findProject(':infra:nova-config-server')?.name = 'nova-config-server'
 include 'infra:nova-discovery-server'
 findProject(':infra:nova-discovery-server')?.name = 'nova-discovery-server'
+include 'infra:nova-gateway-server'
+findProject(':infra:nova-gateway-server')?.name = 'nova-gateway-server'
 
