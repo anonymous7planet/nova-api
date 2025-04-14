@@ -7,17 +7,10 @@ jar {
 }
 
 dependencies {
-    // SpringBoot Basic
-    implementation 'org.springframework.boot:spring-boot-starter'
-
-
     // SpringBootWeb을 사용하지 않기 위해서 필요한 최소한의 라이브러리들만 추가
     implementation 'org.springframework:spring-web'  // Spring MVC 핵심 기능만 포함 (서블릿 X)
     implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0' // HttpServletRequest 사용
     implementation 'jakarta.validation:jakarta.validation-api:3.0.2' // Validation API
-
-    // Spring Data JPA
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     // JSON
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.17.0' // 최소한의 의존성
