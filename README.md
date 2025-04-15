@@ -18,6 +18,18 @@ nova/
 └── build.gradle                 # 루트 빌드 설정
 ```
 
+### 📦 패키지 구조 (각 서비스 공통)
+
+```
+com.nova.anonymousplanet.{service}
+├── domain         // Entity, Enum 등 핵심 도메인 모델
+├── application    // UseCase, Service, Command/Query 핸들링
+├── interfaces     // Controller, DTO, 외부 요청 처리
+├── infrastructure // Repository, 외부 시스템 연동 (JPA, Kafka 등)
+```
+
+---
+
 ## 🧱 기술 스택
 
 - Java 21

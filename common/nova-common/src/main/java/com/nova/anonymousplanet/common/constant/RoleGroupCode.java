@@ -1,9 +1,13 @@
 package com.nova.anonymousplanet.common.constant;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.nova.anonymousplanet.common.configuration.BaseEnumConverter;
 import com.nova.anonymousplanet.common.exception.BadRequestException;
+import com.nova.anonymousplanet.common.util.EnumUtils;
 
-public enum RoleGroupCode implements BaseEnum {
+import javax.persistence.Converter;
+
+public enum RoleGroupCode implements BaseEnum<String> {
 
     SYSTEM("SYSTEM_ADMIN_GROUP", "시스템 관리자"),
     ADMIN("ADMIN_GROUP", "관리자"),
@@ -35,19 +39,16 @@ public enum RoleGroupCode implements BaseEnum {
         return this.desc;
     }
 
-
     @JsonCreator
-    public static RoleGroupCode from(final String code) {
-        if(code == null) {
-            throw new BadRequestException();
-        }
+    public static RoleGroupCode creator(String code) {
+        return EnumUtils.fromCode(RoleGroupCode.class, code);
+    }
 
-        for(RoleGroupCode roleGroup : RoleGroupCode.values()) {
-            if(roleGroup.getCode().equals(code)) {
-                return roleGroup;
-            }
-        }
 
-        throw new BadRequestException();
+    @Converter(autoApply = false)
+    public static class RoleGroupCodeConverter extends BaseEnumConverter<RoleGroupCode, String> {
+        public RoleGroupCodeConverter() {
+            super(RoleGroupCode.class);
+        }
     }
 }

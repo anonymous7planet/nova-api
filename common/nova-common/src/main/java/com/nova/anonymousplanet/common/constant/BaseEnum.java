@@ -1,7 +1,7 @@
 package com.nova.anonymousplanet.common.constant;
 
-public interface BaseEnum {
+public interface BaseEnum<T> {
     String getName();
-    String getCode();
+    T getCode();
     String getDesc();
 }

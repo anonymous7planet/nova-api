@@ -6,14 +6,17 @@ import com.nova.anonymousplanet.common.util.EnumUtils;
 
 import javax.persistence.Converter;
 
-public enum YesNoCode implements BaseEnum<String> {
-    YES("Y", "Yes"),
-    NO("N", "No");
+public enum GenderCode implements BaseEnum<String> {
+
+    MALE("M", "남성"),
+    FEMALE("F", "여성"),
+    OTHER("O", "기타")
+    ;
 
     private final String code;
     private final String desc;
 
-    YesNoCode(final String code, final String desc) {
+    GenderCode(final String code, final String desc) {
         this.code = code;
         this.desc = desc;
     }
@@ -33,17 +36,15 @@ public enum YesNoCode implements BaseEnum<String> {
         return this.desc;
     }
 
-
     @JsonCreator
-    public static YesNoCode creator(String code) {
-        return EnumUtils.fromCode(YesNoCode.class, code);
+    public static GenderCode creator(String code) {
+        return EnumUtils.fromCode(GenderCode.class, code);
     }
 
-
     @Converter(autoApply = false)
-    public static class YesNoCodeConverter extends BaseEnumConverter<YesNoCode, String> {
-        public YesNoCodeConverter() {
-            super(YesNoCode.class);
+    public static class GenderCodeConverter extends BaseEnumConverter<GenderCode, String> {
+        public GenderCodeConverter() {
+            super(GenderCode.class);
         }
     }
 }

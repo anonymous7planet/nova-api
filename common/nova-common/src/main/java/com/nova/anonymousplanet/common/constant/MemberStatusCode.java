@@ -2,18 +2,21 @@ package com.nova.anonymousplanet.common.constant;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.nova.anonymousplanet.common.configuration.BaseEnumConverter;
+import com.nova.anonymousplanet.common.exception.EnumCodeNotFoundException;
 import com.nova.anonymousplanet.common.util.EnumUtils;
 
 import javax.persistence.Converter;
 
-public enum YesNoCode implements BaseEnum<String> {
-    YES("Y", "Yes"),
-    NO("N", "No");
+public enum MemberStatusCode implements BaseEnum<String> {
+    PENDING("PENDING", "가입 대기 상태 회원"),
+    ACTIVE("ACTIVE", "활성 회원"),
+    SUSPENDED("SUSPENDED", "이용 정지 회원"),
+    WITHDRAWN("WITHDRAWN", "탈퇴 회원");
 
     private final String code;
     private final String desc;
 
-    YesNoCode(final String code, final String desc) {
+    MemberStatusCode(final String code, final String desc) {
         this.code = code;
         this.desc = desc;
     }
@@ -34,16 +37,17 @@ public enum YesNoCode implements BaseEnum<String> {
     }
 
 
+
     @JsonCreator
-    public static YesNoCode creator(String code) {
-        return EnumUtils.fromCode(YesNoCode.class, code);
+    public static MemberStatusCode creator(String code) {
+        return EnumUtils.fromCode(MemberStatusCode.class, code);
     }
 
 
     @Converter(autoApply = false)
-    public static class YesNoCodeConverter extends BaseEnumConverter<YesNoCode, String> {
-        public YesNoCodeConverter() {
-            super(YesNoCode.class);
+    public static class MemberStatusCodeConverter extends BaseEnumConverter<MemberStatusCode, String> {
+        public MemberStatusCodeConverter() {
+            super(MemberStatusCode.class);
         }
     }
 }

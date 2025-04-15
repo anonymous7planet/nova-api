@@ -1,6 +1,12 @@
 package com.nova.anonymousplanet.common.constant;
 
-public enum RoleCode implements BaseEnum {
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.nova.anonymousplanet.common.configuration.BaseEnumConverter;
+import com.nova.anonymousplanet.common.util.EnumUtils;
+
+import javax.persistence.Converter;
+
+public enum RoleCode implements BaseEnum<String> {
 
     ADMIN("ROLE_ADMIN", "관리자"),
     MANAGER("ROLE_MANAGER", "매니저"),
@@ -28,5 +34,18 @@ public enum RoleCode implements BaseEnum {
     @Override
     public String getDesc() {
         return this.desc;
+    }
+
+    @JsonCreator
+    public static RoleCode creator(String code) {
+        return EnumUtils.fromCode(RoleCode.class, code);
+    }
+
+
+    @Converter(autoApply = false)
+    public static class RoleCodeConverter extends BaseEnumConverter<RoleCode, String> {
+        public RoleCodeConverter() {
+            super(RoleCode.class);
+        }
     }
 }
