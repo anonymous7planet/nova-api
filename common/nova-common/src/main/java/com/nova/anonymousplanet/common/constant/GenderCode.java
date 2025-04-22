@@ -37,7 +37,7 @@ public enum GenderCode implements BaseEnum<String> {
     }
 
     @JsonCreator
-    public static GenderCode creator(String code) {
+    public static GenderCode fromCode(String code) {
         return EnumUtils.fromCode(GenderCode.class, code);
     }
 

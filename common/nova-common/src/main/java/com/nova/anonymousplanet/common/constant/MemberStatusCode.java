@@ -36,13 +36,10 @@ public enum MemberStatusCode implements BaseEnum<String> {
         return this.desc;
     }
 
-
-
     @JsonCreator
-    public static MemberStatusCode creator(String code) {
+    public static MemberStatusCode fromCode(String code) {
         return EnumUtils.fromCode(MemberStatusCode.class, code);
     }
-
 
     @Converter(autoApply = false)
     public static class MemberStatusCodeConverter extends BaseEnumConverter<MemberStatusCode, String> {

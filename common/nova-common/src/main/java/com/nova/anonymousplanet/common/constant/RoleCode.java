@@ -37,10 +37,9 @@ public enum RoleCode implements BaseEnum<String> {
     }
 
     @JsonCreator
-    public static RoleCode creator(String code) {
+    public static RoleCode fromCode(String code) {
         return EnumUtils.fromCode(RoleCode.class, code);
     }
-
 
     @Converter(autoApply = false)
     public static class RoleCodeConverter extends BaseEnumConverter<RoleCode, String> {

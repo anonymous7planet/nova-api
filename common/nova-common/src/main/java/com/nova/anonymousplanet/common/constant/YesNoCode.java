@@ -33,12 +33,10 @@ public enum YesNoCode implements BaseEnum<String> {
         return this.desc;
     }
 
-
     @JsonCreator
-    public static YesNoCode creator(String code) {
+    public static YesNoCode fromCode(String code) {
         return EnumUtils.fromCode(YesNoCode.class, code);
     }
-
 
     @Converter(autoApply = false)
     public static class YesNoCodeConverter extends BaseEnumConverter<YesNoCode, String> {

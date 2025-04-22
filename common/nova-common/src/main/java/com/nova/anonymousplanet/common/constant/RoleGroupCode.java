@@ -40,10 +40,9 @@ public enum RoleGroupCode implements BaseEnum<String> {
     }
 
     @JsonCreator
-    public static RoleGroupCode creator(String code) {
+    public static RoleGroupCode fromCode(String code) {
         return EnumUtils.fromCode(RoleGroupCode.class, code);
     }
-
 
     @Converter(autoApply = false)
     public static class RoleGroupCodeConverter extends BaseEnumConverter<RoleGroupCode, String> {
