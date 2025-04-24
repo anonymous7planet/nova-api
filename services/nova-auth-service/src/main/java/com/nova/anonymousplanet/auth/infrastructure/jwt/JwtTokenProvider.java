@@ -19,7 +19,7 @@ import java.util.Date;
  * fileName : JwtTokenProvider
  * author : Jinhong Min
  * date : 2025-04-21
- * description : JWT관련 유틸리티 클래스
+ * description : JWT관련 유틸리티 클래스(JWT 생성/파싱에만 집중)
  * ==============================================
  * DATE            AUTHOR          NOTE
  * ----------------------------------------------
@@ -110,21 +110,26 @@ public class JwtTokenProvider {
      * Access Token의 Claims 추출
      */
     public Claims getAccessTokenClaims(String token) {
-        return parseClaims(token, accessSecretKey);
+        return parseClaims(token, accessSecretKey, "accessToken");
     }
 
     /**
      * Refresh Token의 Claims 추출
      */
     public Claims getRefreshTokenClaims(String token) {
-        return parseClaims(token, refreshSecretKey);
+        return parseClaims(token, refreshSecretKey, "refreshToken");
     }
 
-    private Claims parseClaims(String token, SecretKey key) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+    private Claims parseClaims(String token, SecretKey key, String tokenType) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (JwtException | IllegalArgumentException e) {
+            log.error("Failed to parse {} claims. token={}, error={}", tokenType, token, e.getMessage());
+            throw new RuntimeException(tokenType + " 파싱 실패", e);
+        }
     }
 }
