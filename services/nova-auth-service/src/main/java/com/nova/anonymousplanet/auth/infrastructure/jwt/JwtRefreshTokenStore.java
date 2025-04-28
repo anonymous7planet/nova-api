@@ -13,27 +13,31 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+
 /**
  * projectName : nova-api
  * packageName : com.nova.anonymousplanet.auth.infrastructure.jwt
  * fileName : JwtRefreshTokenStore
  * author : Jinhong Min
- * date : 2025-04-22
- * description :
+ * date : 2025-04-21
+ * description : RefreshToken을 Redis에 저장, 조회, 검증, 삭제하는 기능을 제공하는 클래스.
+ *               사용자 인증 상태 유지를 위한 RefreshToken 관리 역할을 하며,
+ *               Redis를 통해 각 사용자의 토큰 및 관련 정보를 안전하게 처리함.
  * ==============================================
  * DATE            AUTHOR          NOTE
  * ----------------------------------------------
- * 2025-04-22     Jinhong Min     최초 생성
+ * 2025-04-21         Jinhong Min         최초 생성
  * ==============================================
  */
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtRefreshTokenStore {
-
     private final RedisTemplate<String, String> redisTemplate;
 
+    /**
+     * RefreshToken과 부가 정보를 Redis에 저장합니다.
+     */
     public void store(RefreshTokenStoreDto.StoreRequest reqDto) {
         String key = reqDto.getKey();
         try {
@@ -52,6 +56,9 @@ public class JwtRefreshTokenStore {
         }
     }
 
+    /**
+     * Redis에서 저장된 RefreshToken 정보를 조회합니다.
+     */
     public Optional<RefreshTokenStoreDto.GetResponse> get(RefreshTokenStoreDto.GetRequest reqDto) {
         String key = reqDto.getKey();
         try {
@@ -80,6 +87,9 @@ public class JwtRefreshTokenStore {
         }
     }
 
+    /**
+     * 전달받은 RefreshToken이 Redis에 저장된 값과 일치하는지 검증합니다.
+     */
     public boolean validate(RefreshTokenStoreDto.ValidateRequest reqDto) {
         String key = reqDto.getKey();
         try {
@@ -91,6 +101,9 @@ public class JwtRefreshTokenStore {
         }
     }
 
+    /**
+     * Redis에서 해당 key의 RefreshToken 정보를 삭제합니다.
+     */
     public void delete(RefreshTokenStoreDto.DeleteRequest reqDto) {
         String key = reqDto.getKey();
         try {

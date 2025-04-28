@@ -13,24 +13,25 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+
 /**
  * projectName : nova-api
  * packageName : com.nova.anonymousplanet.auth.infrastructure.jwt
  * fileName : JwtTokenProvider
  * author : Jinhong Min
  * date : 2025-04-21
- * description : JWT관련 유틸리티 클래스(JWT 생성/파싱에만 집중)
+ * description : JWT 토큰(Access/Refresh)의 생성, 검증 및 클레임 추출 기능을 담당하는 유틸리티 클래스.
+ *               인증 서버에서 JWT 기반 인증 로직 구현 시 핵심적인 역할을 하며, 보안 키를 기반으로 서명된 토큰을 발급하고
+ *               클라이언트로부터 전달받은 토큰의 유효성을 확인하고 필요한 정보를 추출하는 역할을 수행함.
  * ==============================================
  * DATE            AUTHOR          NOTE
  * ----------------------------------------------
  * 2025-04-21         Jinhong Min         최초 생성
  * ==============================================
  */
-
 @Slf4j
 @Component
 public class JwtTokenProvider {
-
     private final long accessTokenExpireMillis;
     private final long refreshTokenExpireMillis;
     private final SecretKey accessSecretKey;
@@ -48,9 +49,8 @@ public class JwtTokenProvider {
         this.refreshSecretKey = Keys.hmacShaKeyFor(refreshSecretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-
     /**
-     * Access Token 생성
+     * Access Token을 생성합니다.
      */
     public String generateAccessToken(String uuid, String role, String roleGroup, String deviceId) {
         Date now = new Date();
@@ -68,7 +68,7 @@ public class JwtTokenProvider {
     }
 
     /**
-     * Refresh Token 생성
+     * Refresh Token을 생성합니다.
      */
     public String generateRefreshToken(String uuid, String deviceId) {
         Date now = new Date();
@@ -84,19 +84,22 @@ public class JwtTokenProvider {
     }
 
     /**
-     * Access Token 검증
+     * Access Token의 유효성을 검증합니다.
      */
     public boolean validateAccessToken(String token) {
         return validateToken(token, accessSecretKey);
     }
 
     /**
-     * Refresh Token 검증
+     * Refresh Token의 유효성을 검증합니다.
      */
     public boolean validateRefreshToken(String token) {
         return validateToken(token, refreshSecretKey);
     }
 
+    /**
+     * JWT 토큰의 서명과 만료 여부를 검증합니다.
+     */
     private boolean validateToken(String token, SecretKey key) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -107,19 +110,22 @@ public class JwtTokenProvider {
     }
 
     /**
-     * Access Token의 Claims 추출
+     * Access Token에서 Claims 정보를 추출합니다.
      */
     public Claims getAccessTokenClaims(String token) {
         return parseClaims(token, accessSecretKey, "accessToken");
     }
 
     /**
-     * Refresh Token의 Claims 추출
+     * Refresh Token에서 Claims 정보를 추출합니다.
      */
     public Claims getRefreshTokenClaims(String token) {
         return parseClaims(token, refreshSecretKey, "refreshToken");
     }
 
+    /**
+     * JWT 토큰에서 Claims를 파싱하여 반환합니다.
+     */
     private Claims parseClaims(String token, SecretKey key, String tokenType) {
         try {
             return Jwts.parserBuilder()
