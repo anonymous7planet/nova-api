@@ -1,8 +1,12 @@
 package com.nova.anonymousplanet.auth.domain.user;
 
 import com.nova.anonymousplanet.auth.domain.common.BaseEntity;
+import com.nova.anonymousplanet.common.constant.BloodTypeCode;
+import com.nova.anonymousplanet.common.constant.GenderCode;
+import com.nova.anonymousplanet.common.constant.MbtiCode;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -48,20 +52,32 @@ public class UserEntity extends BaseEntity {
     @Column(name = "uuid", nullable = false, unique = true, length = 36)
     private String uuid;
 
+    @Column(name = "email", nullable = false, length = 40)
+    private String email;
+
+    @Column(name = "password", nullable = false, length = 25)
+    private String password;
+
     @Column(name = "name", nullable = false, length = 20)
     private String name; // 실명 사용
 
-    @Column(name = "gender", nullable = false, length = 10)
-    private String gender;
+    @Column(name = "nick_name", nullable = false, length = 40)
+    private String nickname;
+
+    @Convert(converter = GenderCode.GenderCodeConverter.class)
+    @Column(name = "gender", nullable = false, length = 1)
+    private GenderCode gender;
 
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
-    @Column(name = "blood_type", length = 3)
-    private String bloodType;
+    @Convert(converter = BloodTypeCode.BloodTypeCodeConverter.class)
+    @Column(name = "blood_type", length = 22)
+    private BloodTypeCode bloodType;
 
+    @Convert(converter = MbtiCode.MbtiCodeConverter.class)
     @Column(name = "mbti", length = 4)
-    private String mbti;
+    private MbtiCode mbti;
 
     @Column(name = "profile_image_url", length = 255)
     private String profileImageUrl; // 대표 프로필 이미지

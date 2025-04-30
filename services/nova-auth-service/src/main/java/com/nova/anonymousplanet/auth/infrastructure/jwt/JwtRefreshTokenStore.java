@@ -1,6 +1,6 @@
 package com.nova.anonymousplanet.auth.infrastructure.jwt;
 
-import com.nova.anonymousplanet.auth.domain.jwt.dto.RefreshTokenStoreDto;
+import com.nova.anonymousplanet.auth.application.dto.RefreshTokenStoreDto;
 import com.nova.anonymousplanet.common.constant.RoleCode;
 import com.nova.anonymousplanet.common.constant.RoleGroupCode;
 import lombok.RequiredArgsConstructor;
