@@ -1,9 +1,9 @@
 package com.nova.anonymousplanet.auth.domain.user;
 
-import com.nova.anonymousplanet.auth.domain.common.BaseEntity;
 import com.nova.anonymousplanet.common.constant.BloodTypeCode;
 import com.nova.anonymousplanet.common.constant.GenderCode;
 import com.nova.anonymousplanet.common.constant.MbtiCode;
+import com.nova.anonymousplanet.persistence.common.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -12,7 +12,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -87,6 +86,8 @@ public class UserEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserIntroductionEntity> userIntroduction;
+
+
 
 
 }

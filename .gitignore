@@ -37,3 +37,6 @@ Thumbs.db
 *.tar
 *.rar
 *.7z
+
+#QueryDSL
+/src/main/generated/

@@ -1,6 +1,18 @@
-package com.nova.anonymousplanet.auth.domain.common;
+package com.nova.anonymousplanet.persistence.common;
 
-import com.nova.anonymousplanet.common.model.AbstractAuditable;
+/*
+  projectName : nova-api
+  packageName : com.nova.anonymousplanet.common.entity.common
+  fileName : BaseEntity
+  author : Jinhong Min
+  date : 2025-05-02
+  description :
+  ==============================================
+  DATE            AUTHOR          NOTE
+  ----------------------------------------------
+  2025-05-02      Jinhong Min      최초 생성
+  ==============================================
+ */
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
@@ -16,33 +28,21 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class BaseEntity extends AbstractAuditable {
+public abstract class BaseEntity {
 
-    @Override
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+    protected LocalDateTime createdAt;
 
-    @Override
     @CreatedBy
     @Column(name = "created_by", updatable = false)
-    public String getCreatedBy() {
-        return createdBy;
-    }
+    protected Long createdBy;
 
-    @Override
     @LastModifiedDate
     @Column(name = "updated_at")
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
+    protected LocalDateTime updatedAt;
 
-    @Override
     @LastModifiedBy
     @Column(name = "updated_by")
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+    protected Long updatedBy;
 }

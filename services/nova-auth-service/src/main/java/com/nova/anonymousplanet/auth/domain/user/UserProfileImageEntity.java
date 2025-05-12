@@ -1,6 +1,6 @@
 package com.nova.anonymousplanet.auth.domain.user;
 
-import com.nova.anonymousplanet.auth.domain.common.BaseEntity;
+import com.nova.anonymousplanet.persistence.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

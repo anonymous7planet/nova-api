@@ -9,4 +9,6 @@ include 'infra:nova-gateway-server'
 findProject(':infra:nova-gateway-server')?.name = 'nova-gateway-server'
 include 'services:nova-auth-service'
 findProject(':services:nova-auth-service')?.name = 'nova-auth-service'
+include 'common:nova-persistence'
+findProject(':common:nova-persistence')?.name = 'nova-persistence'
 
