@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.auth.domain.user;
+package com.nova.anonymousplanet.auth.model.entity;
 
 import com.nova.anonymousplanet.persistence.common.BaseEntity;
 import jakarta.persistence.Column;
@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 /**
  * projectName : nova-api
  * packageName : com.nova.anonymousplanet.auth.domain.user
- * fileName : UserIntroductionEntity
+ * fileName : UserProfileImageEntity
  * author : Jinhong Min
  * date : 2025-04-28
  * description :
@@ -29,13 +29,15 @@ import lombok.NoArgsConstructor;
  * 2025-04-28      Jinhong Min      최초 생성
  * ==============================================
  */
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "tb_user_introduction")
-public class UserIntroductionEntity extends BaseEntity {
+@Table(name = "tb_user_profile_image")
+public class UserProfileImageEntity extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -44,6 +46,9 @@ public class UserIntroductionEntity extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    @Column(name = "introduction_text", columnDefinition = "TEXT")
-    private String introductionText; // 자기소개 글
+    @Column(name = "image_url", nullable = false, length = 255)
+    private String imageUrl;
+
+    @Column(name = "is_representative", nullable = false)
+    private boolean isRepresentative; // 대표 이미지 여부k
 }

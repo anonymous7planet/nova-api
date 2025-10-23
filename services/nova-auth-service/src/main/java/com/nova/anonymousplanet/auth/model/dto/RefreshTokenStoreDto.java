@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.auth.application.dto;
+package com.nova.anonymousplanet.auth.model.dto;
 
 import com.nova.anonymousplanet.common.constant.RoleCode;
 import com.nova.anonymousplanet.common.constant.RoleGroupCode;

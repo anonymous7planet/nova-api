@@ -8,8 +8,10 @@ import javax.persistence.Converter;
 
 public enum RoleCode implements BaseEnum<String> {
 
+    SUPER_ADMIN("ROLE_SUPER_ADMIN", "최고관리자"),
     ADMIN("ROLE_ADMIN", "관리자"),
     MANAGER("ROLE_MANAGER", "매니저"),
+    ANALYST("ROLE_ANALYST", "분석가"),
     USER("ROLE_USER", "사용자")
     ;
 

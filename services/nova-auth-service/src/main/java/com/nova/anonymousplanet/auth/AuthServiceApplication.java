@@ -9,7 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @EnableFeignClients
 @EnableDiscoveryClient
-@ComponentScan(value = "com.nova")
+@ComponentScan(value = "com.nova.anonymousplanet")
 @SpringBootApplication
 public class AuthServiceApplication {
     public static void main(String[] args) {

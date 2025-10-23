@@ -1,0 +1,20 @@
+<configuration>
+    <!-- 패키지 별 로그 레벨 설정 -->
+
+    <!-- 본인 코드 (nova 패키지)만 INFO 이상 로그 출력 -->
+    <logger name="com.nova" level="INFO"/>
+
+    <!-- Hibernate 등 외부 라이브러리는 WARN 이상만 출력 -->
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.springframework.web" level="WARN"/>
+    <logger name="org.springframework.boot.autoconfigure" level="ERROR"/>
+    <logger name="org.apache.kafka" level="ERROR"/>
+    <logger name="org.redisson" level="WARN"/>
+
+    <!-- 루트 로거는 기본 WARN 이상 (최대한 억제) -->
+    <root level="WARN">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

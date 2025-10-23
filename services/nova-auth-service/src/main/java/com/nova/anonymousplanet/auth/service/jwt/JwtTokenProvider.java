@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.auth.infrastructure.jwt;
+package com.nova.anonymousplanet.auth.service.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;

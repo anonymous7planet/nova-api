@@ -1,6 +1,6 @@
-package com.nova.anonymousplanet.auth.infrastructure.persistence.repository;
+package com.nova.anonymousplanet.auth.repository;
 
-import com.nova.anonymousplanet.auth.domain.user.UserEntity;
+import com.nova.anonymousplanet.auth.model.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

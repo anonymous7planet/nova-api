@@ -5,8 +5,8 @@ import lombok.Getter;
 
 @Getter
 public class PaginationRequest extends BaseRequest {
-    private int page = 1;
-    private int size = 20;
+    private final int page = 1;
+    private final int size = 20;
     private String sortBy;
     private String direction;
 }

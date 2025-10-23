@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.auth.application.dto;
+package com.nova.anonymousplanet.auth.model.dto;
 
 import com.nova.anonymousplanet.common.annotation.PasswordMatch;
 import com.nova.anonymousplanet.common.constant.BloodTypeCode;
@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.List;
 
 /**
  * projectName : nova-api

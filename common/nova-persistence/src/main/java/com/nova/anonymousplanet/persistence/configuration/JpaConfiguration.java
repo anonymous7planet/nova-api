@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.auth.configuration;
+package com.nova.anonymousplanet.persistence.configuration;
 
 
 import org.springframework.context.annotation.Configuration;

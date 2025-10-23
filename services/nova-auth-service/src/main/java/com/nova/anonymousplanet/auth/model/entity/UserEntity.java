@@ -1,8 +1,9 @@
-package com.nova.anonymousplanet.auth.domain.user;
+package com.nova.anonymousplanet.auth.model.entity;
 
 import com.nova.anonymousplanet.common.constant.BloodTypeCode;
 import com.nova.anonymousplanet.common.constant.GenderCode;
 import com.nova.anonymousplanet.common.constant.MbtiCode;
+import com.nova.anonymousplanet.common.constant.UserStatusCode;
 import com.nova.anonymousplanet.persistence.common.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -63,6 +64,10 @@ public class UserEntity extends BaseEntity {
     @Column(name = "nick_name", nullable = false, length = 40)
     private String nickname;
 
+    @Convert(converter = UserStatusCode.UserStatusCodeConverter.class)
+    @Column(name ="status", nullable = false, length = 10)
+    private UserStatusCode status;
+
     @Convert(converter = GenderCode.GenderCodeConverter.class)
     @Column(name = "gender", nullable = false, length = 1)
     private GenderCode gender;
@@ -86,8 +91,4 @@ public class UserEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserIntroductionEntity> userIntroduction;
-
-
-
-
 }
