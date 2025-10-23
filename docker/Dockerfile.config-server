@@ -1,0 +1,28 @@
+# docker/Dockerfile.config-server
+
+# 1. JDK 기반 이미지 사용
+FROM eclipse-temurin:21-jdk AS builder
+
+# 2. gradle 빌드용 작업 디렉토리
+WORKDIR /app
+
+# 3. 루트 프로젝트 전체 복사 (gradle 캐시 최적화)
+COPY . .
+
+# 4. config-server 빌드 (infra 폴더 안에 있으므로 경로 주의)
+RUN chmod +x ./gradlew
+RUN ./gradlew :infra:nova-config-server:bootJar --no-daemon
+
+# 5. 실제 런타임 이미지 생성
+FROM eclipse-temurin:21-jre
+
+WORKDIR /app
+
+# 6. 빌드 결과 복사
+COPY --from=builder /app/infra/nova-config-server/build/libs/*.jar app.jar
+
+# 포트 지정
+EXPOSE 8888
+
+# 7. 실행 명령
+ENTRYPOINT ["java", "-jar", "app.jar"]

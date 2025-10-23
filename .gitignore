@@ -38,5 +38,9 @@ Thumbs.db
 *.rar
 *.7z
 
-#QueryDSL
+# QueryDSL
 /src/main/generated/
+
+
+#Docker Data
+/docker/data

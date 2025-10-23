@@ -1,0 +1,27 @@
+# 1) docker 디렉토리로 이동
+cd nova-api/docker
+
+# 2) (선택) .env 파일이 존재하는지 확인
+ls env/.env.local
+
+# 3) 전체 서비스 빌드+실행 (처음 실행 시 --build 권장)
+docker compose -f ./compose/docker-compose.local.yml --env-file ./env/.env.local up -d --build
+
+# 4) 특정 서비스만 실행 (예: config-server만 테스트)
+docker compose -f ./compose/docker-compose.local.yml --env-file ./env/.env.local up -d --build config-server
+
+# 5) 실행 중 컨테이너 목록 확인
+docker ps
+
+# 6) 컨테이너 로그 실시간 보기 (예: config-server)
+docker logs -f nova-config-server
+
+# 7) 전체 중지 및 네트워크/볼륨 유지
+docker compose -f docker-compose.yml --env-file ./env/.env.local down
+
+# 8) 데이터 볼륨까지 완전 삭제 (주의: 모든 데이터 삭제)
+docker compose -f docker-compose.yml --env-file ./env/.env.local down -v
+
+docker compose -f ./compose/docker-compose.local.yml --env-file ./env/.env.local up -d postgres redis kafka
+
+docker compose -f ./compose/docker-compose.local.yml down kafka
