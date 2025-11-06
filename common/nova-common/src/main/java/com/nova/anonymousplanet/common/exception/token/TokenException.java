@@ -1,7 +1,7 @@
 package com.nova.anonymousplanet.common.exception.token;
 
 
-import com.nova.anonymousplanet.common.constant.ErrorCode;
+import com.nova.anonymousplanet.common.constant.error.ErrorCode;
 import com.nova.anonymousplanet.common.exception.BadRequestException;
 
 public class TokenException extends BadRequestException {

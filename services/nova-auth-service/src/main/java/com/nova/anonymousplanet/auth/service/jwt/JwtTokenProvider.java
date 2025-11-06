@@ -1,9 +1,13 @@
 package com.nova.anonymousplanet.auth.service.jwt;
 
+import com.nova.anonymousplanet.auth.dto.TokenDto;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +16,8 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -51,47 +57,49 @@ public class JwtTokenProvider {
 
     /**
      * Access Token을 생성합니다.
+     * userUuid와 Role, deviceId를 저장
      */
-    public String generateAccessToken(String uuid, String role, String roleGroup, String deviceId) {
+    public String createAccessToken(TokenDto.IssueRequest reqDto) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + accessTokenExpireMillis * 1000);
 
         return Jwts.builder()
-                .setSubject(uuid)
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .claim("role", role)
-                .claim("roleGroup", roleGroup)
-                .claim("deviceId", deviceId)
-                .signWith(accessSecretKey, SignatureAlgorithm.HS256)
-                .compact();
+                .subject(reqDto.userUuid())
+                .issuedAt(now)
+                .expiration(expiry)
+                .claim("role", reqDto.role().getCode())
+                .claim("deviceId", reqDto.deviceId())
+                .signWith(accessSecretKey, Jwts.SIG.HS256)
+                .compact()
+                ;
     }
 
     /**
      * Refresh Token을 생성합니다.
+     * userUuid와 deviceId를 저장
      */
-    public String generateRefreshToken(String uuid, String deviceId) {
+    public String createRefreshToken(TokenDto.IssueRequest reqDto) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + refreshTokenExpireMillis * 1000);
 
         return Jwts.builder()
-                .setSubject(uuid)
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .claim("deviceId", deviceId)
-                .signWith(refreshSecretKey, SignatureAlgorithm.HS256)
+                .subject(reqDto.userUuid())
+                .issuedAt(now)
+                .expiration(expiry)
+                .claim("deviceId", reqDto.deviceId())
+                .signWith(accessSecretKey, Jwts.SIG.HS256)
                 .compact();
     }
 
     /**
-     * Access Token의 유효성을 검증합니다.
+     * AccessToken의 유효성을 검증합니다.
      */
     public boolean validateAccessToken(String token) {
         return validateToken(token, accessSecretKey);
     }
 
     /**
-     * Refresh Token의 유효성을 검증합니다.
+     * RefreshToken의 유효성을 검증합니다.
      */
     public boolean validateRefreshToken(String token) {
         return validateToken(token, refreshSecretKey);
@@ -99,14 +107,24 @@ public class JwtTokenProvider {
 
     /**
      * JWT 토큰의 서명과 만료 여부를 검증합니다.
+     * @param token
+     * @param key
+     * @return
      */
     private boolean validateToken(String token, SecretKey key) {
-        try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
+       try {
+           Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
+           return true;
+       } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+           log.error("code: C001-001, message: 잘못된 JWT 서명입니다.");
+       } catch (ExpiredJwtException e) {
+           log.error("code: C001-002, message: 만료된 JWT 토큰입니다.");
+       } catch (UnsupportedJwtException e) {
+           log.error("code: C001-003, message: 지원되지 않는 JWT 토큰입니다.");
+       } catch (IllegalArgumentException e) {
+           log.error("code: C001-004, message: JWT 토큰이 잘못되었습니다.");
+       }
+       return false;
     }
 
     /**
@@ -128,11 +146,11 @@ public class JwtTokenProvider {
      */
     private Claims parseClaims(String token, SecretKey key, String tokenType) {
         try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
+            return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
         } catch (JwtException | IllegalArgumentException e) {
             log.error("Failed to parse {} claims. token={}, error={}", tokenType, token, e.getMessage());
             throw new RuntimeException(tokenType + " 파싱 실패", e);

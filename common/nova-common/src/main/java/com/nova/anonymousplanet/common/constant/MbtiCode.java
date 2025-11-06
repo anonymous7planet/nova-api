@@ -3,8 +3,8 @@ package com.nova.anonymousplanet.common.constant;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.nova.anonymousplanet.common.configuration.BaseEnumConverter;
 import com.nova.anonymousplanet.common.util.EnumUtils;
+import jakarta.persistence.Converter;
 
-import javax.persistence.Converter;
 
 /**
  * projectName : nova-api
@@ -36,7 +36,8 @@ public enum MbtiCode implements BaseEnum<String> {
     ESTJ("ESTJ", "ESTJ"),
     ESFJ("ESFJ", "ESFJ"),
     ENFJ("ENFJ", "ENFJ"),
-    ENTJ("ENTJ", "ENTJ")
+    ENTJ("ENTJ", "ENTJ"),
+    NONE("NONE", "NONE")        // MBTI를 모를 경우
     ;
 
     private final String code;

@@ -1,6 +1,7 @@
-package com.nova.anonymousplanet.common.exception;
+package com.nova.anonymousplanet.common.exception.common;
 
-import com.nova.anonymousplanet.common.constant.ErrorCode;
+import com.nova.anonymousplanet.common.constant.error.ErrorCode;
+import com.nova.anonymousplanet.common.exception.BadRequestException;
 
 public class EnumCodeNotFoundException extends BadRequestException {
     public EnumCodeNotFoundException(String detailMessage) {

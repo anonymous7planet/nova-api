@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RestBaseResponse {
     private boolean isSuccess; // 성공 여부 (true:성공, false:실패)
     private String message;    // 메시지

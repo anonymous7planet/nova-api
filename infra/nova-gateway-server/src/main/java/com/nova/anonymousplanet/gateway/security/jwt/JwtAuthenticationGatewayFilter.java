@@ -92,7 +92,7 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
             }
 
             // header에 memberIdx, Group, Role 추가
-            addAuthorizationHeaders(request, jwtTokenProvider.getUUIdFromToken(accessToken), jwtTokenProvider.getRoleGroupFromToken(accessToken), jwtTokenProvider.getRoleFormToken(accessToken));
+            addAuthorizationHeaders(request, jwtTokenProvider.getUUIdFromToken(accessToken), jwtTokenProvider.getRoleFormToken(accessToken));
 
             return chain.filter(exchange);
         });
@@ -128,10 +128,9 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
      * @param memberIdx
      * @param role
      */
-    private void addAuthorizationHeaders(ServerHttpRequest request, String memberIdx, String roleGroup, String role) {
+    private void addAuthorizationHeaders(ServerHttpRequest request, String memberIdx, String role) {
         request.mutate()
                 .header("X-Authorization-Idx", String.valueOf(memberIdx))
-                .header("X-Authorization-Group", roleGroup)
                 .header("X-Authorization-Role", role)
                 .build()
         ;

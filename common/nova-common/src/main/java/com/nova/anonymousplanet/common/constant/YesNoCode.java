@@ -3,8 +3,8 @@ package com.nova.anonymousplanet.common.constant;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.nova.anonymousplanet.common.configuration.BaseEnumConverter;
 import com.nova.anonymousplanet.common.util.EnumUtils;
+import jakarta.persistence.Converter;
 
-import javax.persistence.Converter;
 
 public enum YesNoCode implements BaseEnum<String> {
     YES("Y", "Yes"),

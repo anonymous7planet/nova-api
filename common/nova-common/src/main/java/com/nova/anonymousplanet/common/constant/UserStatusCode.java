@@ -3,8 +3,8 @@ package com.nova.anonymousplanet.common.constant;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.nova.anonymousplanet.common.configuration.BaseEnumConverter;
 import com.nova.anonymousplanet.common.util.EnumUtils;
+import jakarta.persistence.Converter;
 
-import javax.persistence.Converter;
 
 public enum UserStatusCode implements BaseEnum<String> {
     PENDING("PENDING", "가입 대기 상태"),
@@ -13,7 +13,8 @@ public enum UserStatusCode implements BaseEnum<String> {
     MATCH_ACTIVE("M_ACTIVE", "맞선모드 활성"),
     SUSPENDED("SUSPENDED", "이용 정지"),
     BANNED("BANNED", "추방"),
-    WITHDRAWN("WITHDRAWN", "탈퇴");
+    WITHDRAWN("WITHDRAWN", "탈퇴")
+    ;
 
     private final String code;
     private final String desc;

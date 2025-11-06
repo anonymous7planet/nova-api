@@ -1,8 +1,7 @@
 package com.nova.anonymousplanet.auth.service.jwt;
 
-import com.nova.anonymousplanet.auth.model.dto.RefreshTokenStoreDto;
+import com.nova.anonymousplanet.auth.dto.RefreshTokenStoreDto;
 import com.nova.anonymousplanet.common.constant.RoleCode;
-import com.nova.anonymousplanet.common.constant.RoleGroupCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -42,14 +41,13 @@ public class JwtRefreshTokenStore {
         String key = reqDto.getKey();
         try {
             Map<String, String> valueMap = Map.of(
-                    "refreshToken", reqDto.getRefreshToken(),
-                    "roleGroup", reqDto.getRoleGroup().getCode(),
-                    "role", reqDto.getRole().getCode(),
-                    "userId", reqDto.getUserId().toString()
+                    "refreshToken", reqDto.refreshToken(),
+                    "role", reqDto.role().getCode(),
+                    "userId", reqDto.userId().toString()
             );
             redisTemplate.opsForHash().putAll(key, valueMap);
-            redisTemplate.expire(key, reqDto.getExpirationSeconds(), TimeUnit.SECONDS);
-            log.debug("Stored RefreshToken in Redis. key={}, expiration={}s", key, reqDto.getExpirationSeconds());
+            redisTemplate.expire(key, reqDto.expirationSeconds(), TimeUnit.SECONDS);
+            log.debug("Stored RefreshToken in Redis. key={}, expiration={}s", key, reqDto.expirationSeconds());
         } catch(Exception e) {
             log.error("Failed to store RefreshToken in Redis. key={}", key, e);
             throw new RuntimeException("Redis 저장 실패", e);
@@ -68,17 +66,18 @@ public class JwtRefreshTokenStore {
                 return Optional.empty();
             }
 
-            String userIdStr = (String) entries.get("userId");
-            if (userIdStr == null) {
-                throw new IllegalStateException("Redis에 userId가 없습니다. key=" + key);
+            String userUuid = (String) entries.get("userUuid");
+            if (userUuid == null) {
+                throw new IllegalStateException("Redis에 userUuid가 없습니다. key=" + key);
             }
 
             return Optional.of(
                     new RefreshTokenStoreDto.GetResponse(
-                            (String) entries.get("refreshToken"),
-                            RoleGroupCode.fromCode((String) entries.get("roleGroup")),
-                            RoleCode.fromCode((String) entries.get("role")),
-                            Long.parseLong(userIdStr)
+                        userUuid,
+                        (String) entries.get("deviceId"),
+                        Long.parseLong((String) entries.get("userId")),
+                        (String) entries.get("refreshToken"),
+                        RoleCode.fromCode((String) entries.get("role"))
                     )
             );
         } catch (Exception e) {
@@ -91,12 +90,20 @@ public class JwtRefreshTokenStore {
      * 전달받은 RefreshToken이 Redis에 저장된 값과 일치하는지 검증합니다.
      */
     public boolean validate(RefreshTokenStoreDto.ValidateRequest reqDto) {
-        String key = reqDto.getKey();
         try {
-            Object storedToken = redisTemplate.opsForHash().get(key, "refreshToken");
-            return Objects.equals(reqDto.getRefreshToken(), storedToken);
+            Optional<RefreshTokenStoreDto.GetResponse> stored= get(new RefreshTokenStoreDto.GetRequest(reqDto.userUuid(), reqDto.deviceId()));
+            if (stored.isEmpty()) {
+                log.warn("[Redis] RefreshToken 존재하지 않음 -> userUuid={}, deviceId={}", reqDto.userUuid(), reqDto.deviceId());
+                return false;
+            }
+
+            RefreshTokenStoreDto.GetResponse storedToken = stored.get();
+            boolean valid = storedToken.refreshToken().equals(reqDto.refreshToken());
+            if (!valid) log.warn("[Redis] RefreshToken 검증 실패 -> key={}", reqDto.getKey());
+            return valid;
+
         } catch (Exception e) {
-            log.error("Failed to validate RefreshToken in Redis. key={}", key, e);
+            log.error("Failed to validate RefreshToken in Redis. -> key={}", reqDto.getKey());
             throw new RuntimeException("Redis 검증 실패", e);
         }
     }

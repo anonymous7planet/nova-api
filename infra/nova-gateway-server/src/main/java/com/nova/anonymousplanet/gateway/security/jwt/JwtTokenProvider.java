@@ -18,8 +18,6 @@ import java.util.Map;
 @Slf4j
 @Component
 public class JwtTokenProvider {
-    private static final String ROLE_GROUP_KEY = "roleGroup";
-
     private static final String ROLE_KEY = "role";
 
     private final Key key;
@@ -64,10 +62,6 @@ public class JwtTokenProvider {
 
     public String getUUIdFromToken(String token){
         return this.getClaims(token).getSubject();
-    }
-
-    public String getRoleGroupFromToken(String token) {
-        return String.valueOf(this.getClaims(token).get(ROLE_GROUP_KEY));
     }
 
     public String getRoleFormToken(String token) {

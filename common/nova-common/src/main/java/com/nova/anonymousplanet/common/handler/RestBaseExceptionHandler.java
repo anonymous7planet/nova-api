@@ -1,7 +1,7 @@
 package com.nova.anonymousplanet.common.handler;
 
 
-import com.nova.anonymousplanet.common.constant.ErrorCode;
+import com.nova.anonymousplanet.common.constant.error.ErrorCode;
 import com.nova.anonymousplanet.common.dto.response.ErrorSet;
 import com.nova.anonymousplanet.common.dto.response.RestEmptyResponse;
 import com.nova.anonymousplanet.common.exception.ApplicationException;

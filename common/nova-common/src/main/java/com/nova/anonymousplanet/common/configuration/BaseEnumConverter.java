@@ -2,9 +2,11 @@ package com.nova.anonymousplanet.common.configuration;
 
 import com.nova.anonymousplanet.common.constant.BaseEnum;
 import com.nova.anonymousplanet.common.util.EnumUtils;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
-import javax.persistence.AttributeConverter;
 
+@Converter
 public abstract class BaseEnumConverter<E extends Enum<E> & BaseEnum<T>, T> implements AttributeConverter<E, T> {
 
     private final Class<E> enumClass;

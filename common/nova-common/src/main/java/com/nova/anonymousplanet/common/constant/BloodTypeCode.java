@@ -3,8 +3,8 @@ package com.nova.anonymousplanet.common.constant;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.nova.anonymousplanet.common.configuration.BaseEnumConverter;
 import com.nova.anonymousplanet.common.util.EnumUtils;
+import jakarta.persistence.Converter;
 
-import javax.persistence.Converter;
 
 /**
  * projectName : nova-api
@@ -21,10 +21,14 @@ import javax.persistence.Converter;
  */
 public enum BloodTypeCode implements BaseEnum<String> {
 
-    A("A", "A형"),
-    B("B", "B형"),
-    O("O", "O형"),
-    AB("AB", "AB형")
+    A_POS("A+", "A형 Rh+"),
+    A_NEG("A-", "A형 Rh-"),
+    B_POS("B+", "B형 Rh+"),
+    B_NEG("B-", "B형 Rh-"),
+    O_POS("O+", "O형 Rh+"),
+    O_NEG("O-", "O형 Rh-"),
+    AB_POS("AB+", "AB형 Rh+"),
+    AB_NEG("AB-", "AB형 Rh-")
     ;
 
     private final String code;

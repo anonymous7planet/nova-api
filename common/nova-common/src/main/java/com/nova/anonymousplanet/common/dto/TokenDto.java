@@ -1,7 +1,6 @@
 package com.nova.anonymousplanet.common.dto;
 
 import com.nova.anonymousplanet.common.constant.RoleCode;
-import com.nova.anonymousplanet.common.constant.RoleGroupCode;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,14 +12,12 @@ public class TokenDto {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class TokenCreateRequest {
         private String uuid;
-        private RoleGroupCode roleGroup;
         private RoleCode role;
         private String deviceId;
 
         @Builder
-        public TokenCreateRequest(String uuid, RoleGroupCode roleGroup, RoleCode role, String deviceId) {
+        public TokenCreateRequest(String uuid, RoleCode role, String deviceId) {
             this.uuid = uuid;
-            this.roleGroup = roleGroup;
             this.role = role;
             this.deviceId = deviceId;
         }

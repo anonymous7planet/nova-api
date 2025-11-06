@@ -1,7 +1,7 @@
 package com.nova.anonymousplanet.common.exception;
 
 
-import com.nova.anonymousplanet.common.constant.ErrorCode;
+import com.nova.anonymousplanet.common.constant.error.ErrorCode;
 
 /**
  * 500에러(서버에러)
