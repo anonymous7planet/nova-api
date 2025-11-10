@@ -115,7 +115,7 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
 
             RefreshTokenStoreDto.GetResponse redisStore = jwtRefreshTokenStore.get(new RefreshTokenStoreDto.GetRequest(userUuid, deviceId)).get();
 
-            addAuthorizationHeaders(request, redisStore.userId(), userUuid, userRole, redisStore.userStatusCode());
+            addAuthorizationHeaders(request, redisStore.userId(), userUuid, userRole, redisStore.userStatus());
 
             return chain.filter(exchange);
         });
