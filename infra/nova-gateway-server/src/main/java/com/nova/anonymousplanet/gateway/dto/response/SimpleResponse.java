@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.gateway.common.response;
+package com.nova.anonymousplanet.gateway.dto.response;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -43,16 +43,9 @@ public class SimpleResponse implements Serializable {
 
 
     @Getter
-    public static class SimpleErrorSet {
-        private final String path;
-        private final String code;
-        private final String detailMessage;
-
+    public record SimpleErrorSet(String path, String code, String detailMessage) {
         @Builder
-        public SimpleErrorSet(String path, String code, String detailMessage) {
-            this.path = path;
-            this.code = code;
-            this.detailMessage = detailMessage;
+        public SimpleErrorSet {
         }
     }
 }

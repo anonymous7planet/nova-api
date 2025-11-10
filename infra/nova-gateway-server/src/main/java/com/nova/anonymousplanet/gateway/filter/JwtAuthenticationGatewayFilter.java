@@ -1,7 +1,7 @@
 package com.nova.anonymousplanet.gateway.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nova.anonymousplanet.gateway.common.response.SimpleResponse;
+import com.nova.anonymousplanet.gateway.dto.response.SimpleResponse;
 import com.nova.anonymousplanet.gateway.dto.RefreshTokenStoreDto;
 import com.nova.anonymousplanet.gateway.service.jwt.JwtRefreshTokenStore;
 import com.nova.anonymousplanet.gateway.service.jwt.JwtTokenProvider;
@@ -10,7 +10,6 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -102,12 +101,12 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
             if(!valid) {
                 return onError(
                     response
-                    , errorMap.get("message")
+                    , "토큰에 문제가 말생했습니다."
                     , SimpleResponse.SimpleErrorSet
                         .builder()
                         .path(path)
                         .code("C001")
-                        .detailMessage("[NOVA][GateWay] " + errorMap.get("detailMessage"))
+                        .detailMessage("[NOVA][GateWay] 토큰 정보에 문제가 발생했습니다.")
                         .build(),
                     HttpStatus.BAD_REQUEST
                 );
