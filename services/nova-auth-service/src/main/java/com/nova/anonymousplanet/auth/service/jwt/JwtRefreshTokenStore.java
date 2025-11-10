@@ -1,14 +1,14 @@
 package com.nova.anonymousplanet.auth.service.jwt;
 
 import com.nova.anonymousplanet.auth.dto.RefreshTokenStoreDto;
-import com.nova.anonymousplanet.common.constant.RoleCode;
+import com.nova.anonymousplanet.core.constant.RoleCode;
+import com.nova.anonymousplanet.core.constant.UserStatusCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -41,9 +41,11 @@ public class JwtRefreshTokenStore {
         String key = reqDto.getKey();
         try {
             Map<String, String> valueMap = Map.of(
-                    "refreshToken", reqDto.refreshToken(),
-                    "role", reqDto.role().getCode(),
-                    "userId", reqDto.userId().toString()
+                "userId", reqDto.userId().toString(),
+                "refreshToken", reqDto.refreshToken(),
+                "role", reqDto.role().getCode(),
+                "userStatus", reqDto.userStatus().getCode()
+
             );
             redisTemplate.opsForHash().putAll(key, valueMap);
             redisTemplate.expire(key, reqDto.expirationSeconds(), TimeUnit.SECONDS);
@@ -77,7 +79,8 @@ public class JwtRefreshTokenStore {
                         (String) entries.get("deviceId"),
                         Long.parseLong((String) entries.get("userId")),
                         (String) entries.get("refreshToken"),
-                        RoleCode.fromCode((String) entries.get("role"))
+                        RoleCode.fromCode((String) entries.get("role")),
+                        UserStatusCode.fromCode((String)entries.get("userStatus"))
                     )
             );
         } catch (Exception e) {

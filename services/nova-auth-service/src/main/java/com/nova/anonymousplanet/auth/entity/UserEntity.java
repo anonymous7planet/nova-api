@@ -14,13 +14,13 @@ package com.nova.anonymousplanet.auth.entity;
   ==============================================
  */
 
-import com.nova.anonymousplanet.common.constant.BloodTypeCode;
-import com.nova.anonymousplanet.common.constant.GenderCode;
-import com.nova.anonymousplanet.common.constant.MbtiCode;
-import com.nova.anonymousplanet.common.constant.RoleCode;
-import com.nova.anonymousplanet.common.constant.UserStatusCode;
-import com.nova.anonymousplanet.common.constant.YesNoCode;
-import com.nova.anonymousplanet.common.util.UuidUtils;
+import com.nova.anonymousplanet.core.constant.BloodTypeCode;
+import com.nova.anonymousplanet.core.constant.GenderCode;
+import com.nova.anonymousplanet.core.constant.MbtiCode;
+import com.nova.anonymousplanet.core.constant.RoleCode;
+import com.nova.anonymousplanet.core.constant.UserStatusCode;
+import com.nova.anonymousplanet.core.constant.YesNoCode;
+import com.nova.anonymousplanet.core.util.UuidUtils;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -38,7 +38,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "tb_user")

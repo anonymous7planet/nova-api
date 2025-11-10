@@ -13,16 +13,16 @@ allprojects {
     group = 'com.nova.anonymousplanet' // ✅ 네이밍 일관성 유지
     version = '1.0.0'
 
+    repositories {
+        mavenCentral()
+    }
+
 }
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management' // ✅ root프로젝트에서만 적용하기 때문에 선언 필요
-
-    repositories {
-        mavenCentral()
-    }
 
     dependencyManagement {
         imports {
@@ -31,17 +31,25 @@ subprojects {
         }
     }
 
-    dependencies {
-        // Lombok 공통 적용
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok'
-
-        testCompileOnly 'org.projectlombok:lombok'
-        testAnnotationProcessor 'org.projectlombok:lombok'
+    // library 계열은 공통 설정 제외
+    if (!project.path.startsWith(":library")) {
+        apply from: "${rootDir}/common-dependencies.gradle"
     }
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
+    }
+
+    dependencies {
+        // === Lombok 공통 적용 ===
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
+
+        // === 공통 유틸/로깅 ===
+        implementation 'org.slf4j:slf4j-api'
+        implementation 'ch.qos.logback:logback-classic'
     }
 }
 

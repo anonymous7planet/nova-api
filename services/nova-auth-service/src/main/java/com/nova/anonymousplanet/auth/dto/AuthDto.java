@@ -1,8 +1,8 @@
 package com.nova.anonymousplanet.auth.dto;
 
-import com.nova.anonymousplanet.common.constant.BloodTypeCode;
-import com.nova.anonymousplanet.common.constant.GenderCode;
-import com.nova.anonymousplanet.common.constant.MbtiCode;
+import com.nova.anonymousplanet.core.constant.BloodTypeCode;
+import com.nova.anonymousplanet.core.constant.GenderCode;
+import com.nova.anonymousplanet.core.constant.MbtiCode;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

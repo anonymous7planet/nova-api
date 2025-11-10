@@ -1,0 +1,48 @@
+plugins {
+    id 'java'
+}
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+dependencies {
+    // SpringBootWeb을 사용하지 않기 위해서 필요한 최소한의 라이브러리들만 추가
+    implementation 'org.springframework:spring-web'  // Spring MVC 핵심 기능만 포함 (서블릿 X)
+    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0' // HttpServletRequest 사용
+    implementation 'jakarta.validation:jakarta.validation-api:3.0.2' // Validation API
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // JSON
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.17.0' // 최소한의 의존성
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0' // JSON 직렬화/역직렬화 지원
+
+
+    // AttributeConverter를 사용하기 위해서
+    // implementation 'javax.persistence:javax.persistence-api:jpa2.2'
+    implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+}
+
+/**
+ * Lombok안쓰는 부분에서 제외할때 사용
+ configurations {
+ compileOnly {
+ exclude group: 'org.projectlombok', module: 'lombok'
+ }
+ annotationProcessor {
+ exclude group: 'org.projectlombok', module: 'lombok'
+ }
+ }
+ */

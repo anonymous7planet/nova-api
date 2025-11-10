@@ -41,9 +41,19 @@ dependencies {
 
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
-    // nova-common lib
-    implementation project(path : ':common:nova-common', configuration : 'default')
+    // nova-core
+    implementation project(path : ':library:nova-core', configuration : 'default')
 
-    // nova-persistence lib
-    implementation project(path : ':common:nova-persistence', configuration : 'default')
+    // nova-persistence
+    implementation project(path : ':library:nova-persistence', configuration : 'default')
+
+    // nova-logging
+    implementation project(path : ':library:nova-logging', configuration : 'default')
+
+    // nova-messaging
+    implementation project(path : ':library:nova-messaging', configuration : 'default')
+
+    // nova-security
+    implementation project(path : ':library:nova-security', configuration : 'default')
+
 }

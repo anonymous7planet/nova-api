@@ -4,6 +4,7 @@ jar {
 
 dependencies {
 
+
     /**
      * Srping Cloud Gateway Server
      */
@@ -34,6 +35,9 @@ dependencies {
     // 현재 사용 용도는 마이크로 서비스 모듈에서 컨피그 서버 정보를 유레카 서버에 등록된 서비스 아이디로 설정하기 위해서 사용
     implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
 
+    // Spring Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
     // Spring Cloud Starter Actuator
     // health 및 refresh 처리를 위해 필요한 monitor dependency가 있다면, actuator의 refresh나 bus-refresh는 사용하지 않음
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -41,13 +45,17 @@ dependencies {
     /**
      * 기타 라이브러리
      */
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
+
     /**
      * JWT관련 의존성
      */
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
-    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
-    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
     // redis
-    implementation "org.springframework.boot:spring-boot-starter-data-redis"
+    // implementation "org.springframework.boot:spring-boot-starter-data-redis"
 }
