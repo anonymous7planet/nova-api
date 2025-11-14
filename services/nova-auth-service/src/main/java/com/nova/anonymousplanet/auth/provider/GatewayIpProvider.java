@@ -35,7 +35,7 @@ public class GatewayIpProvider {
     /**
      * Eureka에 등록된 gateway 인스턴스들의 IP 목록을 주기적으로 갱신
      */
-    @Scheduled(fixedDelay = 30000) // 30초마다 갱신
+    @Scheduled(fixedDelay = 30000, initialDelay = 0) // initialDelay=0을 추가하여 즉시 실행
     public void refreshGatewayIps() {
         try {
             List<ServiceInstance> instances = discoveryClient.getInstances("nova-gateway-server");
@@ -44,6 +44,11 @@ public class GatewayIpProvider {
             for (ServiceInstance instance : instances) {
                 newIps.add(instance.getHost());
             }
+
+            // TODO: 수정필요
+            // 개발용 고정
+            newIps.add("172.30.1.96");
+            newIps.add("127.0.0.1");
 
             gatewayIps.clear();
             gatewayIps.addAll(newIps);

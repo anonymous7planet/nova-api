@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.auth.controller;
+package com.nova.anonymousplanet.auth.controller.v1;
 
 /*
   projectName : nova-api
@@ -14,10 +14,11 @@ package com.nova.anonymousplanet.auth.controller;
   ==============================================
  */
 
-import com.nova.anonymousplanet.auth.dto.AuthDto;
-import com.nova.anonymousplanet.auth.service.AuthService;
+import com.nova.anonymousplanet.auth.dto.v1.AuthDto;
+import com.nova.anonymousplanet.auth.service.v1.AuthService;
 import com.nova.anonymousplanet.core.dto.request.RestSingleRequest;
 import com.nova.anonymousplanet.core.dto.response.RestEmptyResponse;
+import com.nova.anonymousplanet.core.dto.response.RestSingleResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/v1")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -40,5 +41,16 @@ public class AuthController {
     public ResponseEntity<RestEmptyResponse> signup(@RequestBody @Valid RestSingleRequest<AuthDto.SignupRequest> request) {
         authService.signup(request.getData());
         return ResponseEntity.ok(RestEmptyResponse.success("회원 가입 성공"));
+    }
+
+    /**
+     * 로그인
+     * @param request
+     * @return
+     */
+    @PostMapping("/login")
+    public ResponseEntity<RestSingleResponse<AuthDto.LoginResponse>> login(@RequestBody @Valid RestSingleRequest<AuthDto.LoginRequest> request) {
+        AuthDto.LoginResponse response = authService.login(request.getData());
+        return ResponseEntity.ok(RestSingleResponse.success(response, request.getRequestId(), request.getPath()));
     }
 }

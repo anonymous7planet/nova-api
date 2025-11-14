@@ -1,12 +1,14 @@
-package com.nova.anonymousplanet.auth.service;
+package com.nova.anonymousplanet.auth.service.v1;
 
-import com.nova.anonymousplanet.auth.dto.AuthDto;
+import com.nova.anonymousplanet.auth.dto.v1.AuthDto;
+import com.nova.anonymousplanet.auth.dto.v1.TokenDto;
 import com.nova.anonymousplanet.auth.entity.UserEntity;
 import com.nova.anonymousplanet.auth.repository.UserRepository;
 import com.nova.anonymousplanet.core.constant.RoleCode;
 import com.nova.anonymousplanet.core.constant.UserStatusCode;
 import com.nova.anonymousplanet.core.constant.YesNoCode;
 import com.nova.anonymousplanet.core.constant.error.ErrorCode;
+import com.nova.anonymousplanet.core.exception.user.UserLoginException;
 import com.nova.anonymousplanet.core.exception.user.UserRegistrationException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
 
     /**
      * 회원가입
@@ -72,5 +75,24 @@ public class AuthService {
         );
         // 저장
         userRepository.save(user);
+    }
+
+    /**
+     * 로그인 처리
+     * - 사용자 검증
+     * - Access / Refresh Token 발급
+     * - Redis에 RefreshToken 상태 저장
+     */
+    public AuthDto.LoginResponse login(AuthDto.LoginRequest request) {
+        UserEntity user = userRepository.findByEmail(request.email())
+            .orElseThrow(UserLoginException::new);
+
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new UserLoginException();
+        }
+
+        TokenDto.IssueResponse token =  tokenService.Issue(new TokenDto.IssueRequest(user.getId(), user.getUuid(), request.deviceId(), user.getRole(), user.getStatus()));
+
+        return new AuthDto.LoginResponse(user.getEmail(), user.getName(), user.getNickname(), user.getGender(), token);
     }
 }

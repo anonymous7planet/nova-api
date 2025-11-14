@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.auth.dto;
+package com.nova.anonymousplanet.auth.dto.v1;
 
 import com.nova.anonymousplanet.core.constant.BloodTypeCode;
 import com.nova.anonymousplanet.core.constant.GenderCode;
@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /*
   projectName : nova-api
@@ -86,8 +87,13 @@ public record AuthDto() {
     }
 
     public record LoginResponse(
-        TokenDto.IssueResponse accessToken,
-        TokenDto.IssueResponse refreshToken
+        // 1. 사용자 식별 정보
+        String email,      // email
+        String name,       // 이름
+        String nickname,   // 닉네임
+        GenderCode gender, // 성별
+        // 2. 토큰 정보
+        TokenDto.IssueResponse tokenInfo     // Access Token 및 Refresh Token 정보 DTO
     ) {
     }
 }

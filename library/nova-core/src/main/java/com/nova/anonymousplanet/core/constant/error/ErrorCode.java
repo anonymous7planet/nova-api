@@ -16,11 +16,11 @@ public enum ErrorCode {
     /**
      * 토큰 Error
      */
-    TOKEN_NOT_EXISTS(HttpStatus.BAD_REQUEST, "T001-1", "토큰이 존재 하지 않습니다.", "다시 로그인해주세요."),
-    TOKEN_ILLEGAL(HttpStatus.BAD_REQUEST, "T001-2", "해당 토큰은 잘못 된 토큰입니다.", "다시 로그인해주세요."),
-    TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "T001-3", "해당 토큰은 만료된 토큰입니다.", "다시 로그인해주세요."),
-    TOKEN_MALFORMED(HttpStatus.BAD_REQUEST, "T001-4", "해당 토큰은 잘못된 JWT 서명입니다.", "다시 로그인해주세요."),
-    TOKEN_UNSUPPORTED(HttpStatus.BAD_REQUEST, "T001-5", "해당 토큰은 지원 되지 않는 JWT 토큰입니다.", "다시 로그인해주세요."),
+    TOKEN_NOT_EXISTS(HttpStatus.BAD_REQUEST, "T001-01", "토큰이 존재 하지 않습니다.", "다시 로그인해주세요."),
+    TOKEN_ILLEGAL(HttpStatus.BAD_REQUEST, "T001-02", "해당 토큰은 잘못 된 토큰입니다.", "다시 로그인해주세요."),
+    TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "T001-03", "해당 토큰은 만료된 토큰입니다.", "다시 로그인해주세요."),
+    TOKEN_MALFORMED(HttpStatus.BAD_REQUEST, "T001-04", "해당 토큰은 잘못된 JWT 서명입니다.", "다시 로그인해주세요."),
+    TOKEN_UNSUPPORTED(HttpStatus.BAD_REQUEST, "T001-05", "해당 토큰은 지원 되지 않는 JWT 토큰입니다.", "다시 로그인해주세요."),
 
     /**
      * 회원가입 및 회원 관련 Error
@@ -30,10 +30,11 @@ public enum ErrorCode {
     USER_NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "U001-03", "이미 사용 중인 닉네임입니다.", "다른 닉네임을 입력해주세요."),
     USER_PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "U001-04", "비밀번호가 일치하지 않습니다.", "비밀번호와 비밀번호 확인란을 동일하게 입력해주세요."),
 
+
     /**
      * 회원 관련 Error
      */
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U002-01", "존재하지 않는 회원입니다.", "회원 정보를 확인해주세요."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U002-01", "회원정보를 찾을 수 없습니다.", "회원 정보를 확인해주세요."),
     USER_INACTIVE(HttpStatus.FORBIDDEN, "U002-02", "비활성화된 회원입니다.", "관리자 승인 후 이용 가능합니다."),
     USER_ALREADY_WITHDRAWN(HttpStatus.GONE, "U002-03", "탈퇴한 회원입니다.", "재가입이 필요합니다."),
     USER_STATUS_NOT_ALLOWED(HttpStatus.FORBIDDEN, "U002-04", "현재 상태에서는 요청을 처리할 수 없습니다.", "회원 상태를 확인해주세요."),

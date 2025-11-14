@@ -36,6 +36,10 @@ public class SecurityConfiguration {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
+                // 1. 헬스 체크 경로는 무조건 허용 (모든 IP 허용)
+                .requestMatchers("/actuator/**", "/health", "/info").permitAll()
+
+                // 2. 나머지 모든 요청에 대해 게이트웨이 IP 검사 적용
                 .anyRequest().access((authentication, context) -> {
                     String remoteAddr = context.getRequest().getRemoteAddr();
                     boolean allowed = gatewayIpProvider.isGatewayIp(remoteAddr);

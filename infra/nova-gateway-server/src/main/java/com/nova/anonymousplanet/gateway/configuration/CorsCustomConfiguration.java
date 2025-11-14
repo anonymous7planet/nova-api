@@ -3,8 +3,8 @@ package com.nova.anonymousplanet.gateway.configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
@@ -31,14 +31,14 @@ import java.util.Arrays;
 public class CorsCustomConfiguration {
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsCustomConfig() {
         CorsConfiguration config = new CorsConfiguration();
 
         // ✅ 허용할 Origin
-        config.setAllowedOrigins(Arrays.asList(
-            "http://localhost:3000",
-            "https://nova.app"
-        ));
+//        config.setAllowedOrigins(Arrays.asList(
+//            "http://localhost:3000",
+//            "https://nova.app"
+//        ));
 
         // ✅ 허용 메서드 (필요 시 OPTIONS 추가)
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));

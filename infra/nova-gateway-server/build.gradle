@@ -36,7 +36,7 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
 
     // Spring Security
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+//    implementation 'org.springframework.boot:spring-boot-starter-security'
 
     // Spring Cloud Starter Actuator
     // health 및 refresh 처리를 위해 필요한 monitor dependency가 있다면, actuator의 refresh나 bus-refresh는 사용하지 않음

@@ -1,7 +1,6 @@
 package com.nova.anonymousplanet.core.dto.request;
 
 
-import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Collections;
 import java.util.List;
@@ -76,9 +77,7 @@ public abstract class RestBaseExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<RestEmptyResponse> handleException(Exception ex, HttpServletRequest request) {
-
         log.error("[Unexpected Error] URI: {}, Message: {}", request.getRequestURI(), ex.getMessage(), ex);
-
         return buildErrorSet(request, ErrorCode.INTERNAL_SERVER_ERROR, "예상하지 못한 에러가 발생했습니다.", Collections.emptyList());
     }
 

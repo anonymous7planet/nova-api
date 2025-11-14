@@ -62,6 +62,11 @@ public class UserEntity {
     @Column(nullable = false, length = 300)
     private String password;
 
+
+    @Comment("이름")
+    @Column(nullable = false, length = 50)
+    private String name;
+
     @Comment("닉네임")
     @Column(nullable = false, unique = true, length = 50)
     private String nickname;

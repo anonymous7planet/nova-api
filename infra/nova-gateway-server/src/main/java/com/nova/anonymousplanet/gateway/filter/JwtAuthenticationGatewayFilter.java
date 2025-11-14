@@ -1,10 +1,12 @@
 package com.nova.anonymousplanet.gateway.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nova.anonymousplanet.gateway.dto.response.SimpleResponse;
+import com.nova.anonymousplanet.gateway.dto.response.RestGatewayResponse;
 import com.nova.anonymousplanet.gateway.dto.RefreshTokenStoreDto;
 import com.nova.anonymousplanet.gateway.service.jwt.JwtRefreshTokenStore;
 import com.nova.anonymousplanet.gateway.service.jwt.JwtTokenProvider;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -15,10 +17,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.integration.annotation.Gateway;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -27,6 +32,8 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
 
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtRefreshTokenStore jwtRefreshTokenStore;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
+
 
     private static final String BEARER_PREFIX = "Bearer ";
 
@@ -40,54 +47,49 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
     @Override
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
+
+            // 요청 URL
+            String requestPath = exchange.getRequest().getURI().getPath();
+
+            // JWT검증 필요 없을 경우
+            if (isExcluded(requestPath, config.getExcludedPaths())) {
+                log.debug("[JwtFilter] Excluded path: {}", requestPath);
+                return chain.filter(exchange);
+            }
+
+
             ServerHttpRequest request = exchange.getRequest();
             ServerHttpResponse response = exchange.getResponse();
 
-            String path = request.getPath().value();
 
             // Header에 Authorization 필드 유무 확인
-            if(!containsAuthorization(request)) {
+            if (!containsAuthorization(request)) {
                 return onError(
-                        response
-                        , "잘못된 요청입니다."
-                        , SimpleResponse.SimpleErrorSet
-                                .builder()
-                                .path(path)
-                                .code("C001")
-                                .detailMessage("[NOVA][Gateway] Header에 Authorization필드가 존재하지 않습니다.")
-                                .build()
-                        , HttpStatus.UNAUTHORIZED
-                        );
+                    response
+                    , "잘못된 요청입니다."
+                    , new RestGatewayResponse.GatewayErrorSet(requestPath, "G001", "[NOVA][Gateway] Header에 Authorization필드가 존재하지 않습니다.")
+                    , HttpStatus.UNAUTHORIZED
+                );
             }
 
             // Authorization에서 accessToken값 추출&존재유무 확인
             String accessToken = extractAccessToken(request);
-            if(!StringUtils.hasText(accessToken)) {
+            if (!StringUtils.hasText(accessToken)) {
                 return onError(
-                        response
-                        , "잘못된 요청입니다."
-                        , SimpleResponse.SimpleErrorSet
-                                .builder()
-                                .path(path)
-                                .code("C001")
-                                .detailMessage("[NOVA][Gateway] Header에 accessToken이 존재하지 않습니다.")
-                                .build()
-                        , HttpStatus.UNAUTHORIZED
+                    response
+                    , "잘못된 요청입니다."
+                    , new RestGatewayResponse.GatewayErrorSet(requestPath, "G001", "[NOVA][Gateway] Header에 accessToken이 존재하지 않습니다.")
+                    , HttpStatus.UNAUTHORIZED
                 );
             }
             // accessToken값 validation
             Map<String, String> errorMap = jwtTokenProvider.validateAccessToken(accessToken);
-            if(errorMap != null) {
+            if (errorMap != null) {
                 return onError(
-                        response
-                        , errorMap.get("message")
-                        , SimpleResponse.SimpleErrorSet
-                                .builder()
-                                .path(path)
-                                .code("C001")
-                                .detailMessage("[NOVA][GateWay] " + errorMap.get("detailMessage"))
-                                .build(),
-                        HttpStatus.BAD_REQUEST
+                    response
+                    , errorMap.get("message")
+                    , new RestGatewayResponse.GatewayErrorSet(requestPath, "G001", "[NOVA][GateWay] " + errorMap.get("detailMessage"))
+                    , HttpStatus.BAD_REQUEST
                 );
             }
 
@@ -97,22 +99,18 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
             String userRole = jwtTokenProvider.getRole(accessToken);
             String deviceId = jwtTokenProvider.getDeviceId(accessToken);
 
-            boolean valid = jwtRefreshTokenStore.validate(new RefreshTokenStoreDto.ValidateRequest(userUuid,deviceId));
-            if(!valid) {
+            boolean valid = jwtRefreshTokenStore.validate(new RefreshTokenStoreDto.ValidateRequest(userUuid, deviceId));
+            if (!valid) {
                 return onError(
                     response
                     , "토큰에 문제가 말생했습니다."
-                    , SimpleResponse.SimpleErrorSet
-                        .builder()
-                        .path(path)
-                        .code("C001")
-                        .detailMessage("[NOVA][GateWay] 토큰 정보에 문제가 발생했습니다.")
-                        .build(),
-                    HttpStatus.BAD_REQUEST
+                    , new RestGatewayResponse.GatewayErrorSet(requestPath, "G001", "[NOVA][GateWay] 토큰 정보에 문제가 발생했습니다.")
+                    , HttpStatus.BAD_REQUEST
                 );
             }
 
-            RefreshTokenStoreDto.GetResponse redisStore = jwtRefreshTokenStore.get(new RefreshTokenStoreDto.GetRequest(userUuid, deviceId)).get();
+            RefreshTokenStoreDto.GetResponse redisStore = jwtRefreshTokenStore.get(
+                new RefreshTokenStoreDto.GetRequest(userUuid, deviceId)).get();
 
             addAuthorizationHeaders(request, redisStore.userId(), userUuid, userRole, redisStore.userStatus());
 
@@ -122,7 +120,20 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
 
 
     /**
+     * URL검증
+     *
+     * @param path
+     * @param excludedPaths
+     * @return
+     */
+    private boolean isExcluded(String path, List<String> excludedPaths) {
+        return excludedPaths.stream().anyMatch(pattern -> pathMatcher.match(pattern, path));
+    }
+
+
+    /**
      * Authorization필드 있는지 확인
+     *
      * @param request
      * @return
      */
@@ -133,12 +144,13 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
 
     /**
      * Header에 Authorization필드에서 AccessToken값 추출
+     *
      * @param request
      * @return
      */
     private String extractAccessToken(ServerHttpRequest request) {
         String bearerToken = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(BEARER_PREFIX.length());
         }
         return "";
@@ -147,10 +159,11 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
 
     /**
      * 타서비스로 보낼 Request Header에 필드 추가
+     *
      * @param request
      * @param userId
      * @param userUuid
-     * @param userRoleCode : code값
+     * @param userRoleCode   : code값
      * @param userStatusCode : code값
      */
     private void addAuthorizationHeaders(ServerHttpRequest request, Long userId, String userUuid, String userRoleCode, String userStatusCode) {
@@ -165,40 +178,34 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
     }
 
 
-    private Mono<Void> onError(ServerHttpResponse response, String message, SimpleResponse.SimpleErrorSet error, HttpStatus status) {
+    private Mono<Void> onError(ServerHttpResponse response, String message, RestGatewayResponse.GatewayErrorSet error, HttpStatus status) {
         response.setStatusCode(status);
 
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
         DataBuffer buffer = null;
         try {
-            buffer = response.bufferFactory().wrap(new ObjectMapper().writeValueAsBytes(SimpleResponse.error(message, error)));
+            buffer = response.bufferFactory().wrap(new ObjectMapper().writeValueAsBytes(
+                RestGatewayResponse.error(message, error)));
             return response.writeWith(Mono.just(buffer));
-        } catch(Exception e) {
-            e.printStackTrace();
+        } catch (Exception e) {
             return response.writeWith(Mono.just(buffer));
         }
 
     }
 
+    @Getter
+    @Setter
     public static class Config {
-        private String secretKey;
-        private boolean enabled = true;
+        private List<String> excludedPaths;
 
-        public String getSecretKey() {
-            return this.secretKey;
-        }
-
-        public void setSecretKey(String secretKey) {
-            this.secretKey = secretKey;
-        }
-
-        public boolean isEnabled() {
-            return this.enabled;
-        }
-
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
+        public Config() {
+            this.excludedPaths = List.of(
+                "/v1/signup",
+                "/v1/login",
+                "/v1/token/refresh",
+                "/v1/health"
+            );
         }
     }
 

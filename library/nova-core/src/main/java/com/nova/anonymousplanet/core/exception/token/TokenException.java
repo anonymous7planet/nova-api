@@ -5,6 +5,11 @@ import com.nova.anonymousplanet.core.constant.error.ErrorCode;
 import com.nova.anonymousplanet.core.exception.BadRequestException;
 
 public class TokenException extends BadRequestException {
+
+    public TokenException() {
+        this(ErrorCode.TOKEN_ILLEGAL);
+    }
+
     public TokenException(ErrorCode errorCode, String message) {
         super(message, errorCode, errorCode.getTitleMessage(), errorCode.getDetailMessage());
     }
