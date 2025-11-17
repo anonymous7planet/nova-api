@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,14 +48,13 @@ public class JwtRefreshTokenStore {
         String rootKey = reqDto.getRootKey();
         String hashField = reqDto.deviceId();
         try {
-            Map<String, String> sessionData = Map.of(
-                "userId", reqDto.userId().toString(),
-                "refreshToken", reqDto.refreshToken(),
-                "deviceId", reqDto.deviceId(),
-                "role", reqDto.role().getCode(),
-                "userStatus", reqDto.userStatus().getCode()
 
-            );
+            Map<String, Object> sessionData = new HashMap<>();
+            sessionData.put("userId", reqDto.userId().toString());
+            sessionData.put("refreshToken", reqDto.refreshToken());
+            sessionData.put("deviceId", reqDto.deviceId());
+            sessionData.put("role", reqDto.role().getCode());
+            sessionData.put("userStatus", reqDto.userStatus().getCode());
             // 1. Redis Hash에 세션 정보 저장 (HSET: Key, Field, Value)
             // Field(deviceId)를 Key가 아닌 Field로 사용하여 덮어쓰기 방지
             redisTemplate.opsForHash().put(rootKey, hashField, sessionData);

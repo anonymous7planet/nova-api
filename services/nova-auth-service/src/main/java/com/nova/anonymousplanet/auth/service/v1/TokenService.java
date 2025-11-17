@@ -7,6 +7,9 @@ package com.nova.anonymousplanet.auth.service.v1;
   author : Jinhong Min
   date : 2025-05-16
   description : 토큰 발급, 재발급, 제거 정의
+  userUuid 프론트에 저장
+  devicedId localStorage저장
+  refershToken cookie저장
   ==============================================
   DATE            AUTHOR          NOTE
   ----------------------------------------------
@@ -47,23 +50,22 @@ public class TokenService {
     }
 
 
-    public TokenDto.IssueResponse reIssue(TokenDto.ReIssueRequest request) {
-
+    public TokenDto.ReIssueResponse reIssue(String refreshToken, TokenDto.ReIssueRequest request) {
         // 유효한 refreshToken인지 확인
-//        boolean tokenValid = tokenProvider.validateRefreshToken(request.refreshToken());
-//        if(!tokenValid) {
-//            throw new TokenException();
-//        }
+        boolean tokenValid = tokenProvider.validateRefreshToken(refreshToken);
+        if(!tokenValid) {
+            throw new TokenException();
+        }
 
         // redis에 토큰 정보 저장되어있는지 확인
-        boolean storeValid = tokenStore.validate(RefreshTokenStoreDto.ValidateRequest.from(request));
+        boolean storeValid = tokenStore.validate(RefreshTokenStoreDto.ValidateRequest.from(refreshToken, request));
         if(!storeValid) {
             throw new TokenException();
         }
         RefreshTokenStoreDto.GetResponse storeData = tokenStore.get(new RefreshTokenStoreDto.GetRequest(request.userUuid(), request.deviceId())).get();
-        return generateToken(
+        return new TokenDto.ReIssueResponse(generateToken(
             new TokenDto.IssueRequest(storeData.userId(), request.userUuid(), request.deviceId(), storeData.userRole(), storeData.userStatus())
-        );
+        ));
     }
 
     public void deleteToken(String deviceId, TokenDto.DeleteRequest request) {

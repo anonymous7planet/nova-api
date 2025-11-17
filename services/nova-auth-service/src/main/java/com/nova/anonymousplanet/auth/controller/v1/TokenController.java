@@ -8,6 +8,7 @@ import com.nova.anonymousplanet.core.dto.response.RestSingleResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
  * author : Jinhong Min
  * date : 2025-11-11
  * description :
+ * userUuid = in-memory저장
+ * accessToken = in-memory 저장
+ * refreshToken = cookie저장(HttpOnly)
+ * deviceId = 로컬 스토리지 저장
  * ==============================================
  * DATE            AUTHOR          NOTE
  * ----------------------------------------------
@@ -42,9 +47,11 @@ public class TokenController {
      * @return
      */
     @PostMapping("/refresh")
-    public ResponseEntity<RestSingleResponse<TokenDto.IssueResponse>> refresh(@RequestBody @Valid RestSingleRequest<TokenDto.ReIssueRequest> request) {
+    public ResponseEntity<RestSingleResponse<TokenDto.ReIssueResponse>> refresh(
+        @CookieValue(value = "refreshToken", required = true) String refreshToken,
+        @RequestBody @Valid RestSingleRequest<TokenDto.ReIssueRequest> request) {
         return ResponseEntity.ok(
-            RestSingleResponse.success(tokenService.reIssue(request.getData()), request.getRequestId(),
+            RestSingleResponse.success(tokenService.reIssue(refreshToken, request.getData()), request.getRequestId(),
                 request.getPath()));
     }
 

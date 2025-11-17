@@ -40,16 +40,18 @@ public record TokenDto() {
         @NotBlank(message = "회원 uuid는 필수 값 입니다.")
         String userUuid,
         @NotBlank(message = "deviceId는 필수 값 입니다.")
-        String deviceId,
-        @NotBlank(message = "refreshToken은 필수 값 입니다.")
-        String refreshToken
+        String deviceId
+    ) {
+    }
+
+    public record ReIssueResponse(
+        IssueResponse tokenInfo
     ) {
     }
 
     public record DeleteRequest(
         @NotBlank(message = "회원 uuid는 필수 값 입니다.")
         String userUuid,
-
         String refreshToken
     ) {
     }

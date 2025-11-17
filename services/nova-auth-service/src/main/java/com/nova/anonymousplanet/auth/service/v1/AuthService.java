@@ -91,7 +91,7 @@ public class AuthService {
             throw new UserLoginException();
         }
 
-        TokenDto.IssueResponse token =  tokenService.Issue(new TokenDto.IssueRequest(user.getId(), user.getUuid(), request.deviceId(), user.getRole(), user.getStatus()));
+        TokenDto.IssueResponse token = tokenService.Issue(new TokenDto.IssueRequest(user.getId(), user.getUuid(), request.deviceId(), user.getRole(), user.getStatus()));
 
         return new AuthDto.LoginResponse(user.getEmail(), user.getName(), user.getNickname(), user.getGender(), token);
     }

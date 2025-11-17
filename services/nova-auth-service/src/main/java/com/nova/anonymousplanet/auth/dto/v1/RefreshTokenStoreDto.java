@@ -77,11 +77,11 @@ public record RefreshTokenStoreDto() {
             return "refresh:" + this.userUuid;
         }
 
-        public static ValidateRequest from(TokenDto.ReIssueRequest request){
+        public static ValidateRequest from(String refreshToken, TokenDto.ReIssueRequest request){
             return new ValidateRequest(
                 request.userUuid(),
                 request.deviceId(),
-                request.refreshToken()
+                refreshToken
             );
         }
     }
