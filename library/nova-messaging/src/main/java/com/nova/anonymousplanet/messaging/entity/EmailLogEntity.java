@@ -2,8 +2,7 @@ package com.nova.anonymousplanet.messaging.entity;
 
 import com.nova.anonymousplanet.messaging.constant.SendStatusCode;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -25,7 +24,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "tb_email_log")
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 public class EmailLogEntity implements Serializable {
 
     @Id

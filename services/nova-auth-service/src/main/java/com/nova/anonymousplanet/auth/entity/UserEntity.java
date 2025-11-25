@@ -21,37 +21,31 @@ import com.nova.anonymousplanet.core.constant.RoleCode;
 import com.nova.anonymousplanet.core.constant.UserStatusCode;
 import com.nova.anonymousplanet.core.constant.YesNoCode;
 import com.nova.anonymousplanet.core.util.UuidUtils;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.nova.anonymousplanet.persistence.common.BaseEntity;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "tb_user")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Builder
-public class UserEntity {
+@AllArgsConstructor
+public class UserEntity extends BaseEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 내부 PK
 
-    @Column(nullable = false, unique = true, updatable = false, length = 36)
+    @Column(nullable = false, unique = true, updatable = false, length = 40)
     private String uuid; // 외부 노출용 UUID
 
     @Comment("이메일(로그인 ID)")
@@ -61,7 +55,6 @@ public class UserEntity {
     @Comment("비밀번호(BCrypt 암호화)")
     @Column(nullable = false, length = 300)
     private String password;
-
 
     @Comment("이름")
     @Column(nullable = false, length = 50)
@@ -83,12 +76,12 @@ public class UserEntity {
 
     @Comment("혈액형 (Rh+ / Rh- 포함)")
     @Convert(converter = BloodTypeCode.BloodTypeCodeConverter.class)
-    @Column(length = 4)
+    @Column(length = 3)
     private BloodTypeCode bloodType;
 
     @Comment("회원 상태")
     @Convert(converter = UserStatusCode.UserStatusCodeConverter.class)
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 10)
     private UserStatusCode status;
 
     @Comment("권한(Role)")
@@ -101,11 +94,23 @@ public class UserEntity {
     @Column(nullable = false, length = 1)
     private YesNoCode isActive;
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    /** 자기소개 다수(별도 Entity) */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserIntroductionEntity> introductions;
+
+    /** 프로필 1:1 */
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private UserProfileEntity profile;
+
+    /** 프로필 이미지 다수 (별도 Entity) */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserProfileImageEntity> profileImages; //
+
+    /** 메인 프로필 이미지 (OneToOne - FK로 가장 무결성 높음) */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "main_profile_image_id")
+    private UserProfileImageEntity mainImage;
 
     /**
      * 사용자 생성 메서드
