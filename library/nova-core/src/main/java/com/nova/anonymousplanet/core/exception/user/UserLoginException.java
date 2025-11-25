@@ -16,7 +16,9 @@ import com.nova.anonymousplanet.core.constant.error.ErrorCode;
   ==============================================
  */
 public class UserLoginException extends UserException {
+
     public UserLoginException() {
-        super(ErrorCode.USER_NOT_FOUND);
+        super(ErrorCode.USER_LOGIN);
     }
+
 }

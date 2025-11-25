@@ -57,7 +57,7 @@ public enum BloodTypeCode implements BaseEnum<String> {
 
 
     @JsonCreator
-    public BloodTypeCode fromCode(String code) {
+    public static BloodTypeCode fromCode(String code) {
         return EnumUtils.fromCode(BloodTypeCode.class, code);
     }
 

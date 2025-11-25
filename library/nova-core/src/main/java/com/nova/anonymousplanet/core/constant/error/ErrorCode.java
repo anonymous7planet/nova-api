@@ -35,9 +35,10 @@ public enum ErrorCode {
      * 회원 관련 Error
      */
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U002-01", "회원정보를 찾을 수 없습니다.", "회원 정보를 확인해주세요."),
-    USER_INACTIVE(HttpStatus.FORBIDDEN, "U002-02", "비활성화된 회원입니다.", "관리자 승인 후 이용 가능합니다."),
-    USER_ALREADY_WITHDRAWN(HttpStatus.GONE, "U002-03", "탈퇴한 회원입니다.", "재가입이 필요합니다."),
-    USER_STATUS_NOT_ALLOWED(HttpStatus.FORBIDDEN, "U002-04", "현재 상태에서는 요청을 처리할 수 없습니다.", "회원 상태를 확인해주세요."),
+    USER_LOGIN(HttpStatus.BAD_REQUEST, "U002-02", "로그인 회원 정보가 올바르지 않습니다.", "회원 정보를 확인해주세요."),
+    USER_INACTIVE(HttpStatus.FORBIDDEN, "U002-03", "비활성화된 회원입니다.", "관리자 승인 후 이용 가능합니다."),
+    USER_ALREADY_WITHDRAWN(HttpStatus.GONE, "U002-04", "탈퇴한 회원입니다.", "재가입이 필요합니다."),
+    USER_STATUS_NOT_ALLOWED(HttpStatus.FORBIDDEN, "U002-05", "현재 상태에서는 요청을 처리할 수 없습니다.", "회원 상태를 확인해주세요."),
 
     /**
      * Validation Error

@@ -1,12 +1,6 @@
 plugins {
     id 'java'
 }
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-}
-
 bootJar {
     enabled = false
 }
@@ -15,6 +9,40 @@ jar {
     enabled = true
 }
 
-dependencies {
-    implementation 'org.springframework.kafka:spring-kafka'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
+
+dependencies {
+    // 1. Core Spring Dependencies
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // 2. Database (JPA)
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // 3. Email
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    // 4. Templating (Thymeleaf)
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+
+    // implementation 'ognl:ognl:3.3.4'
+
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+/**
+ * Lombok안쓰는 부분에서 제외할때 사용
+ configurations {
+ compileOnly {
+ exclude group: 'org.projectlombok', module: 'lombok'
+ }
+ annotationProcessor {
+ exclude group: 'org.projectlombok', module: 'lombok'
+ }
+ }
+ */

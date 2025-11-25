@@ -10,10 +10,20 @@ import com.nova.anonymousplanet.core.constant.YesNoCode;
 import com.nova.anonymousplanet.core.constant.error.ErrorCode;
 import com.nova.anonymousplanet.core.exception.user.UserLoginException;
 import com.nova.anonymousplanet.core.exception.user.UserRegistrationException;
+import com.nova.anonymousplanet.messaging.constant.EmailTemplateTypeCode;
+import com.nova.anonymousplanet.messaging.model.EmailPayload;
+import com.nova.anonymousplanet.messaging.model.InlineImage;
+import com.nova.anonymousplanet.messaging.service.EmailAsyncService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /*
   projectName : nova-api
@@ -29,6 +39,7 @@ import org.springframework.stereotype.Service;
   ==============================================
  */
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -36,6 +47,9 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+
+    private final EmailAsyncService emailAsyncService;
+
 
     /**
      * 회원가입
@@ -75,6 +89,28 @@ public class AuthService {
         );
         // 저장
         userRepository.save(user);
+
+
+        // 회원 가입 축하 이메일발송
+        EmailTemplateTypeCode template = EmailTemplateTypeCode.WELCOME;
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("nickname", request.name());
+
+        List<InlineImage> images = new ArrayList<>();
+
+        images.add(new InlineImage("test.jpg", "test"));
+
+
+        emailAsyncService.sendAsync(
+            new EmailPayload(
+                request.email(),
+                String.format(template.getTitle(), request.name()),
+                template,
+                variables,
+                null,
+                images
+            )
+        );
     }
 
     /**
@@ -84,6 +120,7 @@ public class AuthService {
      * - Redis에 RefreshToken 상태 저장
      */
     public AuthDto.LoginResponse login(AuthDto.LoginRequest request) {
+        // FIXME: 관리자 로그인과 회원 로그인 구분 필요
         UserEntity user = userRepository.findByEmail(request.email())
             .orElseThrow(UserLoginException::new);
 
@@ -91,6 +128,12 @@ public class AuthService {
             throw new UserLoginException();
         }
 
+        if(!user.getStatus().isLoginAllowed()) {
+            throw new UserLoginException();
+        }
+
+
+        // FIXME: 토큰 정보에 회원 구분값 넣기 userTypeCode
         TokenDto.IssueResponse token = tokenService.Issue(new TokenDto.IssueRequest(user.getId(), user.getUuid(), request.deviceId(), user.getRole(), user.getStatus()));
 
         return new AuthDto.LoginResponse(user.getEmail(), user.getName(), user.getNickname(), user.getGender(), token);
