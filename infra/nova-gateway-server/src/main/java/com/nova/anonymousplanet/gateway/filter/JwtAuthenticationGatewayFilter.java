@@ -1,6 +1,7 @@
 package com.nova.anonymousplanet.gateway.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nova.anonymousplanet.gateway.constant.LogHeaderCode;
 import com.nova.anonymousplanet.gateway.dto.response.RestGatewayResponse;
 import com.nova.anonymousplanet.gateway.dto.RefreshTokenStoreDto;
 import com.nova.anonymousplanet.gateway.service.jwt.JwtRefreshTokenStore;
@@ -53,20 +54,20 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
 
             // 1. JWT검증 필요 없을 경우 (Excluded Path)
             if (isExcluded(requestPath, config.getExcludedPaths())) {
-                log.debug("[JwtFilter] Excluded path: {}", requestPath);
+                log.debug("[JwtAuthenticationGatewayFilter] Excluded path: {}", requestPath);
                 return chain.filter(exchange);
             }
 
 
             ServerHttpRequest request = exchange.getRequest();
             ServerHttpResponse response = exchange.getResponse();
-            String requestId = request.getHeaders().getFirst("X-Request-ID");
+            String traceId = request.getHeaders().getFirst(LogHeaderCode.TRACE_ID.getKey());
 
 
             // 2. Header에 Authorization 필드 유무 확인
             if (!containsAuthorization(request)) {
                 return onError(
-                    response, requestId
+                    response, traceId
                     , "인증 토큰이 누락되었습니다."
                     , new RestGatewayResponse.GatewayErrorSet(requestPath, "G401", "[NOVA][Gateway] Header에 Authorization 필드가 존재하지 않습니다.")
                     , HttpStatus.UNAUTHORIZED
@@ -77,7 +78,7 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
             String accessToken = extractAccessToken(request);
             if (!StringUtils.hasText(accessToken)) {
                 return onError(
-                    response, requestId
+                    response, traceId
                     , "토큰 형식이 잘못되었습니다."
                     , new RestGatewayResponse.GatewayErrorSet(requestPath, "G401", "[NOVA][Gateway] Header에 AccessToken이 'Bearer '와 함께 올바르게 존재하지 않습니다.")
                     , HttpStatus.UNAUTHORIZED
@@ -88,7 +89,7 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
             Map<String, String> errorMap = jwtTokenProvider.validateAccessToken(accessToken);
             if (errorMap != null) {
                 return onError(
-                    response, requestId
+                    response, traceId
                     , errorMap.getOrDefault("message", "토큰이 유효하지 않습니다.")
                     , new RestGatewayResponse.GatewayErrorSet(requestPath, "G400", "[NOVA][GateWay] " + errorMap.getOrDefault("detailMessage", "JWT 유효성 검증 실패"))
                     , HttpStatus.BAD_REQUEST
@@ -103,7 +104,7 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
             boolean valid = jwtRefreshTokenStore.validate(new RefreshTokenStoreDto.ValidateRequest(userUuid, deviceId));
             if (!valid) {
                 return onError(
-                    response, requestId
+                    response, traceId
                     , "토큰 정보가 만료되었거나 일치하지 않습니다."
                     , new RestGatewayResponse.GatewayErrorSet(requestPath, "G401", "[NOVA][GateWay] Redis의 Refresh Token 정보 불일치 또는 만료.")
                     , HttpStatus.UNAUTHORIZED

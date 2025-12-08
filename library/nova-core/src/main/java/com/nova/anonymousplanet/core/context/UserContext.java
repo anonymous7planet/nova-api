@@ -1,6 +1,6 @@
 package com.nova.anonymousplanet.core.context;
 
-import com.nova.anonymousplanet.core.constant.RoleCode;
+import com.nova.anonymousplanet.core.constant.UserRoleCode;
 import com.nova.anonymousplanet.core.constant.UserStatusCode;
 
 import java.io.Serializable;
@@ -21,7 +21,7 @@ import java.io.Serializable;
 public record UserContext(
     Long userId,
     String userUuid,
-    RoleCode userRole,
+    UserRoleCode userRole,
     UserStatusCode userStatus,
     String ipAddress
 ) implements Serializable {

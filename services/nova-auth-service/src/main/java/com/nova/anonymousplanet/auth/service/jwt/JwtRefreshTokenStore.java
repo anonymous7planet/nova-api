@@ -1,7 +1,7 @@
 package com.nova.anonymousplanet.auth.service.jwt;
 
 import com.nova.anonymousplanet.auth.dto.v1.RefreshTokenStoreDto;
-import com.nova.anonymousplanet.core.constant.RoleCode;
+import com.nova.anonymousplanet.core.constant.UserRoleCode;
 import com.nova.anonymousplanet.core.constant.UserStatusCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -100,7 +100,7 @@ public class JwtRefreshTokenStore {
                         entries.get("deviceId"),
                         Long.parseLong(entries.get("userId")),
                         entries.get("refreshToken"),
-                        RoleCode.fromCode(entries.get("role")),
+                        UserRoleCode.fromCode(entries.get("role")),
                         UserStatusCode.fromCode(entries.get("userStatus"))
                     )
             );
@@ -149,7 +149,7 @@ public class JwtRefreshTokenStore {
                             entries.get("deviceId"),
                             Long.parseLong(entries.get("userId")),
                             entries.get("refreshToken"),
-                            RoleCode.fromCode(entries.get("role")),
+                            UserRoleCode.fromCode(entries.get("role")),
                             UserStatusCode.fromCode(entries.get("userStatus"))
                         )
                     );

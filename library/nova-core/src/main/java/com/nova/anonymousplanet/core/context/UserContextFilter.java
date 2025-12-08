@@ -1,6 +1,6 @@
 package com.nova.anonymousplanet.core.context;
 
-import com.nova.anonymousplanet.core.constant.RoleCode;
+import com.nova.anonymousplanet.core.constant.UserRoleCode;
 import com.nova.anonymousplanet.core.constant.UserStatusCode;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -44,7 +44,7 @@ public class UserContextFilter extends OncePerRequestFilter {
             String ipAddress = request.getRemoteAddr();
 
             if (userId != null && userUuid != null) {
-                UserContext userContext = new UserContext(Long.valueOf(userId), userUuid, RoleCode.fromCode(role),
+                UserContext userContext = new UserContext(Long.valueOf(userId), userUuid, UserRoleCode.fromCode(role),
                     UserStatusCode.fromCode(status), ipAddress);
                 UserContextHolder.set(userContext);
             }

@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class RestEmptyResponse extends RestBaseResponse implements Serializable {
 
     private RestEmptyResponse(boolean isSuccess, String message, ErrorSet error) {
-       super(isSuccess, message, null, null, error);
+       super(isSuccess, message, error);
     }
 
     public static RestEmptyResponse success(String message) {

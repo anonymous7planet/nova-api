@@ -21,18 +21,20 @@ import lombok.Getter;
 @Getter
 public enum EmailTemplateTypeCode {
 
-    WELCOME("welcome", "%s님 단비 회원 가입을 축하합니다", "회원 가입 환영 메일")
-    , PASSWORD_RESET("password-reset", "비밀번호 재설정을 해주세요", "비밀번호 재설정 메일")
-    , VERIFY_CODE("verify-code", "인증번호 발송", "회원가입시 인증번호")
-    , ACCOUNT_WITHDRAW("account-withdraw", "%s님 단비 회원 탈퇴 안내", "회원 탈퇴 안내 메시지")
+    WELCOME("welcome", "welcome-template", "%s님 단비 회원 가입을 축하합니다", "회원 가입 환영 메일")
+    , PASSWORD_RESET("password-reset", "password-reset-template", "비밀번호 재설정을 해주세요", "비밀번호 재설정 메일")
+    , VERIFY_CODE("verify-code", "verify-code-template", "인증번호 발송", "회원가입시 인증번호")
+    , ACCOUNT_WITHDRAW("account-withdraw", "account-withdraw-template", "%s님 단비 회원 탈퇴 안내", "회원 탈퇴 안내 메시지")
     ;
 
     private final String fileName;
+    private final String templateName;
     private final String title; // 메일 제목
     private final String desc;
 
-    EmailTemplateTypeCode(String fileName, String title, String desc) {
+    EmailTemplateTypeCode(String fileName, String templateName, String title, String desc) {
         this.fileName = fileName;
+        this.templateName = templateName;
         this.title = title;
         this.desc = desc;
     }
@@ -59,8 +61,4 @@ public enum EmailTemplateTypeCode {
             return null;
         }
     }
-
-
-
-
 }

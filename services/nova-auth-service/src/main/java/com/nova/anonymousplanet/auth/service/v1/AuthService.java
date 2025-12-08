@@ -4,7 +4,7 @@ import com.nova.anonymousplanet.auth.dto.v1.AuthDto;
 import com.nova.anonymousplanet.auth.dto.v1.TokenDto;
 import com.nova.anonymousplanet.auth.entity.UserEntity;
 import com.nova.anonymousplanet.auth.repository.UserRepository;
-import com.nova.anonymousplanet.core.constant.RoleCode;
+import com.nova.anonymousplanet.core.constant.UserRoleCode;
 import com.nova.anonymousplanet.core.constant.UserStatusCode;
 import com.nova.anonymousplanet.core.constant.YesNoCode;
 import com.nova.anonymousplanet.core.constant.error.ErrorCode;
@@ -75,6 +75,9 @@ public class AuthService {
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(request.password());
 
+        // UUID생성 후 UUID있는지 조회
+
+
         // 엔티티 생성
         UserEntity user = UserEntity.create(
             request.email(),
@@ -83,7 +86,7 @@ public class AuthService {
             request.gender(),
             request.mbti(),
             request.bloodType(),
-            RoleCode.USER,
+            UserRoleCode.USER,
             UserStatusCode.PENDING,
             YesNoCode.NO
         );
@@ -94,11 +97,11 @@ public class AuthService {
         // 회원 가입 축하 이메일발송
         EmailTemplateTypeCode template = EmailTemplateTypeCode.WELCOME;
         Map<String, Object> variables = new HashMap<>();
-        variables.put("nickname", request.name());
+        variables.put("name", request.name());
 
         List<InlineImage> images = new ArrayList<>();
 
-        images.add(new InlineImage("test.jpg", "test"));
+        images.add(new InlineImage("logo.png", "logo"));
 
 
         emailAsyncService.sendAsync(

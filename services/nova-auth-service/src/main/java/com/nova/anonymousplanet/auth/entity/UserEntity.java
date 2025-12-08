@@ -17,7 +17,7 @@ package com.nova.anonymousplanet.auth.entity;
 import com.nova.anonymousplanet.core.constant.BloodTypeCode;
 import com.nova.anonymousplanet.core.constant.GenderCode;
 import com.nova.anonymousplanet.core.constant.MbtiCode;
-import com.nova.anonymousplanet.core.constant.RoleCode;
+import com.nova.anonymousplanet.core.constant.UserRoleCode;
 import com.nova.anonymousplanet.core.constant.UserStatusCode;
 import com.nova.anonymousplanet.core.constant.YesNoCode;
 import com.nova.anonymousplanet.core.util.UuidUtils;
@@ -85,9 +85,9 @@ public class UserEntity extends BaseEntity implements Serializable {
     private UserStatusCode status;
 
     @Comment("권한(Role)")
-    @Convert(converter = RoleCode.RoleCodeConverter.class)
+    @Convert(converter = UserRoleCode.RoleCodeConverter.class)
     @Column(nullable = false, length = 20)
-    private RoleCode role;
+    private UserRoleCode role;
 
     @Comment("계정 활성화 여부")
     @Convert(converter = YesNoCode.YesNoCodeConverter.class)
@@ -123,7 +123,7 @@ public class UserEntity extends BaseEntity implements Serializable {
         GenderCode gender,
         MbtiCode mbti,
         BloodTypeCode bloodType,
-        RoleCode role,
+        UserRoleCode role,
         UserStatusCode status,
         YesNoCode isActive
     ) {

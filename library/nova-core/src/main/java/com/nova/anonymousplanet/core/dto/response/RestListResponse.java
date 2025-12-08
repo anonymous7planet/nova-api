@@ -15,18 +15,18 @@ public class RestListResponse<T> extends RestBaseResponse implements Serializabl
     private PageInfo pageInfo;
     private List<T> data;
 
-    protected RestListResponse(boolean isSuccess, String message, String requestId, String path, PageInfo pageInfo, List<T> data) {
-        super(isSuccess, message, requestId, path, null);
+    protected RestListResponse(boolean isSuccess, String message, PageInfo pageInfo, List<T> data) {
+        super(isSuccess, message, null);
         this.pageInfo = pageInfo;
         this.data = data;
     }
 
-    public static <T> RestListResponse<T> success(String message, String requestId, String path, PageInfo pageInfo, List<T> data) {
-        return new RestListResponse<>(true, message, requestId, path, pageInfo, data);
+    public static <T> RestListResponse<T> success(String message, PageInfo pageInfo, List<T> data) {
+        return new RestListResponse<>(true, message, pageInfo, data);
     }
 
-    public static <T> RestListResponse<T> success(String requestId, String path, PageInfo pageInfo, List<T> data) {
-        return new RestListResponse<>(true, "성공", requestId, path, pageInfo, data);
+    public static <T> RestListResponse<T> success(PageInfo pageInfo, List<T> data) {
+        return new RestListResponse<>(true, "성공", pageInfo, data);
     }
 
     @Getter

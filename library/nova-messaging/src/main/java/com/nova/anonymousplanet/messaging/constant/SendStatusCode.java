@@ -1,6 +1,10 @@
 package com.nova.anonymousplanet.messaging.constant;
 
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Converter;
 import lombok.Getter;
+import org.aspectj.apache.bcel.classfile.Code;
 
 /**
  * projectName : nova-api
@@ -30,4 +34,26 @@ public enum SendStatusCode {
         this.code = code;
         this.desc = desc;
     }
+
+    @Converter
+    public static class SendStatusCodeConverter implements AttributeConverter<SendStatusCode, String> {
+        @Override
+        public String convertToDatabaseColumn(SendStatusCode sendStatusCode) {
+            return sendStatusCode != null ? sendStatusCode.getCode() : null;
+        }
+
+        @Override
+        public SendStatusCode convertToEntityAttribute(String s) {
+            if(s == null) {
+                return null;
+            }
+            for(SendStatusCode sendStatusCode : SendStatusCode.values()){
+                if(sendStatusCode.getCode().equals(s)) {
+                    return sendStatusCode;
+                }
+            }
+            return null;
+        }
+    }
+
 }

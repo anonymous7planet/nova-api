@@ -51,8 +51,7 @@ public class TokenController {
         @CookieValue(value = "refreshToken", required = true) String refreshToken,
         @RequestBody @Valid RestSingleRequest<TokenDto.ReIssueRequest> request) {
         return ResponseEntity.ok(
-            RestSingleResponse.success(tokenService.reIssue(refreshToken, request.getData()), request.getRequestId(),
-                request.getPath()));
+            RestSingleResponse.success(tokenService.reIssue(refreshToken, request.getData())));
     }
 
     /**

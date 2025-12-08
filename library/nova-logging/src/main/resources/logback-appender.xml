@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <!-- 서비스 이름 -->
+    <springProperty scope="context" name="SERVICE_NAME" source="spring.application.name"/>
+
+    <!-- 서비스별 파일 경로 -->
+    <property name="LOG_FILE_PATH" value="/var/log/nova/${SERVICE_NAME}"/>
+
+    <!-- 로그 패턴: MDC 적용 -->
+    <property name="LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg
+                      [traceId=%X{traceId} requestId=%X{requestId}
+                       userId=%X{X-User-Id} role=%X{X-User-Role}
+                       device=%X{X-Device-Type} ip=%X{X-Client-IP}]
+                      %n"/>
+
+
+    <!-- 1. 콘솔 로그 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ========================================================= -->
+    <!-- 2) Rolling File Appender (dev / prod) -->
+    <!-- ========================================================= -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/${spring.profiles.active}/${SERVICE_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/${spring.profiles.active}/${SERVICE_NAME}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+
+    <!-- ========================================================= -->
+    <!-- 3) ERROR 전용 Rolling File (dev / prod) -->
+    <!-- ========================================================= -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/${spring.profiles.active}/error/${SERVICE_NAME}-error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/${spring.profiles.active}/error/${SERVICE_NAME}-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+
+    <!-- ========================================================= -->
+    <!-- 4) Logstash / Elastic / Loki / Splunk Appender (prod 전용) -->
+    <!-- ========================================================= -->
+    <!-- Logstash TCP Appender -->
+    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <remoteHost>${LOGSTASH_HOST:-localhost}</remoteHost>
+        <port>${LOGSTASH_PORT:-5000}</port>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+    </appender>
+</included>

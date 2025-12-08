@@ -1,9 +1,11 @@
 package com.nova.anonymousplanet.core.dto.response;
 
+import com.nova.anonymousplanet.core.util.ClientUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.slf4j.MDC;
 
 import java.time.LocalDateTime;
 
@@ -19,14 +21,12 @@ public class RestBaseResponse {
     private ErrorSet error;    // Error 정보
     private LocalDateTime timestamp; // 반환 시간
 
-    protected RestBaseResponse(boolean isSuccess, String message, String requestId, String path, ErrorSet error) {
+    protected RestBaseResponse(boolean isSuccess, String message, ErrorSet error) {
         this.isSuccess = isSuccess;
         this.message = message;
-        this.requestId = requestId;
-        this.path = path;
+        this.requestId = MDC.get("requestId");
+        this.path = ClientUtils.getCurrentRequestUri();
         this.error = error;
         this.timestamp = LocalDateTime.now();
     }
-
-
 }

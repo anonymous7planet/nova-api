@@ -15,6 +15,8 @@
     <!-- 루트 로거는 기본 WARN 이상 (최대한 억제) -->
     <root level="WARN">
         <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="ERROR"/>
     </root>
 
 </configuration>

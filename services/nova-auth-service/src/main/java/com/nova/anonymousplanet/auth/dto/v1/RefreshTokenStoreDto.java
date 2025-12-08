@@ -1,6 +1,6 @@
 package com.nova.anonymousplanet.auth.dto.v1;
 
-import com.nova.anonymousplanet.core.constant.RoleCode;
+import com.nova.anonymousplanet.core.constant.UserRoleCode;
 import com.nova.anonymousplanet.core.constant.UserStatusCode;
 
 /**
@@ -23,7 +23,7 @@ public record RefreshTokenStoreDto() {
         String userUuid,
         String deviceId,
         String refreshToken,
-        RoleCode role,
+        UserRoleCode role,
         UserStatusCode userStatus,
         Long expirationSeconds
     ) {
@@ -63,7 +63,7 @@ public record RefreshTokenStoreDto() {
         String deviceId,
         Long userId,
         String refreshToken,
-        RoleCode userRole,
+        UserRoleCode userRole,
         UserStatusCode userStatus
     ) {
     }

@@ -1,12 +1,9 @@
 package com.nova.anonymousplanet.messaging.entity;
 
 import com.nova.anonymousplanet.messaging.constant.EmailTemplateTypeCode;
-import com.nova.anonymousplanet.messaging.constant.SendStatusCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,7 +31,7 @@ import java.time.LocalDateTime;
  * ==============================================
  */
 @Entity
-@Table
+@Table(name = "tb_email_template_variable")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <!-- 서비스명 가져오기 -->
+    <springProperty scope="context" name="SERVICE_NAME" source="spring.application.name"/>
     <include resource="logback-appender.xml"/>
     <springProperty scope="context" name="springProfile" source="spring.profiles.active" defaultValue="local"/>
     <include resource="logback/logback-${springProfile}.xml" />

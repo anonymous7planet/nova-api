@@ -51,6 +51,6 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<RestSingleResponse<AuthDto.LoginResponse>> login(@RequestBody @Valid RestSingleRequest<AuthDto.LoginRequest> request) {
         AuthDto.LoginResponse response = authService.login(request.getData());
-        return ResponseEntity.ok(RestSingleResponse.success(response, request.getRequestId(), request.getPath()));
+        return ResponseEntity.ok(RestSingleResponse.success(response));
     }
 }

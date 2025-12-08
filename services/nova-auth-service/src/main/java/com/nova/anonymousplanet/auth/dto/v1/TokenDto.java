@@ -1,6 +1,6 @@
 package com.nova.anonymousplanet.auth.dto.v1;
 
-import com.nova.anonymousplanet.core.constant.RoleCode;
+import com.nova.anonymousplanet.core.constant.UserRoleCode;
 import com.nova.anonymousplanet.core.constant.UserStatusCode;
 import jakarta.validation.constraints.NotBlank;
 
@@ -23,7 +23,7 @@ public record TokenDto() {
         Long userId,
         String userUuid,
         String deviceId,
-        RoleCode role,
+        UserRoleCode role,
         UserStatusCode userStatus
     ) {
     }

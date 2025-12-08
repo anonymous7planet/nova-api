@@ -20,7 +20,7 @@ import jakarta.persistence.Converter;
  */
 public enum AdminRoleCode implements BaseEnum<String> {
 
-    SUPER_ADMIN("ROLE_SUPER_ADMIN", "최고관리자"),
+    SYSTEM_ADMIN("ROLE_SYSTEM", "시스템관리자"),
     ADMIN("ROLE_ADMIN", "관리자"),
     MANAGER("ROLE_MANAGER", "매니저"),
     ANALYST("ROLE_ANALYST", "분석가")
