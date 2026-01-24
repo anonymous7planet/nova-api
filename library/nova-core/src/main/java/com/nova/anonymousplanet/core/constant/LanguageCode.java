@@ -55,7 +55,7 @@ public enum LanguageCode implements BaseEnum<String> {
         return EnumUtils.fromCode(LanguageCode.class, code);
     }
 
-    @Converter(autoApply = false)
+    @Converter(autoApply = true)
     public static class LanguageCodeConverter extends BaseEnumConverter<LanguageCode, String> {
         public LanguageCodeConverter() {
             super(LanguageCode.class);

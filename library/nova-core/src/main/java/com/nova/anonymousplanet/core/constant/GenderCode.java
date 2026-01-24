@@ -40,7 +40,7 @@ public enum GenderCode implements BaseEnum<String> {
         return EnumUtils.fromCode(GenderCode.class, code);
     }
 
-    @Converter(autoApply = false)
+    @Converter(autoApply = true)
     public static class GenderCodeConverter extends BaseEnumConverter<GenderCode, String> {
         public GenderCodeConverter() {
             super(GenderCode.class);

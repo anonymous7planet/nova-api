@@ -1,9 +1,10 @@
 package com.nova.anonymousplanet.system.controller.v1;
 
 import com.nova.anonymousplanet.core.constant.*;
+import com.nova.anonymousplanet.core.dto.v1.response.RestSingleResponse;
 import com.nova.anonymousplanet.system.dto.v1.CodeResponse;
 import com.nova.anonymousplanet.system.dto.v1.CommonCodeResponse;
-import com.nova.anonymousplanet.core.entity.CommonCodeEntity;
+import com.nova.anonymousplanet.system.entity.CommonCodeEntity;
 import com.nova.anonymousplanet.system.service.CodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,47 +37,38 @@ public class CodeController {
 
 
     /**
-     * [1] 시스템 고정 Enum 코드 조회
-     * 주로 가입 폼의 성별, MBTI 등 절대 변하지 않는 리스트를 한꺼번에 내려줄 때 사용합니다.
+     * [1] 시스템 전체 Enum 코드 목록 조회
+     * @return 각 카테고리별 Enum 코드 리스트 맵
      */
     @GetMapping("/system")
-    public ResponseEntity<Map<String, List<CodeResponse>>> getAllCodes() {
-        Map<String, List<CodeResponse>> codes = new HashMap<>();
-
-        codes.put("religion", Arrays.stream(ReligionCode.values()).map(CodeResponse::of).toList());
-        codes.put("education", Arrays.stream(EduCationLevelCode.values()).map(CodeResponse::of).toList());
-        codes.put("jobCategory", Arrays.stream(JobCategoryCode.values()).map(CodeResponse::of).toList());
-        codes.put("gender", Arrays.stream(GenderCode.values()).map(CodeResponse::of).toList());
-        codes.put("mbti", Arrays.stream(MbtiCode.values()).map(CodeResponse::of).toList());
-
-        return ResponseEntity.ok(codes);
+    public ResponseEntity<RestSingleResponse<Map<String, CodeResponse.EnumCodeResponse<?>>>> getAllSystemCodes() {
+        // 변수명: systemCodeMap (복수형 맵)
+        Map<String,CodeResponse.EnumCodeResponse<?>> systemCodes = codeService.getAllSystemCodes();
+        return ResponseEntity.ok(RestSingleResponse.success(systemCodes));
     }
+
+    /**
+     * [2] 특정 시스템 Enum 코드 항목 조회
+     * @param enumName 조회할 항목명 (예: gender, mbti)
+     */
+    @GetMapping("/system/{enumName}")
+    public ResponseEntity<RestSingleResponse<CodeResponse.EnumCodeResponse<?>>> getSpecificSystemCodes(@PathVariable String enumName) {
+        // 변수명: codes (복수형)
+        CodeResponse.EnumCodeResponse<?> codes = codeService.getSpecificSystemCode(enumName);
+        return ResponseEntity.ok(RestSingleResponse.success(codes));
+    }
+
 
     /**
      * [2] DB 공통 코드 그룹 조회 (트리 구조)
      * 취미, 관심사 등 관리자 페이지에서 수정이 가능한 계층형 데이터를 조회할 때 사용합니다.
      */
     @GetMapping("/group/{groupCode}")
-    public ResponseEntity<List<CommonCodeResponse>> getGroupCodes(
+    public ResponseEntity<RestSingleResponse<List<CommonCodeResponse>>> getGroupCodes(
             @PathVariable String groupCode,
             @RequestHeader(name = "Accept-Language", defaultValue = "ko") String lang) {
 
-        List<CommonCodeEntity> entities = codeService.getCodeTreeEntity(groupCode);
-
-        return ResponseEntity.ok(entities.stream()
-                .map(e -> CommonCodeResponse.from(e, lang))
-                .toList());
-    }
-
-    /**
-     * [3] 특정 코드의 명칭 조회 (단건)
-     */
-    @GetMapping("/{codeId}/name")
-    public ResponseEntity<String> getCodeName(
-            @PathVariable String codeId,
-            @RequestHeader(name = "Accept-Language", defaultValue = "ko") String lang) {
-
-        // Service에 getCodeName(codeId, lang) 메서드 추가 필요
-        return ResponseEntity.ok(codeService.getCodeName(codeId, lang));
+        List<CommonCodeResponse> commonCodes = codeService.getCodeTree(groupCode, lang);
+        return ResponseEntity.ok(RestSingleResponse.success(commonCodes));
     }
 }

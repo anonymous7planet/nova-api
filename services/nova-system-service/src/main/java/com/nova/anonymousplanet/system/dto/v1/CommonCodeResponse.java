@@ -1,6 +1,6 @@
 package com.nova.anonymousplanet.system.dto.v1;
 
-import com.nova.anonymousplanet.core.entity.CommonCodeEntity;
+import com.nova.anonymousplanet.system.entity.CommonCodeEntity;
 
 import java.util.List;
 

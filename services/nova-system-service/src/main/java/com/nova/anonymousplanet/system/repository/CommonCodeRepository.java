@@ -1,7 +1,9 @@
 package com.nova.anonymousplanet.system.repository;
 
-import com.nova.anonymousplanet.core.entity.CommonCodeEntity;
+import com.nova.anonymousplanet.system.entity.CommonCodeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,5 +25,10 @@ import java.util.Optional;
 @Repository
 public interface CommonCodeRepository extends JpaRepository<CommonCodeEntity, String> {
     Optional<CommonCodeEntity> findByCodeId(String codeId);
-    List<CommonCodeEntity> findRootCodesByGroupCode(String groupCode);
+
+
+    @Query("SELECT DISTINCT c FROM CommonCodeEntity c " +
+            "LEFT JOIN FETCH c.children " +
+            "WHERE c.groupCode = :groupCode AND c.parent IS NULL")
+    List<CommonCodeEntity> findRootCodesByGroupCode(@Param("groupCode") String groupCode);
 }

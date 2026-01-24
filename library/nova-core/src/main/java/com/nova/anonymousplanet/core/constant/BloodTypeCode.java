@@ -61,7 +61,7 @@ public enum BloodTypeCode implements BaseEnum<String> {
         return EnumUtils.fromCode(BloodTypeCode.class, code);
     }
 
-    @Converter(autoApply = false)
+    @Converter(autoApply = true)
     public static class BloodTypeCodeConverter extends BaseEnumConverter<BloodTypeCode, String> {
         public BloodTypeCodeConverter() {
             super(BloodTypeCode.class);

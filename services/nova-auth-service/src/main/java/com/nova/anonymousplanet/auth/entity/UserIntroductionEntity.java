@@ -36,8 +36,8 @@ public class UserIntroductionEntity extends BaseEntity implements Serializable {
     private UserEntity user;
 
     @Column(nullable = false, length = 100)
-    private String title;
+    private String title; // 질문 제목
 
     @Column(nullable = false, length = 1000)
-    private String content;
+    private String content; // 질문 작성 내용
 }

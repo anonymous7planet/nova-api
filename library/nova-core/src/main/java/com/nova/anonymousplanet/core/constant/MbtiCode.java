@@ -69,7 +69,7 @@ public enum MbtiCode implements BaseEnum<String> {
         return EnumUtils.fromCode(MbtiCode.class, code);
     }
 
-    @Converter(autoApply = false)
+    @Converter(autoApply = true)
     public static class MbtiCodeConverter extends BaseEnumConverter<MbtiCode, String> {
         protected MbtiCodeConverter() {
             super(MbtiCode.class);

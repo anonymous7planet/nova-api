@@ -1,6 +1,7 @@
 spring:
   application:
     name: nova-auth-service
+    group: service
   config: # spring boot 2.4부터는 bootstrap.yml파일이 필요 없고 아래 설정을 해준다
     # optional : optional이 붙어있으면 config server에서 응답을 받지 못해도 client애플리케이션은 구동된다
     # optinal:configserver: 까지만 적으면 default로 localhost:8888을 지정한다

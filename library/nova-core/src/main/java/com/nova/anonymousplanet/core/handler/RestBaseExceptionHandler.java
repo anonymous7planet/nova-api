@@ -2,8 +2,8 @@ package com.nova.anonymousplanet.core.handler;
 
 
 import com.nova.anonymousplanet.core.constant.error.ErrorCode;
-import com.nova.anonymousplanet.core.dto.response.ErrorSet;
-import com.nova.anonymousplanet.core.dto.response.RestEmptyResponse;
+import com.nova.anonymousplanet.core.dto.v1.response.ErrorSet;
+import com.nova.anonymousplanet.core.dto.v1.response.RestEmptyResponse;
 import com.nova.anonymousplanet.core.exception.ApplicationException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Collections;
 import java.util.List;

@@ -1,10 +1,10 @@
 package com.nova.anonymousplanet.auth.controller.v1;
 
 import com.nova.anonymousplanet.auth.dto.v1.TokenDto;
-import com.nova.anonymousplanet.auth.service.v1.TokenService;
-import com.nova.anonymousplanet.core.dto.request.RestSingleRequest;
-import com.nova.anonymousplanet.core.dto.response.RestEmptyResponse;
-import com.nova.anonymousplanet.core.dto.response.RestSingleResponse;
+import com.nova.anonymousplanet.auth.service.TokenService;
+import com.nova.anonymousplanet.core.dto.v1.request.RestSingleRequest;
+import com.nova.anonymousplanet.core.dto.v1.response.RestEmptyResponse;
+import com.nova.anonymousplanet.core.dto.v1.response.RestSingleResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

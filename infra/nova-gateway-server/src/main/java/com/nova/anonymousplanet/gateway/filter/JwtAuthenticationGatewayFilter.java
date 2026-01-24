@@ -24,6 +24,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,8 +33,9 @@ import java.util.Map;
 public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory<JwtAuthenticationGatewayFilter.Config> implements Ordered {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtRefreshTokenStore jwtRefreshTokenStore;
-    private final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final ObjectMapper objectMapper; // 💡 ObjectMapper를 필드로 정의하여 재사용
+
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     private static final String BEARER_PREFIX = "Bearer ";
 
@@ -127,6 +129,8 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
      * URL검증 (WhiteList/ExcludedPaths)
      */
     private boolean isExcluded(String path, List<String> excludedPaths) {
+        if (excludedPaths == null || excludedPaths.isEmpty()) return false;
+        // 💡 AntPathMatcher를 사용하여 /** 패턴을 완벽하게 지원합니다.
         return excludedPaths.stream().anyMatch(pattern -> pathMatcher.match(pattern, path));
     }
 
@@ -197,17 +201,20 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
     @Getter
     @Setter
     public static class Config {
-        private List<String> excludedPaths;
+        private List<String> excludedPaths = new ArrayList<>();
 
-        public Config() {
-            // 기본값 설정
-            this.excludedPaths = List.of(
-                "/v1/signup",
-                "/v1/login",
-                "/v1/token/refresh",
-                "/v1/health"
-            );
-        }
+//        public Config() {
+//            // 기본값 설정
+//            this.excludedPaths = List.of(
+//                    "/v1/signup",
+//                    "/v1/login",
+//                    "/v1/token/refresh",
+//                    "/v1/health",
+//                    "/v1/code/system",
+//                    "/v1/code/system/**",
+//                    "/v1/code/group"
+//            );
+//        }
     }
 
     @Override

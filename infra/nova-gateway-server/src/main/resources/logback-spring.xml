@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Logback 내부 상태 로그 제거 -->
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+
+    <!-- Spring Boot 기본 converter (%clr 등) -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- 서비스 환경 가져오기 -->
+    <springProperty scope="context" name="springProfile" source="spring.profiles.active" defaultValue="local"/>
+
+    <!-- Appender 정의 -->
+    <include resource="logback/logback-appender.xml"/>
+
+    <include resource="logback/logback-${springProfile}.xml" />
+</configuration>

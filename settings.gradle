@@ -14,6 +14,8 @@ findProject(':infra:nova-gateway-server')?.name = 'nova-gateway-server'
 // services
 include 'services:nova-auth-service'
 findProject(':services:nova-auth-service')?.name = 'nova-auth-service'
+include 'services:nova-system-service'
+findProject(':services:nova-system-service')?.name = 'nova-system-service'
 
 
 // library

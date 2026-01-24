@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+
+    <logger name="com.nova" level="WARN"/>
+
+    <logger name="org.springframework" level="ERROR"/>
+    <logger name="org.springframework.cloud" level="ERROR"/>
+
+    <root level="WARN">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</included>

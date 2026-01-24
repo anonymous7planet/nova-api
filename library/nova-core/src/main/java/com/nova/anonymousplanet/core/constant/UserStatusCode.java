@@ -7,13 +7,10 @@ import jakarta.persistence.Converter;
 
 
 public enum UserStatusCode implements BaseEnum<String> {
-    PENDING("PENDING", "가입 대기 상태", false),
-    FRIEND_ACTIVE("F_ACTIVE", "친구모드 활성", true),
-    MATCH_PENDING("M_PENDING", "맞선모드 가입 대기 상태", true),
-    MATCH_ACTIVE("M_ACTIVE", "맞선모드 활성", true),
+    PENDING("PENDING", "가입 대기(승인전)", false),
+    NORMAL("NORMAL", "정상 이용 중", true),
     SUSPENDED("SUSPENDED", "이용 정지", false),
-    BANNED("BANNED", "추방", false),
-    WITHDRAWN("WITHDRAWN", "탈퇴", false)
+    WITHDRAWN("WITHDRAWN", "탈퇴", false);
     ;
 
     private final String code;
@@ -50,7 +47,7 @@ public enum UserStatusCode implements BaseEnum<String> {
         return EnumUtils.fromCode(UserStatusCode.class, code);
     }
 
-    @Converter(autoApply = false)
+    @Converter(autoApply = true)  // autoApply를 true로 하면 Entity에 @Convert를 안 붙여도 자동 적용됩니다.
     public static class UserStatusCodeConverter extends BaseEnumConverter<UserStatusCode, String> {
         public UserStatusCodeConverter() {
             super(UserStatusCode.class);

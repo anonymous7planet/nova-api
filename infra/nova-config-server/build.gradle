@@ -31,4 +31,8 @@ dependencies {
     // Spring Cloud Config Monitor
     // bus-refresh가 가능한 /monitor 엔드포인트를 생성해준다.
     implementation 'org.springframework.cloud:spring-cloud-config-monitor'
+
+    // 로그
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
+    implementation 'org.slf4j:slf4j-api:2.0.9'
 }

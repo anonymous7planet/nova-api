@@ -1,6 +1,7 @@
 spring:
   application:
     name: nova-config-server
+    group: infra
   profiles:
     group:
       default:

@@ -34,4 +34,8 @@ dependencies {
 
     // Spring Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // 로그
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
+    implementation 'org.slf4j:slf4j-api:2.0.9'
 }

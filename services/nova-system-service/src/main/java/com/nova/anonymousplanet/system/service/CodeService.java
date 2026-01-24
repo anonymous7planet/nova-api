@@ -1,14 +1,19 @@
 package com.nova.anonymousplanet.system.service;
 
-import com.nova.anonymousplanet.core.entity.CommonCodeEntity;
+import com.nova.anonymousplanet.core.constant.*;
+import com.nova.anonymousplanet.system.dto.v1.CodeResponse;
+import com.nova.anonymousplanet.system.dto.v1.CommonCodeResponse;
+import com.nova.anonymousplanet.system.entity.CommonCodeEntity;
 import com.nova.anonymousplanet.system.repository.CommonCodeRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * projectName : nova-api
@@ -31,13 +36,50 @@ public class CodeService {
 
     private final CommonCodeRepository commonCodeRepository;
 
+    // 서버 기동 시점에 한 번만 생성되어 메모리에 상주 (가장 빠름)
+    private static final Map<String, CodeResponse.EnumCodeResponse<?>> SYSTEM_CODE_MAP = new ConcurrentHashMap<>();
+
+    @PostConstruct // 의존성 주입 후 자동 실행
+    public void init() {
+        SYSTEM_CODE_MAP.put("bloodType", toResponseList("혈액형", BloodTypeCode.values()));
+        SYSTEM_CODE_MAP.put("educationLevel", toResponseList("교육수준", EducationLevelCode.values()));
+        SYSTEM_CODE_MAP.put("gender", toResponseList("성별", GenderCode.values()));
+        SYSTEM_CODE_MAP.put("jobCategory", toResponseList("직업카테고리", JobCategoryCode.values()));
+        SYSTEM_CODE_MAP.put("language", toResponseList("언어", LanguageCode.values()));
+        SYSTEM_CODE_MAP.put("loginProvider", toResponseList("로그인방법", LoginProviderCode.values()));
+        SYSTEM_CODE_MAP.put("mbti", toResponseList("MBTI", MbtiCode.values()));
+        SYSTEM_CODE_MAP.put("religion", toResponseList("종교", ReligionCode.values()));
+        SYSTEM_CODE_MAP.put("serviceMode", toResponseList("서비스모드", ServiceModeCode.values()));
+        SYSTEM_CODE_MAP.put("yesNo", toResponseList("Yes/No", YesNoCode.values()));
+    }
+
+    public Map<String, CodeResponse.EnumCodeResponse<?>> getAllSystemCodes() {
+        return SYSTEM_CODE_MAP;
+    }
+
+    public CodeResponse.EnumCodeResponse<?> getSpecificSystemCode(String enumName) {
+        return SYSTEM_CODE_MAP.getOrDefault(enumName, null);
+    }
+
+    private <T> CodeResponse.EnumCodeResponse<T> toResponseList(String title, BaseEnum<T>[] enums) {
+        return CodeResponse.EnumCodeResponse.of(title, enums);
+    }
+
+
+
+
     /**
      * 그룹 코드를 기반으로 최상위 코드 리스트를 조회합니다.
      * (children 필드에 의해 하위 트리까지 JPA가 로드합니다.)
      */
     @Cacheable(value = "commonCodeTree", key = "#groupCode")
-    public List<CommonCodeEntity> getCodeTreeEntity(String groupCode) {
-        return commonCodeRepository.findRootCodesByGroupCode(groupCode);
+    public List<CommonCodeResponse> getCodeTree(String groupCode, String lang) {
+        List<CommonCodeEntity> entities = commonCodeRepository.findRootCodesByGroupCode(groupCode);
+
+        // 트랜잭션이 유지되는 여기서 children에 접근하므로 에러가 나지 않습니다.
+        return entities.stream()
+                .map(e -> CommonCodeResponse.from(e, lang))
+                .toList();
     }
 
     /**

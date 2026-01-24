@@ -1,5 +1,6 @@
 package com.nova.anonymousplanet.gateway.configuration;
 
+import com.nova.anonymousplanet.gateway.configuration.properties.JwtAuthProperties;
 import com.nova.anonymousplanet.gateway.filter.JwtAuthenticationGatewayFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.route.RouteLocator;
@@ -16,16 +17,42 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class GatewayRouteConfiguration {
     @Bean
-    public RouteLocator routeLocator(RouteLocatorBuilder builder, JwtAuthenticationGatewayFilter jwtAuthenticationGatewayFilter) {
+    public RouteLocator routeLocator(RouteLocatorBuilder builder,
+                                     JwtAuthenticationGatewayFilter jwtAuthenticationGatewayFilter,
+                                     JwtAuthProperties authProperties // 👈 위에서 만든 클래스 주입
+    ) {
+        // 필터에 적용할 설정 객체 생성
+        JwtAuthenticationGatewayFilter.Config jwtAuthConfig = new JwtAuthenticationGatewayFilter.Config();
+        // YML에서 읽어온 제외 경로 리스트를 주입
+        jwtAuthConfig.setExcludedPaths(authProperties.getExcludedPaths());
+
         return builder.routes()
-            .route("auth-service", r-> r
-                .path("/api/auth/**")
-                .filters(f -> f
-                    .stripPrefix(2)
+//                .route("auth-service", r -> r
+//                                .path("/api/auth/**")
+//                                .filters(f -> f.stripPrefix(2)
 //                    .addRequestHeader("X-Gateway", "nova-gateway")  // 요청 헤더 추가
-                    .filter(jwtAuthenticationGatewayFilter.apply(new JwtAuthenticationGatewayFilter.Config())))
-                .uri("lb://nova-auth-service")
-            )
+//                                        .filter(jwtAuthenticationGatewayFilter.apply(new JwtAuthenticationGatewayFilter.Config())))
+//                                .uri("lb://nova-auth-service")
+//                )
+                .route("auth-service", r -> r
+                                .path("/api/auth/**")
+                                .filters(f -> f
+                                        .stripPrefix(2)
+                                        .filter(jwtAuthenticationGatewayFilter.apply(jwtAuthConfig))
+//                    .addRequestHeader("X-Gateway", "nova-gateway")  // 요청 헤더 추가
+                                )
+                                .uri("lb://NOVA-AUTH-SERVICE")
+                )
+                .route("system-service", r -> r
+                                .path("/api/system/**")
+                                .filters(f -> f
+                                                // /api/system/ 부분을 뒤에 오는 모든 것($1)으로 교체
+                                                .rewritePath("/api/system/(?<segment>.*)", "/${segment}")
+                                                .filter(jwtAuthenticationGatewayFilter.apply(jwtAuthConfig))
+//                    .addRequestHeader("X-Gateway", "nova-gateway")  // 요청 헤더 추가
+                                )
+                                .uri("lb://NOVA-SYSTEM-SERVICE")
+                )
             .build();
     }
 
