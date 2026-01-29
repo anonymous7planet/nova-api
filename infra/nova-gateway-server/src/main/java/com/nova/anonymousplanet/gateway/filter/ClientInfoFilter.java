@@ -1,6 +1,9 @@
 package com.nova.anonymousplanet.gateway.filter;
 
-import com.nova.anonymousplanet.gateway.constant.LogHeaderCode;
+import com.nova.anonymousplanet.gateway.constant.LogContextCode;
+import com.nova.anonymousplanet.gateway.filter.order.FilterOrder;
+import com.nova.anonymousplanet.gateway.util.ClientUtils;
+import com.nova.anonymousplanet.gateway.util.LogContextUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -28,45 +31,24 @@ import reactor.core.publisher.Mono;
 public class ClientInfoFilter implements GlobalFilter, Ordered {
 
     @Override
-    public int getOrder() {
-        return FilterOrder.CLIENT_INFO; // 5번
-    }
-
-    @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
 
         // X-Forwarded-For 우선, 없으면 remote address 사용
-        String clientIp = request.getHeaders().getFirst("X-Forwarded-For");
-        if (clientIp == null || clientIp.isBlank()) {
-            if (request.getRemoteAddress() != null && request.getRemoteAddress().getAddress() != null) {
-                clientIp = request.getRemoteAddress().getAddress().getHostAddress();
-            } else {
-                clientIp = "unknown";
-            }
-        } else {
-            clientIp = clientIp.split(",")[0].trim();
-        }
+        String clientIp = ClientUtils.getClientIp(request);
 
-        String ua = request.getHeaders().getFirst("User-Agent");
-        String deviceType = request.getHeaders().getFirst(LogHeaderCode.DEVICE_TYPE.getKey());
-        String os = request.getHeaders().getFirst(LogHeaderCode.OS_TYPE.getKey());
-        String osVersion = request.getHeaders().getFirst(LogHeaderCode.OS_VERSION.getKey());
-        String appVersion = request.getHeaders().getFirst(LogHeaderCode.APP_VERSION.getKey());
-
-        log.debug("[ClientInfoFilter] clientIp={}, ua={}, deviceType={}, os={}, osVersion={}, appVersion={}",
-                clientIp, ua, deviceType, os, osVersion, appVersion);
+        log.info("[ClientInfoFilter] {}", clientIp);
 
         ServerHttpRequest mutated = request.mutate()
-                .header(LogHeaderCode.CLIENT_IP.getKey(), clientIp)
-                .header(LogHeaderCode.USER_AGENT.getKey(), ua != null ? ua : "")
-                // 이미 프론트에서 넘겼다면 재사용(여기선 그냥 전달)
-                .header(LogHeaderCode.DEVICE_TYPE.getKey(), deviceType != null ? deviceType : "")
-                .header(LogHeaderCode.OS_TYPE.getKey(), os != null ? os : "")
-                .header(LogHeaderCode.OS_VERSION.getKey(), osVersion != null ? osVersion : "")
-                .header(LogHeaderCode.APP_VERSION.getKey(), appVersion != null ? appVersion : "")
+                .header(LogContextCode.CLIENT_IP.getHeaderKey(), clientIp)
                 .build();
 
-        return chain.filter(exchange.mutate().request(mutated).build());
+        return chain.filter(exchange.mutate().request(mutated).build())
+                .contextWrite(LogContextUtils.populateContext(mutated));
+    }
+
+    @Override
+    public int getOrder() {
+        return FilterOrder.CLIENT_INFO; // 5번
     }
 }

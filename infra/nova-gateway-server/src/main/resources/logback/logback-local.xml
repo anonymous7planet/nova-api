@@ -1,14 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <included>
-    <!-- infra는 조용해야 한다 -->
-    <logger name="com.nova" level="INFO"/>
+    <!-- ============================= -->
+    <!-- Local 환경: DEBUG 중심 -->
+    <!-- ============================= -->
 
-    <logger name="org.springframework" level="WARN"/>
-    <logger name="org.springframework.cloud" level="WARN"/>
-    <logger name="org.apache" level="WARN"/>
-    <logger name="org.hibernate" level="ERROR"/>
+    <!-- 우리 코드 -->
+    <logger name="com.nova.anonymousplanet" level="DEBUG"/>
 
-    <root level="WARN">
+    <!-- Gateway Access / Slow 로그 -->
+    <logger name="access.log" level="INFO" additivity="false">
+        <appender-ref ref="ASYNC_ACCESS"/>
         <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <logger name="slow.log" level="WARN" additivity="false">
+        <appender-ref ref="ASYNC_SLOW"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- ========================= -->
+    <!-- Exception / Error Log -->
+    <!-- ========================= -->
+
+    <logger name="error.log" level="ERROR" additivity="false">
+        <appender-ref ref="ASYNC_ERROR"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Spring -->
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.springframework.web" level="INFO"/>
+
+    <!-- Netty / Reactor (너무 시끄러움 방지) -->
+    <logger name="reactor.netty" level="INFO"/>
+    <logger name="io.netty" level="INFO"/>
+
+    <!-- Root -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+
+        <!--log.error사용해도 error로그 작성해줌 -->
+        <appender-ref ref="ASYNC_ERROR"/>
     </root>
 </included>

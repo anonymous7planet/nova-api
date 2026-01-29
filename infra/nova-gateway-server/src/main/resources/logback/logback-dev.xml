@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <!-- ============================= -->
+    <!-- Dev 환경 -->
+    <!-- ============================= -->
+
+    <!-- 우리 코드 -->
+    <logger name="com.nova" level="INFO"/>
+
+    <!-- Gateway 로그 -->
+    <logger name="gateway.access" level="INFO"/>
+    <logger name="gateway.slow" level="WARN"/>
+
+    <!-- Spring -->
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.springframework.web" level="WARN"/>
+
+    <!-- Root -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ASYNC_JSON"/>
+    </root>
+</included>

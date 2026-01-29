@@ -1,13 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <included>
+    <!-- ============================= -->
+    <!-- Prod 환경 -->
+    <!-- ============================= -->
 
-    <logger name="com.nova" level="WARN"/>
+    <!-- 우리 코드 -->
+    <logger name="com.nova" level="INFO"/>
 
-    <logger name="org.springframework" level="ERROR"/>
-    <logger name="org.springframework.cloud" level="ERROR"/>
+    <!-- Gateway Access Log -->
+    <logger name="gateway.access" level="INFO" additivity="false">
+        <appender-ref ref="ASYNC_JSON"/>
+    </logger>
 
+    <!-- Gateway Slow Log -->
+    <logger name="gateway.slow" level="WARN" additivity="false">
+        <appender-ref ref="ASYNC_JSON"/>
+    </logger>
+
+    <!-- Spring -->
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.springframework.web" level="WARN"/>
+
+    <!-- Root -->
     <root level="WARN">
         <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ASYNC_JSON"/>
     </root>
-
 </included>

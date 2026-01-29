@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <included>
-    <!-- Discovery 내부 동작 -->
-    <logger name="com.netflix.discovery" level="DEBUG"/>
-    <logger name="com.netflix.eureka" level="DEBUG"/>
-    <logger name="org.springframework.cloud.netflix.eureka" level="DEBUG"/>
 
-    <!-- Spring 기본 -->
-    <logger name="org.springframework" level="INFO"/>
-    <logger name="org.apache.http" level="WARN"/>
+    <logger name="com.nova.anonymousplanet" level="INFO"/>
+    <!-- Discovery 내부 동작 -->
+    <logger name="com.netflix.discovery" level="WARN"/>
+    <logger name="com.netflix.eureka" level="INFO"/>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>

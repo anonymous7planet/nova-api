@@ -1,0 +1,24 @@
+<included>
+    <appender name="SLOW_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_BASE_DIR}/${SERVICE_NAME}/${SERVICE_NAME}-slow.json</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_BASE_DIR}/${SERVICE_NAME}/logs/${SERVICE_NAME}-slow.%d{yyyy-MM-dd}.json</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>{"logType":"slow","service":"${SERVICE_NAME}"}</customFields>
+            <charset>UTF-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+    </appender>
+
+    <appender name="ASYNC_SLOW" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="SLOW_FILE" />
+        <queueSize>10000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <neverBlock>true</neverBlock>
+        <includeCallerData>false</includeCallerData>
+    </appender>
+</included>

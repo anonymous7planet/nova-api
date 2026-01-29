@@ -9,6 +9,9 @@
     <!-- 서비스 환경 가져오기 -->
     <springProperty scope="context" name="springProfile" source="spring.profiles.active" defaultValue="local"/>
 
+    <!-- 서비스 이름 -->
+    <springProperty scope="context" name="SERVICE_NAME" source="spring.application.name"/>
+
     <!-- Appender 정의 -->
     <include resource="logback-appender.xml"/>
 

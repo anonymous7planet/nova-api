@@ -6,11 +6,28 @@
     <!-- Spring Boot 기본 converter (%clr 등) -->
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
+
+    <!--30초 동안 메모리에 남은 로그(데이터)를 파일에 다 쓰고 나서 종료해라, 메모리 큐에 데이터 없을 시 바로 종료-->
+    <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook">
+        <delay>30s</delay>
+    </shutdownHook>
+
     <!-- 서비스 환경 가져오기 -->
     <springProperty scope="context" name="springProfile" source="spring.profiles.active" defaultValue="local"/>
 
+    <!-- 서비스 이름 -->
+    <springProperty scope="context" name="SERVICE_NAME" source="spring.application.name" defaultValue="nova-gateway-server"/>
+
+    <if condition='property("springProfile").contains("local")'>
+        <then><property name="LOG_BASE_DIR" value="./logs"/></then>
+        <else><property name="LOG_BASE_DIR" value="/var/log/nova"/></else>
+    </if>
+
     <!-- Appender 정의 -->
-    <include resource="logback/logback-appender.xml"/>
+    <include resource="logback/appender/logback-appender.xml"/>
+    <include resource="logback/appender/logback-access.xml"/>
+    <include resource="logback/appender/logback-slow.xml"/>
+    <include resource="logback/appender/logback-error.xml"/>
 
     <include resource="logback/logback-${springProfile}.xml" />
 </configuration>

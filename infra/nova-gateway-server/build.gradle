@@ -62,4 +62,14 @@ dependencies {
     // 로그
     implementation 'org.springframework.boot:spring-boot-starter-logging'
     implementation 'org.slf4j:slf4j-api:2.0.9'
+
+    implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
+
+    // Java 21 & Jackson 호환성을 위해 필요
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+
+    // Logback 조건부 설정(<if>)을 위한 라이브러리
+    implementation 'org.codehaus.janino:janino:3.1.12'
+    implementation 'org.codehaus.janino:commons-compiler:3.1.12'
 }

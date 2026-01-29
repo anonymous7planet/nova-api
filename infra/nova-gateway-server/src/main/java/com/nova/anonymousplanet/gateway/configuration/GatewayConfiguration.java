@@ -21,19 +21,10 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class GatewayConfiguration {
+
     // ObjectMapper는 WebFlux 환경에서 자동으로 Bean으로 등록되므로 주입받아 사용합니다.
     @Bean
     public ErrorWebExceptionHandler gatewayExceptionHandler(ObjectMapper objectMapper) {
         return new GatewayExceptionHandler(objectMapper);
     }
-
-    // 필요하다면 ObjectMapper 설정을 여기서 커스터마이징 할 수 있습니다.
-    /*
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        // Customizations...
-        return mapper;
-    }
-    */
 }

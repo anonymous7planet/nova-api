@@ -47,7 +47,8 @@ public class GatewayRouteConfiguration {
                                 .path("/api/system/**")
                                 .filters(f -> f
                                                 // /api/system/ 부분을 뒤에 오는 모든 것($1)으로 교체
-                                                .rewritePath("/api/system/(?<segment>.*)", "/${segment}")
+//                                                .rewritePath("/api/system/(?<segment>.*)", "/${segment}")
+                                                .stripPrefix(2)
                                                 .filter(jwtAuthenticationGatewayFilter.apply(jwtAuthConfig))
 //                    .addRequestHeader("X-Gateway", "nova-gateway")  // 요청 헤더 추가
                                 )

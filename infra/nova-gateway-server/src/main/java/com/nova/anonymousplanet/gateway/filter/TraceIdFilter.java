@@ -1,6 +1,8 @@
 package com.nova.anonymousplanet.gateway.filter;
 
-import com.nova.anonymousplanet.gateway.constant.LogHeaderCode;
+import com.nova.anonymousplanet.gateway.constant.LogContextCode;
+import com.nova.anonymousplanet.gateway.filter.order.FilterOrder;
+import com.nova.anonymousplanet.gateway.util.LogContextUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -9,6 +11,7 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import reactor.util.context.Context;
 
 import java.util.UUID;
 
@@ -34,27 +37,28 @@ import java.util.UUID;
 public class TraceIdFilter implements GlobalFilter, Ordered {
 
     @Override
-    public int getOrder() {
-        return FilterOrder.TRACE_ID;
-    }
-
-    @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
         ServerHttpRequest request = exchange.getRequest();
 
-        String traceId = request.getHeaders().getFirst(LogHeaderCode.TRACE_ID.getKey());
+        String traceId = request.getHeaders().getFirst(LogContextCode.TRACE_ID.getHeaderKey());
         if (traceId == null || traceId.isBlank()) {
             traceId = UUID.randomUUID().toString();
-            log.debug("[TraceRequestFilter] Generated new TraceId={}", traceId);
+            log.debug("[TraceIdFilter] Generated new TraceId={}", traceId);
         } else {
-            log.debug("[TraceRequestFilter] Reusing TraceId={}", traceId);
+            log.debug("[TraceFilter] Reusing TraceId={}", traceId);
         }
 
         ServerHttpRequest mutated = request.mutate()
-                .header(LogHeaderCode.TRACE_ID.getKey(), traceId)
+                .header(LogContextCode.TRACE_ID.getHeaderKey(), traceId)
                 .build();
 
-        return chain.filter(exchange.mutate().request(mutated).build());
+        return chain.filter(exchange.mutate().request(mutated).build())
+                .contextWrite(LogContextUtils.populateContext(mutated));
+    }
+
+    @Override
+    public int getOrder() {
+        return FilterOrder.TRACE_ID;
     }
 }

@@ -4,7 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nova.anonymousplanet.gateway.dto.response.RestGatewayResponse;
 import com.nova.anonymousplanet.gateway.exception.NovaGatewayAuthException;
-import com.nova.anonymousplanet.gateway.filter.FilterOrder;
+import com.nova.anonymousplanet.gateway.filter.order.FilterOrder;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
@@ -32,13 +33,12 @@ import java.nio.charset.StandardCharsets;
  * ==============================================
  */
 @Order(FilterOrder.EXCEPTION_HANDLER)
+@RequiredArgsConstructor
 public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
-    private static final Logger log = LoggerFactory.getLogger(GatewayExceptionHandler.class);
-    private final ObjectMapper objectMapper;
+    // Logger 이름을 "error.log"로 명시해야 XML의 <logger name="error.log">와 매칭됩니다.
+    private static final Logger log = LoggerFactory.getLogger("error.log");
 
-    public GatewayExceptionHandler(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
+    private final ObjectMapper objectMapper;
 
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
