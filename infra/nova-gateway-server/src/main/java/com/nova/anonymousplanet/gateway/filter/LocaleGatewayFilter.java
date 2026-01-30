@@ -1,6 +1,6 @@
 package com.nova.anonymousplanet.gateway.filter;
 
-import com.nova.anonymousplanet.gateway.constant.LogHeaderCode;
+import com.nova.anonymousplanet.gateway.constant.LogContextCode;
 import com.nova.anonymousplanet.gateway.filter.order.FilterOrder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -36,10 +36,10 @@ public class LocaleGatewayFilter implements GlobalFilter, Ordered {
 
         ServerHttpRequest request = exchange.getRequest();
 
-        String localeHeader = request.getHeaders().getFirst(LogHeaderCode.LOCALE.getKey());
+        String localeHeader = request.getHeaders().getFirst(LogContextCode.LOCALE.getHeaderKey());
 
         if (localeHeader == null || localeHeader.isBlank()) {
-            String lang = request.getHeaders().getFirst(LogHeaderCode.LANG.getKey());
+            String lang = request.getHeaders().getFirst(LogContextCode.LANG.getHeaderKey());
             if (lang != null && !lang.isBlank()) {
                 localeHeader = Locale.forLanguageTag(lang).toLanguageTag();
                 log.debug("[LocaleGatewayFilter] X-Lang -> normalized localeHeader={}", localeHeader);
@@ -50,7 +50,7 @@ public class LocaleGatewayFilter implements GlobalFilter, Ordered {
         }
 
         if (localeHeader == null || localeHeader.isBlank()) {
-            String acceptLang = request.getHeaders().getFirst(LogHeaderCode.ACCEPT_LANGUAGE.getKey());
+            String acceptLang = request.getHeaders().getFirst(LogContextCode.ACCEPT_LANGUAGE.getHeaderKey());
             if (acceptLang != null && !acceptLang.isBlank()) {
                 String first = acceptLang.split(",")[0].trim();
                 localeHeader = Locale.forLanguageTag(first).toLanguageTag();
@@ -64,8 +64,8 @@ public class LocaleGatewayFilter implements GlobalFilter, Ordered {
         }
 
         ServerHttpRequest mutated = request.mutate()
-                .header(LogHeaderCode.LOCALE.getKey(), localeHeader)
-                .header(LogHeaderCode.ACCEPT_LANGUAGE.getKey(), localeHeader)
+                .header(LogContextCode.LOCALE.getHeaderKey(), localeHeader)
+                .header(LogContextCode.ACCEPT_LANGUAGE.getHeaderKey(), localeHeader)
                 .build();
 
         log.info("[LocaleGatewayFilter] Locale resolved and injected: {}", localeHeader);

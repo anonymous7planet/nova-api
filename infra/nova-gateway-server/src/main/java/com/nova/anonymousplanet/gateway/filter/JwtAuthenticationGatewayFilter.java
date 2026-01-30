@@ -1,7 +1,7 @@
 package com.nova.anonymousplanet.gateway.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nova.anonymousplanet.gateway.constant.LogHeaderCode;
+import com.nova.anonymousplanet.gateway.constant.LogContextCode;
 import com.nova.anonymousplanet.gateway.dto.response.RestGatewayResponse;
 import com.nova.anonymousplanet.gateway.dto.RefreshTokenStoreDto;
 import com.nova.anonymousplanet.gateway.filter.order.FilterOrder;
@@ -63,7 +63,7 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
 
             ServerHttpRequest request = exchange.getRequest();
             ServerHttpResponse response = exchange.getResponse();
-            String traceId = request.getHeaders().getFirst(LogHeaderCode.TRACE_ID.getKey());
+            String traceId = request.getHeaders().getFirst(LogContextCode.TRACE_ID.getHeaderKey());
 
 
             // 2. Header에 Authorization 필드 유무 확인

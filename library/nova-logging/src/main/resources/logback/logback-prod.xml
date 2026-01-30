@@ -8,13 +8,19 @@
     <!-- Hibernate 등 외부 라이브러리는 WARN 이상만 출력 -->
     <logger name="org.springframework" level="WARN"/>
     <logger name="org.redisson" level="WARN"/>
+
     <logger name="org.hibernate" level="ERROR"/>
+    <logger name="com.zaxxer.hikari" level="WARN"/>
+    <logger name="org.hibernate.SQL" level="OFF"/>
+
     <logger name="org.apache.kafka" level="ERROR"/>
+    <logger name="com.netflix" level="WARN"/>
+    <logger name="io.lettuce" level="WARN"/>
 
     <!-- 루트 로거는 기본 WARN 이상 (최대한 억제) -->
     <root level="WARN">
-        <appender-ref ref="FILE"/>
-        <appender-ref ref="ERROR_FILE"/>
+        <appender-ref ref="ASYNC_FILE"/>
+        <appender-ref ref="ASYNC_ERROR"/>
     </root>
 
 </included>

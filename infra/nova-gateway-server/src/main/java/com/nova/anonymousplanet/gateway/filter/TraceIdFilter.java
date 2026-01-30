@@ -41,6 +41,7 @@ public class TraceIdFilter implements GlobalFilter, Ordered {
 
         ServerHttpRequest request = exchange.getRequest();
 
+        // 1. TraceId 추출 또는 생성
         String traceId = request.getHeaders().getFirst(LogContextCode.TRACE_ID.getHeaderKey());
         if (traceId == null || traceId.isBlank()) {
             traceId = UUID.randomUUID().toString();
@@ -49,10 +50,15 @@ public class TraceIdFilter implements GlobalFilter, Ordered {
             log.debug("[TraceFilter] Reusing TraceId={}", traceId);
         }
 
+        // 2. [중요] Exchange Attributes에 저장하여 Gateway 내부 전역에서 공유
+        exchange.getAttributes().put(LogContextCode.TRACE_ID.getMdcKey(), traceId);
+
+        // 3. 내부 서비스 전파를 위한 Mutated Request 생성
         ServerHttpRequest mutated = request.mutate()
                 .header(LogContextCode.TRACE_ID.getHeaderKey(), traceId)
                 .build();
 
+        // 4. 컨텍스트 전파 및 체인 실행
         return chain.filter(exchange.mutate().request(mutated).build())
                 .contextWrite(LogContextUtils.populateContext(mutated));
     }

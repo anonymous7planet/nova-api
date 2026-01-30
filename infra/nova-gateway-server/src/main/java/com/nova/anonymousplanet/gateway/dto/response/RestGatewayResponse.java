@@ -1,47 +1,44 @@
 package com.nova.anonymousplanet.gateway.dto.response;
 
+import com.nova.anonymousplanet.gateway.constant.LogContextCode;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.slf4j.MDC;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class RestGatewayResponse implements Serializable {
-    private boolean isSuccess;
-    private String message;
-    private String requestId;
-    private GatewayErrorSet error;
-    private LocalDateTime timestamp;
+public record RestGatewayResponse(
+        boolean isSuccess,
+        String message,
+        String traceId,
+        String requestId,
+        String path,
+        GatewayErrorSet error,
+        LocalDateTime timestamp
+) implements Serializable {
 
     @Builder
-    public RestGatewayResponse(boolean isSuccess, String message, String requestId, GatewayErrorSet error) {
-        this.isSuccess = isSuccess;
-        this.message = message;
-        this.requestId = requestId;
-        this.error = error;
-        this.timestamp = LocalDateTime.now();
-    }
-    public static RestGatewayResponse success(String message, String requestId) {
-        return new RestGatewayResponse(true, message, requestId, null);
+    public RestGatewayResponse {
+        timestamp = LocalDateTime.now();
     }
 
-    public static RestGatewayResponse success(String requestId) {
-        return success("성공", requestId);
+    public static RestGatewayResponse error(String path, String traceId, GatewayErrorSet error) {
+        return RestGatewayResponse.builder()
+                .isSuccess(false)
+                .message("실패")
+                .path(path)
+                .traceId(traceId)
+                .requestId(traceId) // Gateway에서는 요청 ID를 traceId와 동일시하거나 별도 추출
+                .error(error)
+                .build();
     }
 
-    public static RestGatewayResponse error(String message, String requestId, GatewayErrorSet error) {
-        return new RestGatewayResponse(false, message, requestId, error);
-    }
-
-    public static RestGatewayResponse error(String requestId, GatewayErrorSet error) {
-       return new RestGatewayResponse(false, "실패", requestId, error);
-    }
-
-
-    public record GatewayErrorSet(String path, String code, String detailMessage) {
-    }
+    public record GatewayErrorSet(
+            String code,
+            String titleMessage,
+            String detailMessage
+    ) {}
 }

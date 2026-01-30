@@ -5,14 +5,18 @@
     <!-- 본인 코드 (nova 패키지)만 INFO 이상 로그 출력 -->
     <logger name="com.nova" level="INFO"/>
 
+    <logger name="org.springframework" level="INFO" />
+    <logger name="org.springframework.web" level="WARN"/>
+
     <!-- Hibernate 등 외부 라이브러리는 WARN 이상만 출력 -->
     <logger name="org.hibernate" level="WARN"/>
-    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.hibernate.SQL" level="DEBUG"/>
+
+    <logger name="com.netflix" level="WARN"/>
 
     <!-- 루트 로거는 기본 WARN 이상 (최대한 억제) -->
     <root level="INFO">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="FILE"/>
-        <appender-ref ref="ERROR_FILE"/>
+        <appender-ref ref="ASYNC_FILE"/>
+        <appender-ref ref="ASYNC_ERROR"/>
     </root>
 </included>
