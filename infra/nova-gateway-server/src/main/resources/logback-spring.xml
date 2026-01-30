@@ -6,7 +6,6 @@
     <!-- Spring Boot 기본 converter (%clr 등) -->
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-
     <!--30초 동안 메모리에 남은 로그(데이터)를 파일에 다 쓰고 나서 종료해라, 메모리 큐에 데이터 없을 시 바로 종료-->
     <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook">
         <delay>30s</delay>
@@ -25,9 +24,9 @@
 
     <!-- Appender 정의 -->
     <include resource="logback/appender/logback-appender.xml"/>
-    <include resource="logback/appender/logback-access.xml"/>
-    <include resource="logback/appender/logback-slow.xml"/>
-    <include resource="logback/appender/logback-error.xml"/>
+    <include resource="logback/appender/access-appender.xml"/>
+    <include resource="logback/appender/slow-appender.xml"/>
+    <include resource="logback/appender/error-appender.xml"/>
 
     <include resource="logback/logback-${springProfile}.xml" />
 </configuration>

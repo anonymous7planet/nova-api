@@ -25,11 +25,11 @@
     <!-- 2) Rolling File Appender (dev / prod) -->
     <!-- ========================================================= -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/var/log/nova/${SERVICE_NAME}/${SERVICE_NAME}.log</file>
+        <file>${LOG_BASE_DIR}/${SERVICE_NAME}/${SERVICE_NAME}.log</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>
-                /var/log/nova/${SERVICE_NAME}/logs/${SERVICE_NAME}.%d{yyyy-MM-dd}.log
+                ${LOG_BASE_DIR}/${SERVICE_NAME}/logs/${SERVICE_NAME}.%d{yyyy-MM-dd}.log
             </fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
@@ -44,10 +44,10 @@
     <!-- 3) ERROR 전용 Rolling File (dev / prod) -->
     <!-- ========================================================= -->
     <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/var/log/nova/${SERVICE_NAME}/${SERVICE_NAME}-error.log</file>
+        <file>${LOG_BASE_DIR}/${SERVICE_NAME}/${SERVICE_NAME}-error.log</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/var/log/nova/${SERVICE_NAME}/errors/${SERVICE_NAME}-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_BASE_DIR}/${SERVICE_NAME}/errors/${SERVICE_NAME}-error.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>60</maxHistory>
         </rollingPolicy>
 

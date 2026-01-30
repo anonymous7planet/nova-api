@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <!-- FILE 로그 패턴: MDC 적용 -->
+<!--    <property name="FILE_LOG_PATTERN"-->
+<!--              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg-->
+<!--                      [traceId=%X{traceId} requestId=%X{requestId}-->
+<!--                       userId=%X{X-User-Id} role=%X{X-User-Role}-->
+<!--                       device=%X{X-Device-Type} ip=%X{X-Client-IP}]-->
+<!--                      %n"-->
+<!--    />-->
+
+<!--    <property name="FILE_LOG_PATTERN"-->
+<!--              value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){blue} %clr(%-5level) %clr([${SERVICE_NAME}]){cyan} %clr([%thread]){faint} %clr(%logger{36}){magenta} - %msg %clr(%replace([traceId=%X{traceId}]){'\[traceId=\]', ''}){yellow}%clr(%replace([requestId=%X{requestId}]){'\[requestId=\]', ''}){yellow}%clr(%replace([clientIp=%X{clientIp}]){'\[clientIp=\]', ''}){green}%clr(%replace([userAgent=%X{userAgent}]){'\[userAgent=\]', ''}){green}%clr(%replace([userId=%X{userId}]){'\[userId=\]', ''}){cyan}%clr(%replace([userUuid=%X{userUuid}]){'\[userUuid=\]', ''}){cyan}%clr(%replace([userRole=%X{userRole}]){'\[userRole=\]', ''}){cyan}%n"/>-->
+
+    <property name="FILE_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [${SERVICE_NAME}] [%thread] %logger{36} - %msg%replace( [traceId=%X{traceId}]){' \[traceId=\]', ''}%replace( [requestId=%X{requestId}]){' \[requestId=\]', ''}%replace( [clientIp=%X{clientIp}]){' \[clientIp=\]', ''}%replace( [userAgent=%X{userAgent}]){' \[userAgent=\]', ''}%replace( [userId=%X{userId}]){' \[userId=\]', ''}%replace( [userUuid=%X{userUuid}]){' \[userUuid=\]', ''}%replace( [userRole=%X{userRole}]){' \[userRole=\]', ''}%n"/>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_BASE_DIR}/${SERVICE_NAME}/${SERVICE_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>
+                ${LOG_BASE_DIR}/${SERVICE_NAME}/logs/${SERVICE_NAME}.%d{yyyy-MM-dd}.log
+            </fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="FILE" />
+        <queueSize>2048</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <neverBlock>true</neverBlock>
+        <includeCallerData>false</includeCallerData>
+    </appender>
+</included>
