@@ -27,20 +27,6 @@ dependencies {
     implementation group: 'org.json', name: 'json', version: '20231013'
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.3'
 
-
-    // Spring Security
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-
-    // JWT (jjwt API + impl + jackson)
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
-
-    // PasswordEncoder용 BCrypt
-    implementation 'org.springframework.security:spring-security-crypto'
-
-    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-
     // nova-core
     implementation project(path : ':library:nova-core', configuration : 'default')
 

@@ -3,20 +3,16 @@ rootProject.name = 'nova-api'
 // Infrastructure
 include 'infra:nova-config-server'
 findProject(':infra:nova-config-server')?.name = 'nova-config-server'
-
 include 'infra:nova-discovery-server'
 findProject(':infra:nova-discovery-server')?.name = 'nova-discovery-server'
-
 include 'infra:nova-gateway-server'
 findProject(':infra:nova-gateway-server')?.name = 'nova-gateway-server'
-
 
 // services
 include 'services:nova-auth-service'
 findProject(':services:nova-auth-service')?.name = 'nova-auth-service'
 include 'services:nova-system-service'
 findProject(':services:nova-system-service')?.name = 'nova-system-service'
-
 
 // library
 include 'library:nova-core'

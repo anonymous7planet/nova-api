@@ -47,9 +47,6 @@ subprojects {
         testCompileOnly 'org.projectlombok:lombok'
         testAnnotationProcessor 'org.projectlombok:lombok'
 
-        // === 공통 유틸/로깅 ===
-        implementation 'org.slf4j:slf4j-api'
-        implementation 'ch.qos.logback:logback-classic'
     }
 }
 

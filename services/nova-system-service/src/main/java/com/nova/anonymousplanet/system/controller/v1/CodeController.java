@@ -35,7 +35,6 @@ public class CodeController {
 
     private final CodeService codeService;
 
-
     /**
      * [1] 시스템 전체 Enum 코드 목록 조회
      * @return 각 카테고리별 Enum 코드 리스트 맵

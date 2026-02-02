@@ -7,11 +7,10 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 @EnableFeignClients
 @EnableDiscoveryClient
-@EnableScheduling
 @ComponentScan(value = "com.nova.anonymousplanet")
 @EntityScan(value = "com.nova.anonymousplanet") // entity 스캔 범위 설정
 @SpringBootApplication

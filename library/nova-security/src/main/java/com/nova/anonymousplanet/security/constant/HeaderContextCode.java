@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.gateway.constant;
+package com.nova.anonymousplanet.security.constant;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum LogContextCode {
+public enum HeaderContextCode {
     TRACE_ID("X-Trace-Id", "traceId", true),
     REQUEST_ID("X-Request-Id", "requestId", false),
 
@@ -40,6 +40,7 @@ public enum LogContextCode {
 
     GATEWAY_SECRET("X-Gateway-Secret", null, false),
     SERVICE_NAME("X-Service-Name", null, false)
+
     ;
 
     private final String headerKey;

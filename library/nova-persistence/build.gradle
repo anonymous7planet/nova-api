@@ -16,21 +16,23 @@ jar {
 }
 
 def queryDslVersion = "7.0"
-def querydslDir = layout.buildDirectory.dir("generated/querydsl").get().asFile
+def querydslMainDir = layout.buildDirectory.dir("generated/querydsl/main")
+def querydslTestDir = layout.buildDirectory.dir("generated/querydsl/test")
 
-tasks.withType(JavaCompile).configureEach {
-    options.generatedSourceOutputDirectory.set(querydslDir)
-}
+plugins.withId("java-library") {
 
-sourceSets {
-    main {
-        java {
-            srcDirs += querydslDir
+    tasks.withType(JavaCompile).configureEach {
+        if (name.contains("Test")) {
+            generatedSourceOutputDirectory = querydslTestDir
+        } else {
+            generatedSourceOutputDirectory = querydslMainDir
         }
     }
 }
-configurations {
-    querydsl.extendsFrom compileClasspath
+// 핵심: clean 시 생성된 폴더도 지우도록 설정
+clean {
+    delete querydslMainDir
+    delete querydslTestDir
 }
 
 dependencies {

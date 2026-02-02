@@ -1,8 +1,10 @@
 package com.nova.anonymousplanet.gateway.configuration;
 
 import com.nova.anonymousplanet.gateway.configuration.properties.JwtAuthProperties;
+import com.nova.anonymousplanet.gateway.constant.LogContextCode;
 import com.nova.anonymousplanet.gateway.filter.JwtAuthenticationGatewayFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +18,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class GatewayRouteConfiguration {
+
+    @Value("${spring.application.name}")
+    private String serviceName;
+
+    @Value("${nova.security.gateway-secret:}")
+    private String gatewaySecret;
+
+
     @Bean
     public RouteLocator routeLocator(RouteLocatorBuilder builder,
                                      JwtAuthenticationGatewayFilter jwtAuthenticationGatewayFilter,
@@ -27,19 +37,13 @@ public class GatewayRouteConfiguration {
         jwtAuthConfig.setExcludedPaths(authProperties.getExcludedPaths());
 
         return builder.routes()
-//                .route("auth-service", r -> r
-//                                .path("/api/auth/**")
-//                                .filters(f -> f.stripPrefix(2)
-//                    .addRequestHeader("X-Gateway", "nova-gateway")  // 요청 헤더 추가
-//                                        .filter(jwtAuthenticationGatewayFilter.apply(new JwtAuthenticationGatewayFilter.Config())))
-//                                .uri("lb://nova-auth-service")
-//                )
                 .route("auth-service", r -> r
                                 .path("/api/auth/**")
                                 .filters(f -> f
                                         .stripPrefix(2)
                                         .filter(jwtAuthenticationGatewayFilter.apply(jwtAuthConfig))
-//                    .addRequestHeader("X-Gateway", "nova-gateway")  // 요청 헤더 추가
+                                        .addRequestHeader(LogContextCode.GATEWAY_SECRET.getHeaderKey(), gatewaySecret)  // 요청 헤더 추가
+                                        .addRequestHeader(LogContextCode.SERVICE_NAME.getHeaderKey(), serviceName)  // 요청 헤더 추가
                                 )
                                 .uri("lb://NOVA-AUTH-SERVICE")
                 )
@@ -50,7 +54,8 @@ public class GatewayRouteConfiguration {
 //                                                .rewritePath("/api/system/(?<segment>.*)", "/${segment}")
                                                 .stripPrefix(2)
                                                 .filter(jwtAuthenticationGatewayFilter.apply(jwtAuthConfig))
-//                    .addRequestHeader("X-Gateway", "nova-gateway")  // 요청 헤더 추가
+                                                .addRequestHeader(LogContextCode.GATEWAY_SECRET.getHeaderKey(), gatewaySecret)  // 요청 헤더 추가
+                                                .addRequestHeader(LogContextCode.SERVICE_NAME.getHeaderKey(), serviceName)  // 요청 헤더 추가
                                 )
                                 .uri("lb://NOVA-SYSTEM-SERVICE")
                 )

@@ -33,5 +33,4 @@ dependencies {
 //    implementation 'org.slf4j:slf4j-ext:2.0.9' // optional
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-//    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

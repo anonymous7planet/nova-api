@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
 }
 
 java {
@@ -16,6 +16,22 @@ jar {
 }
 
 dependencies {
+    // 1. Spring Security & Web (핵심)
+    api 'org.springframework.boot:spring-boot-starter-security'
+    compileOnly 'org.springframework.boot:spring-boot-starter-web'
+
+    // 2. OpenFeign (선택적 기능을 위한 compileOnly)
+    // 각 서비스에서 Feign을 사용 중일 때만 이 인터셉터가 활성화되도록 설계
+    api 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    // 3. 편의 및 설정용
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // 4. Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
     implementation 'org.springframework.boot:spring-boot-starter'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
