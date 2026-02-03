@@ -38,8 +38,8 @@ public class EncryptionProvider {
     private final String hashSalt;
 
     public EncryptionProvider(
-            @Value("${app.encryption.key}") String key,
-            @Value("${app.encryption.salt}") String salt
+            @Value("${nova.secret.encryption.key}") String key,
+            @Value("${nova.secret.encryption.salt}") String salt
     ) {
         if (key == null || key.getBytes(StandardCharsets.UTF_8).length != 32) {
             throw new IllegalArgumentException("AES-256 키는 정확히 32바이트여야 합니다.");

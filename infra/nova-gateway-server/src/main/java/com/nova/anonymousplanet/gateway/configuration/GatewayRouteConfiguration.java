@@ -37,16 +37,6 @@ public class GatewayRouteConfiguration {
         jwtAuthConfig.setExcludedPaths(authProperties.getExcludedPaths());
 
         return builder.routes()
-                .route("auth-service", r -> r
-                                .path("/api/auth/**")
-                                .filters(f -> f
-                                        .stripPrefix(2)
-                                        .filter(jwtAuthenticationGatewayFilter.apply(jwtAuthConfig))
-                                        .addRequestHeader(LogContextCode.GATEWAY_SECRET.getHeaderKey(), gatewaySecret)  // 요청 헤더 추가
-                                        .addRequestHeader(LogContextCode.SERVICE_NAME.getHeaderKey(), serviceName)  // 요청 헤더 추가
-                                )
-                                .uri("lb://NOVA-AUTH-SERVICE")
-                )
                 .route("system-service", r -> r
                                 .path("/api/system/**")
                                 .filters(f -> f
@@ -58,6 +48,28 @@ public class GatewayRouteConfiguration {
                                                 .addRequestHeader(LogContextCode.SERVICE_NAME.getHeaderKey(), serviceName)  // 요청 헤더 추가
                                 )
                                 .uri("lb://NOVA-SYSTEM-SERVICE")
+                )
+                .route("notification-service", r -> r
+                                .path("/api/notification/**")
+                                .filters(f -> f
+                                                // /api/system/ 부분을 뒤에 오는 모든 것($1)으로 교체
+//                                                .rewritePath("/api/system/(?<segment>.*)", "/${segment}")
+                                                .stripPrefix(2)
+                                                .filter(jwtAuthenticationGatewayFilter.apply(jwtAuthConfig))
+                                                .addRequestHeader(LogContextCode.GATEWAY_SECRET.getHeaderKey(), gatewaySecret)  // 요청 헤더 추가
+                                                .addRequestHeader(LogContextCode.SERVICE_NAME.getHeaderKey(), serviceName)  // 요청 헤더 추가
+                                )
+                                .uri("lb://NOVA-NOTIFICATION-SERVICE")
+                )
+                .route("auth-service", r -> r
+                                .path("/api/auth/**")
+                                .filters(f -> f
+                                        .stripPrefix(2)
+                                        .filter(jwtAuthenticationGatewayFilter.apply(jwtAuthConfig))
+                                        .addRequestHeader(LogContextCode.GATEWAY_SECRET.getHeaderKey(), gatewaySecret)  // 요청 헤더 추가
+                                        .addRequestHeader(LogContextCode.SERVICE_NAME.getHeaderKey(), serviceName)  // 요청 헤더 추가
+                                )
+                                .uri("lb://NOVA-AUTH-SERVICE")
                 )
             .build();
     }

@@ -11,10 +11,6 @@ import com.nova.anonymousplanet.core.constant.error.ErrorCode;
 import com.nova.anonymousplanet.core.exception.user.UserLoginException;
 import com.nova.anonymousplanet.core.exception.user.UserRegistrationException;
 import com.nova.anonymousplanet.core.util.crypto.EncryptionUtils;
-import com.nova.anonymousplanet.messaging.constant.EmailTemplateTypeCode;
-import com.nova.anonymousplanet.messaging.model.EmailPayload;
-import com.nova.anonymousplanet.messaging.model.InlineImage;
-import com.nova.anonymousplanet.messaging.service.EmailAsyncService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +44,7 @@ public class UserAuthService {
 
     private final PasswordEncoder passwordEncoder;
     private final EncryptionProvider encryptionProvider;
-    private final EmailAsyncService emailAsyncService;
+
     // 이메일 중복 검사
     @Transactional
     public void existsEmail(String email) throws Exception {
@@ -67,24 +63,6 @@ public class UserAuthService {
         persistUserWithRetry(request);
 
         // 3. 회원 가입 축하 이메일발송
-        EmailTemplateTypeCode template = EmailTemplateTypeCode.WELCOME;
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("name", request.name());
-
-        List<InlineImage> images = new ArrayList<>();
-
-        images.add(new InlineImage("logo.png", "logo"));
-
-        emailAsyncService.sendAsync(
-                new EmailPayload(
-                        request.email(),
-                        String.format(template.getTitle(), request.name()),
-                        template,
-                        variables,
-                        null,
-                        images
-                )
-        );
     }
 
     /**
