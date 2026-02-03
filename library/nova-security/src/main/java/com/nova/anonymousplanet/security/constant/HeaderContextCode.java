@@ -20,12 +20,14 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum HeaderContextCode {
+
     TRACE_ID("X-Trace-Id", "traceId", true),
     REQUEST_ID("X-Request-Id", "requestId", false),
 
     USER_ID("X-User-Id", "userId", true),
     USER_UUID("X-User-Uuid", "userUuid", true),
     USER_ROLE("X-User-Role", "userRole", true),
+    USER_STATUS("X-User-Status", null, false),
 
     CLIENT_IP("X-Client-Ip", "clientIp", true),
     USER_AGENT("User-Agent", "userAgent", true),

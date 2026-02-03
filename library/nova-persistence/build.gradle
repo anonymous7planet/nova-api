@@ -60,3 +60,48 @@ dependencies {
 //    main.java.srcDirs += querydslDir
 //}
 
+
+
+///**
+// * [Project Nova] QueryDsl 빌드 설정
+// * Main/Test 소스셋 분리 및 Jakarta Persistence 대응
+// */
+//def querydslMainDir = layout.buildDirectory.dir("generated/querydsl/main")
+//def querydslTestDir = layout.buildDirectory.dir("generated/querydsl/test")
+//
+//dependencies {
+//    // Jakarta 대응 버전 명시
+//    api 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
+//    annotationProcessor "com.querydsl:querydsl-apt:5.1.0:jakarta"
+//    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+//    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+//}
+//
+//sourceSets {
+//    main {
+//        java {
+//            srcDirs += [ querydslMainDir ]
+//        }
+//    }
+//    test {
+//        java {
+//            srcDirs += [ querydslTestDir ]
+//        }
+//    }
+//}
+//
+//tasks.withType(JavaCompile).configureEach {
+//    // Java 21의 파라미터 이름 보존 설정 (QueryDsl 매핑에 도움)
+//    options.compilerArgs << "-parameters"
+//
+//    if (name.contains("Test")) {
+//        options.generatedSourceOutputDirectory.set(querydslTestDir)
+//    } else {
+//        options.generatedSourceOutputDirectory.set(querydslMainDir)
+//    }
+//}
+//
+//clean {
+//    delete querydslMainDir
+//    delete querydslTestDir
+//}

@@ -2,10 +2,15 @@ jar {
     enabled = false
 }
 
-
 dependencies {
-    // SpringBootWeb
+    // 1. Core Spring Dependencies
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // 3. Email
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    // 4. Templating (Thymeleaf)
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
     // Spring Cloud Config Client
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
@@ -20,14 +25,6 @@ dependencies {
 
     // redis
     implementation "org.springframework.boot:spring-boot-starter-data-redis"
-
-    // JWT (jjwt API + impl + jackson)
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
-
-    // PasswordEncoder용 BCrypt
-    implementation 'org.springframework.security:spring-security-crypto'
 
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 

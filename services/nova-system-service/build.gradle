@@ -21,12 +21,6 @@ dependencies {
     // redis
     implementation "org.springframework.boot:spring-boot-starter-data-redis"
 
-    // json lib
-    implementation 'com.google.code.gson:gson:2.9.0'
-    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
-    implementation group: 'org.json', name: 'json', version: '20231013'
-    implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.3'
-
     // nova-core
     implementation project(path : ':library:nova-core', configuration : 'default')
 

@@ -8,6 +8,7 @@ import jakarta.persistence.Converter;
 
 public enum UserRoleCode implements BaseEnum<String> {
 
+    SYSTEM("ROLE_SYSTEM", "시스템 관리자"),
     ADMIN("ROLE_ADMIN", "관리자"),
     MANAGER("ROLE_MANAGER", "매니저"),
     USER("ROLE_USER", "사용자")

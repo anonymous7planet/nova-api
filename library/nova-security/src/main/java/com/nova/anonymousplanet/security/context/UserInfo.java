@@ -1,5 +1,8 @@
 package com.nova.anonymousplanet.security.context;
 
+import com.nova.anonymousplanet.security.constant.UserRoleCode;
+import com.nova.anonymousplanet.security.constant.UserStatusCode;
+
 /**
  * projectName : nova-api
  * packageName : com.nova.anonymousplanet.security.context
@@ -16,7 +19,9 @@ package com.nova.anonymousplanet.security.context;
 public record UserInfo(
         Long userId,
         String userUuid,
-        UserRoleCode userRole
+        UserRoleCode userRole,
+        UserStatusCode userStatus,
+        String ipAddress
 ) {
 
     public boolean isSystem() {

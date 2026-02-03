@@ -1,7 +1,7 @@
 package com.nova.anonymousplanet.auth.configuration;
 
-import com.nova.anonymousplanet.core.context.UserContext;
-import com.nova.anonymousplanet.core.context.UserContextHolder;
+import com.nova.anonymousplanet.security.context.UserContext;
+import com.nova.anonymousplanet.security.context.UserInfo;
 import org.springframework.data.domain.AuditorAware;
 
 import java.util.Optional;
@@ -20,10 +20,9 @@ import java.util.Optional;
   ==============================================
  */
 public class AuditorAwareImpl implements AuditorAware<Long> {
-
     @Override
     public Optional<Long> getCurrentAuditor() {
-        UserContext context = UserContextHolder.get();
+        UserInfo context = UserContext.getUserInfo();
         return Optional.ofNullable(context != null ? context.userId() : null);
     }
 }

@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.system;
+package com.nova.anonymousplanet.notification;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,12 +12,12 @@ import org.springframework.context.annotation.ComponentScan;
  * packageName : com.nova.anonymousplanet
  * fileName : ${NAME}
  * author : Jinhong Min
- * date : 2026-01-11
+ * date : 2026-02-03
  * description :
  * ==============================================
  * DATE            AUTHOR          NOTE
  * ----------------------------------------------
- * 2026-01-11      Jinhong Min      최초 생성
+ * 2026-02-03      Jinhong Min      최초 생성
  * ==============================================
  */
 
@@ -26,8 +26,8 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(value = "com.nova.anonymousplanet")
 @EntityScan(value = "com.nova.anonymousplanet") // entity 스캔 범위 설정
 @SpringBootApplication
-public class SystemServiceApplication {
+public class NotificationServiceApplication {
     public static void main(String[] args) {
-        SpringApplication.run(SystemServiceApplication.class, args);
+        SpringApplication.run(NotificationServiceApplication.class, args);
     }
 }

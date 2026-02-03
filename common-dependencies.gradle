@@ -3,7 +3,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-logging'
 
-
+    // json lib
+    // 1. 이거 하나면 위 3개(Gson, json-simple, org.json)의 기능을 모두 압도합니다.
+    implementation 'org.springframework.boot:spring-boot-starter-json'
+    // 2. 외부 웹페이지 크롤링 기능이 '실제로' 있을 때만 남겨두세요.
+    implementation 'org.jsoup:jsoup:1.17.2' // 버전도 1.15는 너무 낮습니다.
 
     // === Test ===
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

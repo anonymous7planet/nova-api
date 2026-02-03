@@ -9,6 +9,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CodeService {
 
     private final CommonCodeRepository commonCodeRepository;
+
+    private final ApplicationEventPublisher eventPublisher;
 
     // 서버 기동 시점에 한 번만 생성되어 메모리에 상주 (가장 빠름)
     private static final Map<String, CodeResponse.EnumCodeResponse<?>> SYSTEM_CODE_MAP = new ConcurrentHashMap<>();

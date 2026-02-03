@@ -13,6 +13,8 @@ include 'services:nova-auth-service'
 findProject(':services:nova-auth-service')?.name = 'nova-auth-service'
 include 'services:nova-system-service'
 findProject(':services:nova-system-service')?.name = 'nova-system-service'
+include 'services:nova-notification-service'
+findProject(':services:nova-notification-service')?.name = 'nova-notification-service'
 
 // library
 include 'library:nova-core'
@@ -29,3 +31,4 @@ findProject(':library:nova-persistence')?.name = 'nova-persistence'
 
 include 'library:nova-security'
 findProject(':library:nova-security')?.name = 'nova-security'
+

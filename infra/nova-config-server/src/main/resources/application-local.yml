@@ -1,7 +1,6 @@
 server:
   port: 8888
   shutdown: graceful
-
 spring:
   config:
     activate:
@@ -13,7 +12,7 @@ spring:
           uri: https://github.com/${GITHUB_USERNAME}/nova-api-config.git
           username: ${GITHUB_USERNAME}
           password: ${GITHUB_TOKEN}
-          search-paths: nova-discovery-server, nova-gateway-server, nova-auth-service, nova-system-service
+          search-paths: nova-discovery-server, nova-gateway-server, nova-auth-service, nova-system-service, nova-notification-service
           default-label: main
           skip-ssl-validation: true
           ignore-local-ssh-settings: true

@@ -9,7 +9,6 @@
     <root level="WARN">
         <appender-ref ref="FILE"/>
         <appender-ref ref="ERROR_FILE"/>
-<!--        <appender-ref ref="LOGSTASH"/>-->
     </root>
 
 </included>

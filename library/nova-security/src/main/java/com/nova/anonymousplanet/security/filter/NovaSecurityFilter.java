@@ -1,7 +1,8 @@
 package com.nova.anonymousplanet.security.filter;
 
 import com.nova.anonymousplanet.security.constant.HeaderContextCode;
-import com.nova.anonymousplanet.security.context.UserRoleCode;
+import com.nova.anonymousplanet.security.constant.UserRoleCode;
+import com.nova.anonymousplanet.security.constant.UserStatusCode;
 import com.nova.anonymousplanet.security.context.UserContext;
 import com.nova.anonymousplanet.security.context.UserInfo;
 import com.nova.anonymousplanet.security.handler.NovaAccessDeniedHandler;
@@ -52,13 +53,15 @@ public class NovaSecurityFilter extends OncePerRequestFilter {
 
         // 2. 서비스 간 직접 호출 시에는 'X-User-Id'가 없을 수도 있음 (Batch 작업 등)
         // 이럴 경우를 대비해 Null 체크 후 비어있을 때의 처리를 명확히 함
-        String userIdHeader = request.getHeader(HeaderContextCode.USER_ID.getHeaderKey());
-        String userUuidHeader = request.getHeader(HeaderContextCode.USER_UUID.getHeaderKey());
-        String userRoleHeader = request.getHeader(HeaderContextCode.USER_ROLE.getHeaderKey());
+        String userId = request.getHeader(HeaderContextCode.USER_ID.getHeaderKey());
+        String userUuid = request.getHeader(HeaderContextCode.USER_UUID.getHeaderKey());
+        String userRole = request.getHeader(HeaderContextCode.USER_ROLE.getHeaderKey());
+        String userStatus = request.getHeader(HeaderContextCode.USER_STATUS.getHeaderKey());
+        String ipAddress = request.getRemoteAddr();
 
         try {
-            if (userIdHeader != null && !userIdHeader.isBlank()) {
-                UserContext.setUserInfo(new UserInfo(Long.parseLong(userIdHeader), userUuidHeader, UserRoleCode.from(userRoleHeader)));
+            if (userId != null && !userId.isBlank()) {
+                UserContext.setUserInfo(new UserInfo(Long.parseLong(userId), userUuid, UserRoleCode.from(userRole), UserStatusCode.from(userStatus), ipAddress));
             } else {
                 // [선택] 서비스 간 시스템 통신일 경우 특정 'SYSTEM' 권한 ID를 부여하거나 비워둠
                 log.debug("Internal service call without User context");
