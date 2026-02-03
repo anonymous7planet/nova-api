@@ -23,7 +23,6 @@ import java.util.Optional;
  * ==============================================
  */
 @Configuration
-@EnableJpaAuditing // JPA Auditing 활성화 필수!
 public class JpaAuditConfiguration {
     /**
      * [Project Nova] AuditorAware 빈 등록
