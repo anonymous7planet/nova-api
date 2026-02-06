@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
  * ==============================================
  */
 @Configuration
-@ConfigurationProperties(prefix="nova.email")
+@ConfigurationProperties(prefix="nova.notification.email")
 @Getter
 @Setter
 public class EmailProperties {
@@ -37,6 +37,8 @@ public class EmailProperties {
 
     // 첨부파일 최대 크기(바이트) 기본 10MB
     private long maxAttachmentSize = 10* 1024 * 1024L;
+
+    private boolean templateCache = true;
 
     // SMTP 설정
     private String host = "smtp.gmail.com";

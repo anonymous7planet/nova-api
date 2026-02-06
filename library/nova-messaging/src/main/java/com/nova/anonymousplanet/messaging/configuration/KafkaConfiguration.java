@@ -4,13 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
+import org.springframework.kafka.support.converter.RecordMessageConverter;
+import org.springframework.kafka.support.converter.StringJsonMessageConverter;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
@@ -30,60 +36,64 @@ import java.util.Map;
  * 2026-02-03      Jinhong Min      최초 생성
  * ==============================================
  */
+@Configuration
 @EnableKafka
 public class KafkaConfiguration {
+    @Value("${spring.kafka.bootstrap-servers:localhost:9092}")
+    private String bootstrapServers;
 
+    @Bean
+    @Primary
+    public ObjectMapper kafkaObjectMapper() {
+        return new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .findAndRegisterModules()
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    }
 
-    /**
-     * KafkaTemplate 빈 등록
-     * 서비스에서 이 Bean을 주입받아 데이터를 전송합니다.
-     */
+    @Bean
+    public ProducerFactory<String, Object> producerFactory(ObjectMapper kafkaObjectMapper) {
+        Map<String, Object> config = new HashMap<>();
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+
+        return new DefaultKafkaProducerFactory<>(config, new StringSerializer(), new JsonSerializer<>(kafkaObjectMapper));
+    }
+
     @Bean
     public KafkaTemplate<String, Object> kafkaTemplate(ProducerFactory<String, Object> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
 
     /**
-     * ProducerFactory 설정
-     * 데이터를 JSON으로 직렬화하기 위한 설정을 포함합니다.
+     * 핵심 수정: ConsumerFactory는 String만 처리하도록 단순화
      */
     @Bean
-    public ProducerFactory<String, Object> producerFactory() {
-        Map<String, Object> configProps = new HashMap<>();
+    public ConsumerFactory<String, Object> consumerFactory() {
+        Map<String, Object> config = new HashMap<>();
+        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        // 여기서 String으로 읽어야 MessageConverter가 정상 작동함
+        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 
-        // 기본 설정 (실제 주소는 application.yml에서 덮어쓰기 가능)
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-
-        // ObjectMapper 설정 (Java 8 날짜/시간 포맷 지원)
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-
-        return new DefaultKafkaProducerFactory<>(configProps, new StringSerializer(), new JsonSerializer<>(objectMapper));
-    }
-
-    // 3. 수신(Consumer) 설정
-    @Bean
-    public ConsumerFactory<String, Object> consumerFactory(ObjectMapper objectMapper) {
-        JsonDeserializer<Object> deserializer = new JsonDeserializer<>(objectMapper);
-        deserializer.addTrustedPackages("*"); // 모든 패키지의 DTO 허용
-
-        return new DefaultKafkaConsumerFactory<>(new HashMap<>(), new StringDeserializer(), deserializer);
+        return new DefaultKafkaConsumerFactory<>(config);
     }
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory(
-            ConsumerFactory<String, Object> consumerFactory) {
+            ConsumerFactory<String, Object> consumerFactory,
+            RecordMessageConverter messageConverter) {
+
         ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
+        // @KafkaListener의 파라미터를 보고 변환해주는 핵심 설정
+        factory.setRecordMessageConverter(messageConverter);
         return factory;
     }
 
     @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper()
-                .registerModule(new JavaTimeModule()) // LocalDateTime 지원
-                .findAndRegisterModules()              // ParameterNamesModule 등 자동 등록
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    public RecordMessageConverter messageConverter(ObjectMapper kafkaObjectMapper) {
+        return new StringJsonMessageConverter(kafkaObjectMapper);
     }
 }

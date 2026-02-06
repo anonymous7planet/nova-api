@@ -8,7 +8,8 @@ dependencies {
 
     // 3. Email
     implementation 'org.springframework.boot:spring-boot-starter-mail'
-
+    implementation 'org.springframework.retry:spring-retry'
+    
     // 4. Templating (Thymeleaf)
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 

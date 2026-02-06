@@ -1,6 +1,6 @@
 package com.nova.anonymousplanet.core.event;
 
-import com.nova.anonymousplanet.core.constant.NovaEventType;
+import com.nova.anonymousplanet.core.constant.NovaEventTypeCode;
 
 import java.time.LocalDateTime;
 
@@ -18,11 +18,11 @@ import java.time.LocalDateTime;
  * ==============================================
  */
 public record NovaEvent<T>(
-        NovaEventType type,
+        NovaEventTypeCode type,
         T payload,
         LocalDateTime publishedAt
 ) {
-    public static <T> NovaEvent<T> of(NovaEventType type, T payload) {
+    public static <T> NovaEvent<T> of(NovaEventTypeCode type, T payload) {
         return new NovaEvent<>(type, payload, LocalDateTime.now());
     }
 }

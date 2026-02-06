@@ -32,7 +32,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class CodeService {
 
     private final CommonCodeRepository commonCodeRepository;
@@ -75,6 +74,7 @@ public class CodeService {
      * 그룹 코드를 기반으로 최상위 코드 리스트를 조회합니다.
      * (children 필드에 의해 하위 트리까지 JPA가 로드합니다.)
      */
+    @Transactional(readOnly = true)
     @Cacheable(value = "commonCodeTree", key = "#groupCode")
     public List<CommonCodeResponse> getCodeTree(String groupCode, String lang) {
         List<CommonCodeEntity> entities = commonCodeRepository.findRootCodesByGroupCode(groupCode);
@@ -91,6 +91,7 @@ public class CodeService {
      * @param lang   언어 코드 (ko, en, ja, zh)
      * @return 해당 언어의 코드 명칭
      */
+    @Transactional(readOnly = true)
     @Cacheable(value = "commonCodeName", key = "#codeId + '_' + #lang")
     public String getCodeName(String codeId, String lang) {
         return commonCodeRepository.findByCodeId(codeId)
@@ -101,6 +102,7 @@ public class CodeService {
     /**
      * [참고] 만약 캐시를 사용하지 않고 직접 엔티티가 필요한 경우
      */
+    @Transactional(readOnly = true)
     public CommonCodeEntity getEntity(String codeId) {
         return commonCodeRepository.findById(codeId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 코드입니다: " + codeId));

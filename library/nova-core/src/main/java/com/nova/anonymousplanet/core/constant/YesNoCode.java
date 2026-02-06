@@ -38,7 +38,7 @@ public enum YesNoCode implements BaseEnum<String> {
         return EnumUtils.fromCode(YesNoCode.class, code);
     }
 
-    @Converter(autoApply = false)
+    @Converter
     public static class YesNoCodeConverter extends BaseEnumConverter<YesNoCode, String> {
         public YesNoCodeConverter() {
             super(YesNoCode.class);

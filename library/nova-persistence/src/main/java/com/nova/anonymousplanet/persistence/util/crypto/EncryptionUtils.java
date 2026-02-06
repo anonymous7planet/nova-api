@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.core.util.crypto;
+package com.nova.anonymousplanet.persistence.util.crypto;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;

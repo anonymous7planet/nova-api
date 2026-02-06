@@ -223,7 +223,6 @@ public record UserAuthDto() {
         // 1. 사용자 식별 정보
         String email,      // email
         String name,       // 이름
-        String nickname,   // 닉네임
         GenderCode gender, // 성별
         // 2. 토큰 정보
         TokenDto.IssueResponse tokenInfo     // Access Token 및 Refresh Token 정보 DTO

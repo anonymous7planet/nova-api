@@ -6,11 +6,16 @@ import com.nova.anonymousplanet.auth.dto.v1.command.UserAuthCommand;
 import com.nova.anonymousplanet.auth.entity.UserEntity;
 import com.nova.anonymousplanet.auth.provider.crypto.EncryptionProvider;
 import com.nova.anonymousplanet.auth.repository.UserRepository;
+import com.nova.anonymousplanet.core.constant.NovaEventTypeCode;
 import com.nova.anonymousplanet.core.constant.UserRoleCode;
 import com.nova.anonymousplanet.core.constant.error.ErrorCode;
+import com.nova.anonymousplanet.core.event.email.EmailSendEvent;
+import com.nova.anonymousplanet.core.event.NovaEvent;
+import com.nova.anonymousplanet.core.event.email.InlineImage;
 import com.nova.anonymousplanet.core.exception.user.UserLoginException;
 import com.nova.anonymousplanet.core.exception.user.UserRegistrationException;
-import com.nova.anonymousplanet.core.util.crypto.EncryptionUtils;
+import com.nova.anonymousplanet.messaging.producer.NovaEventPublisher;
+import com.nova.anonymousplanet.persistence.util.crypto.EncryptionUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +50,8 @@ public class UserAuthService {
     private final PasswordEncoder passwordEncoder;
     private final EncryptionProvider encryptionProvider;
 
+    private final NovaEventPublisher novaEventPublisher;
+
     // 이메일 중복 검사
     @Transactional
     public void existsEmail(String email) throws Exception {
@@ -57,18 +64,28 @@ public class UserAuthService {
     @Transactional
     public void signup(UserAuthDto.SignupRequest request) {
         // 1. 중복 검사 (CI 해시 또는 이메일 해시 기준)
-        validateDuplicateUser(request);
+//        validateDuplicateUser(request);
 
         // 2. 회원가입 프로세스
-        persistUserWithRetry(request);
+//        persistUserWithRetry(request);
 
         // 3. 회원 가입 축하 이메일발송
+
+        // 2. 이메일 발송은 내 소관이 아님. 이벤트만 던짐!
+        EmailSendEvent payload = new EmailSendEvent(null, request.email(), "WELCOME_CONFIRM", Map.of("name",request.name(),"logo", "logo.png"), null, List.of(new InlineImage("logo.png", "logo")));
+
+        // NovaEvent라는 전사 표준 규격으로 감싸서
+        NovaEvent<EmailSendEvent> event = NovaEvent.of(NovaEventTypeCode.EMAIL_SEND_REQUESTED, payload);
+
+        // 공통 발행기(Publisher)를 통해 카프카로 툭 던짐
+        novaEventPublisher.publish(event.type().getTopic(), event);
+
     }
 
     /**
      * UUID 중복 예외 발생 시 재시도하는 로직
      */
-    private void persistUserWithRetry(UserAuthDto.SignupRequest request){
+    private UserEntity persistUserWithRetry(UserAuthDto.SignupRequest request){
         // 2. 데이터 암호화 및 해싱
         String emailHash = encryptionProvider.hashForSearch(request.email());
         String phoneHash = encryptionProvider.hashForSearch(request.phoneNumber());
@@ -108,6 +125,7 @@ public class UserAuthService {
 
                 // 저장 시도
                 userRepository.save(user);
+                return user;
             } catch (DataIntegrityViolationException e) {
                 // UUID 중복(Unique Constraint) 예외 발생 시
                 if (e.getMessage().contains("user_uuid")) {
