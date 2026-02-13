@@ -14,6 +14,7 @@ import com.nova.anonymousplanet.core.event.NovaEvent;
 import com.nova.anonymousplanet.core.event.email.InlineImage;
 import com.nova.anonymousplanet.core.exception.user.UserLoginException;
 import com.nova.anonymousplanet.core.exception.user.UserRegistrationException;
+import com.nova.anonymousplanet.core.util.RecordMapper;
 import com.nova.anonymousplanet.messaging.producer.NovaEventPublisher;
 import com.nova.anonymousplanet.persistence.util.crypto.EncryptionUtils;
 import jakarta.transaction.Transactional;
@@ -64,15 +65,13 @@ public class UserAuthService {
     @Transactional
     public void signup(UserAuthDto.SignupRequest request) {
         // 1. 중복 검사 (CI 해시 또는 이메일 해시 기준)
-//        validateDuplicateUser(request);
+        validateDuplicateUser(request);
 
         // 2. 회원가입 프로세스
-//        persistUserWithRetry(request);
+        persistUserWithRetry(request);
 
-        // 3. 회원 가입 축하 이메일발송
-
-        // 2. 이메일 발송은 내 소관이 아님. 이벤트만 던짐!
-        EmailSendEvent payload = new EmailSendEvent(null, request.email(), "WELCOME_CONFIRM", Map.of("name",request.name(),"logo", "logo.png"), null, List.of(new InlineImage("logo.png", "logo")));
+        // 3. 회원 가입 축하 이메일발송 - 이메일 발송은 내 소관이 아님. 이벤트만 던짐!
+        EmailSendEvent payload = new EmailSendEvent(null, request.email(), "WELCOME_CONFIRM", RecordMapper.toMap(request), null, List.of(new InlineImage("logo.png", "logo")));
 
         // NovaEvent라는 전사 표준 규격으로 감싸서
         NovaEvent<EmailSendEvent> event = NovaEvent.of(NovaEventTypeCode.EMAIL_SEND_REQUESTED, payload);

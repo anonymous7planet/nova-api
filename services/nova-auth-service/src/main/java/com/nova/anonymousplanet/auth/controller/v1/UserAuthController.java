@@ -38,8 +38,7 @@ public class UserAuthController {
      * 회원가입
      */
     @PostMapping("/signup")
-//    public ResponseEntity<RestEmptyResponse> signup(@RequestBody @Valid RestSingleRequest<UserAuthDto.SignupRequest> request) {
-    public ResponseEntity<RestEmptyResponse> signup(@RequestBody RestSingleRequest<UserAuthDto.SignupRequest> request) {
+    public ResponseEntity<RestEmptyResponse> signup(@RequestBody @Valid RestSingleRequest<UserAuthDto.SignupRequest> request) {
         userAuthService.signup(request.getData());
         return ResponseEntity.ok(RestEmptyResponse.success("회원 가입 성공"));
     }
