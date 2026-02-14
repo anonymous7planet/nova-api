@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RestBaseResponse {
     private boolean isSuccess; // 성공 여부 (true:성공, false:실패)
-    private String message;    // 메시지
+    private String message;    // 메시지(일단 성공시만 사용)
     private String traceId;    // 에러 추척 id Gateway에서 생성
     private String requestId;  // 요청 ID 각 서비스에서 생성(미사용)
     private String path;

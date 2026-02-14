@@ -2,7 +2,7 @@ package com.nova.anonymousplanet.core.util;
 
 import com.nova.anonymousplanet.core.constant.BaseEnum;
 import com.nova.anonymousplanet.core.constant.error.ErrorCode;
-import com.nova.anonymousplanet.core.exception.common.EnumCodeNotFoundException;
+import com.nova.anonymousplanet.core.exception.domain.common.InvalidEnumCodeException;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -17,7 +17,7 @@ public class EnumUtils {
         return Arrays.stream(enumType.getEnumConstants())
                 .filter(e -> Objects.equals(e.getCode(), code))
                 .findFirst()
-                .orElseThrow(() -> new EnumCodeNotFoundException(
-                        String.format(ErrorCode.INVALID_ENUM_CODE.getDetailMessage(), enumType.getSimpleName(), code)));
+                .orElseThrow(() -> new InvalidEnumCodeException(
+                        String.format(ErrorCode.INVALID_ENUM_VALUE.getDetailMessage(), enumType.getSimpleName(), code)));
     }
 }

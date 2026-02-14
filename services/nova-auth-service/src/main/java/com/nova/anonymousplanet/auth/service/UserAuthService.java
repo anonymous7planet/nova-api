@@ -12,8 +12,8 @@ import com.nova.anonymousplanet.core.constant.error.ErrorCode;
 import com.nova.anonymousplanet.core.event.email.EmailSendEvent;
 import com.nova.anonymousplanet.core.event.NovaEvent;
 import com.nova.anonymousplanet.core.event.email.InlineImage;
-import com.nova.anonymousplanet.core.exception.user.UserLoginException;
-import com.nova.anonymousplanet.core.exception.user.UserRegistrationException;
+import com.nova.anonymousplanet.core.exception.domain.auth.LoginFailedException;
+import com.nova.anonymousplanet.core.exception.domain.user.DuplicateEmailException;
 import com.nova.anonymousplanet.core.util.RecordMapper;
 import com.nova.anonymousplanet.messaging.producer.NovaEventPublisher;
 import com.nova.anonymousplanet.persistence.util.crypto.EncryptionUtils;
@@ -58,7 +58,7 @@ public class UserAuthService {
     public void existsEmail(String email) throws Exception {
         String encodedEmail = EncryptionUtils.encrypt(email);
         if(userRepository.existsByEmailHash(encodedEmail)) {
-            throw new UserRegistrationException(ErrorCode.USER_EMAIL_ALREADY_EXISTS);
+            throw new DuplicateEmailException();
         }
     }
 
@@ -160,14 +160,14 @@ public class UserAuthService {
      */
     public UserAuthDto.LoginResponse login(UserAuthDto.LoginRequest request) {
         UserEntity user = userRepository.findByEmailHash(request.email())
-            .orElseThrow(UserLoginException::new);
+            .orElseThrow(LoginFailedException::new);
 
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
-            throw new UserLoginException();
+            throw new LoginFailedException("패스워드 불일치");
         }
 
         if(!user.getStatus().isLoginAllowed()) {
-            throw new UserLoginException();
+            throw new LoginFailedException("회원 상태가 로그인을 허용하지 않은 상태");
         }
 
 

@@ -16,14 +16,26 @@ import com.nova.anonymousplanet.core.constant.BaseEnum;
   ==============================================
  */
 public enum ErrorGroupCode implements BaseEnum<String> {
-    COMMON("A000", "공통 오류"),
-    VALIDATION("A002", "유효성 검증 오류"),
-    AUTH("B000", "인증 관련 오류"),
-    TOKEN("C001", "JWT/토큰 관련 오류"),
-    ACCESS("C000", "권한 관련 오류"),
-    RESOURCE("D000", "자원 관련 오류"),
-    USER("U000", "회원 관련 오류"),
-    SERVER("S000", "서버 내부 오류");
+    // --- Technical (Status Based) ---
+    BAD_REQUEST("BR", "400: 잘못된 요청"),
+    VALIDATION("VAL", "400: 유효성 검증 실패"),
+    UNAUTHORIZED("ATH", "401: 인증 실패"),
+    FORBIDDEN("FOR", "403: 권한 부족"),
+    NOT_FOUND("NF", "404: 리소스 없음"),
+    CONFLICT("CON", "409: 상태 충돌/중복"),
+    SERVER_ERROR("SYS", "500: 내부 장애"),
+    EXTERNAL("EXT", "외부 연동 오류"),
+
+    // --- Business (Domain Based) ---
+    USER("USER", "회원 관리"),
+    MATCH("MATCH", "매칭/소개"),
+    CHAT("CHAT", "메시지/채팅"),
+    POINT("POINT", "결제/포인트"),
+    AD("AD", "광고/프로모션"),
+    COUPON("CPN", "쿠폰"),
+    NOTICE("NTC", "공지사항/알림")
+
+    ;
 
     private final String code;
     private final String desc;
