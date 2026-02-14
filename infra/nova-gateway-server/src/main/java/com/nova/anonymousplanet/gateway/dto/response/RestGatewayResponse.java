@@ -31,7 +31,7 @@ public record RestGatewayResponse(
                 .message("실패")
                 .path(path)
                 .traceId(traceId)
-                .requestId(traceId) // Gateway에서는 요청 ID를 traceId와 동일시하거나 별도 추출
+                .requestId(traceId) // Gateway에서는 traceId와 requestId 값이 같다
                 .error(error)
                 .build();
     }

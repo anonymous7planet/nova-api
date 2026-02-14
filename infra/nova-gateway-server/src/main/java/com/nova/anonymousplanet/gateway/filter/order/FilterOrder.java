@@ -33,6 +33,10 @@ public class FilterOrder {
     // → 헤더 기반 Locale을 정해서 downstream 서비스로 전달
     public static final int LOCALE = 20;
 
+    // 25: LocalMasterTokenFilter
+    // Local에서 테스트 편하게 하기 위해서
+    public static final int LOCAL_MASTER = 20;
+
     // 30: JWT 인증 필터
     // → JWT 검증 및 사용자 정보(id, uuid, role, status, internal-auth) 헤더 주입, whiteList검사 포함
     public static final int JWT_AUTH = 30;

@@ -69,10 +69,11 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
             // 2. Header에 Authorization 필드 유무 확인
             if (!containsAuthorization(request)) {
                 return onError(
-                    response, traceId
-                    , "인증 토큰이 누락되었습니다."
-                    , new RestGatewayResponse.GatewayErrorSet(requestPath, "G401", "[NOVA][Gateway] Header에 Authorization 필드가 존재하지 않습니다.")
-                    , HttpStatus.UNAUTHORIZED
+                    response
+                        , HttpStatus.UNAUTHORIZED
+                        , requestPath
+                        , traceId
+                        , new RestGatewayResponse.GatewayErrorSet( "G401", "Header에 필드가 존재하지 않습니다.", "[NOVA][Gateway] Header에 Authorization 필드가 존재하지 않습니다.")
                 );
             }
 
@@ -80,10 +81,11 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
             String accessToken = extractAccessToken(request);
             if (!StringUtils.hasText(accessToken)) {
                 return onError(
-                    response, traceId
-                    , "토큰 형식이 잘못되었습니다."
-                    , new RestGatewayResponse.GatewayErrorSet(requestPath, "G401", "[NOVA][Gateway] Header에 AccessToken이 'Bearer '와 함께 올바르게 존재하지 않습니다.")
-                    , HttpStatus.UNAUTHORIZED
+                    response
+                        , HttpStatus.UNAUTHORIZED
+                        , requestPath
+                        , traceId
+                        , new RestGatewayResponse.GatewayErrorSet("G401", "토큰 형식이 잘못되었습니다.", "[NOVA][Gateway] Header에 AccessToken이 'Bearer '와 함께 올바르게 존재하지 않습니다.")
                 );
             }
 
@@ -91,10 +93,11 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
             Map<String, String> errorMap = jwtTokenProvider.validateAccessToken(accessToken);
             if (errorMap != null) {
                 return onError(
-                    response, traceId
-                    , errorMap.getOrDefault("message", "토큰이 유효하지 않습니다.")
-                    , new RestGatewayResponse.GatewayErrorSet(requestPath, "G400", "[NOVA][GateWay] " + errorMap.getOrDefault("detailMessage", "JWT 유효성 검증 실패"))
-                    , HttpStatus.BAD_REQUEST
+                    response
+                        , HttpStatus.BAD_REQUEST
+                        , requestPath
+                        , traceId
+                        , new RestGatewayResponse.GatewayErrorSet("G400", "토큰이 유효하지 않습니다.", "[NOVA][GateWay] " + errorMap.getOrDefault("detailMessage", "JWT 유효성 검증 실패"))
                 );
             }
 
@@ -106,10 +109,11 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
             boolean valid = jwtRefreshTokenStore.validate(new RefreshTokenStoreDto.ValidateRequest(userUuid, deviceId));
             if (!valid) {
                 return onError(
-                    response, traceId
-                    , "토큰 정보가 만료되었거나 일치하지 않습니다."
-                    , new RestGatewayResponse.GatewayErrorSet(requestPath, "G401", "[NOVA][GateWay] Redis의 Refresh Token 정보 불일치 또는 만료.")
-                    , HttpStatus.UNAUTHORIZED
+                    response
+                        , HttpStatus.UNAUTHORIZED
+                        , requestPath
+                        , traceId
+                    , new RestGatewayResponse.GatewayErrorSet("G401", "토큰 정보가 만료되었거나 일치하지 않습니다.", "[NOVA][GateWay] Redis의 Refresh Token 정보 불일치 또는 만료.")
                 );
             }
 
@@ -178,11 +182,11 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
     /**
      * 오류 발생 시 RestGatewayResponse DTO 형식으로 JSON 응답을 반환합니다.
      */
-    private Mono<Void> onError(ServerHttpResponse response, String requestId, String message, RestGatewayResponse.GatewayErrorSet error, HttpStatus status) {
+    private Mono<Void> onError(ServerHttpResponse response, HttpStatus status, String path, String traceId, RestGatewayResponse.GatewayErrorSet error) {
         response.setStatusCode(status);
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
-        RestGatewayResponse errorResponse = RestGatewayResponse.error(message, requestId, error);
+        RestGatewayResponse errorResponse = RestGatewayResponse.error(path, traceId, error);
 
         DataBuffer buffer = null;
         try {
@@ -202,19 +206,6 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
     @Setter
     public static class Config {
         private List<String> excludedPaths = new ArrayList<>();
-
-//        public Config() {
-//            // 기본값 설정
-//            this.excludedPaths = List.of(
-//                    "/v1/signup",
-//                    "/v1/login",
-//                    "/v1/token/refresh",
-//                    "/v1/health",
-//                    "/v1/code/system",
-//                    "/v1/code/system/**",
-//                    "/v1/code/group"
-//            );
-//        }
     }
 
     @Override
