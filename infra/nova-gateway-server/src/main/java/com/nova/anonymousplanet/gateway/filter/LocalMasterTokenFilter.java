@@ -23,6 +23,7 @@ import reactor.core.publisher.Mono;
  * 2026-02-14      Jinhong Min      최초 생성
  * ==============================================
  */
+// FIXME : 작업중
 @Component
 @Profile("local") // 핵심: application.yml의 active profile이 local일 때만 동작
 public class LocalMasterTokenFilter implements GlobalFilter, Ordered {
