@@ -5,7 +5,7 @@ server:
 spring:
   config:
     activate:
-      on-profile: local
+      on-profile: docker
 
   cloud:
     config:
@@ -25,7 +25,7 @@ spring:
       env:
         enabled: true
   kafka:
-    bootstrap-servers: ${nova.kafka.host:127.0.0.1}:${nova.kafka.port:9092}
+    bootstrap-servers: ${nova.kafka.host:nova-kafka}:${nova.kafka.port:9092}
 
 eureka:
   client:
@@ -63,12 +63,12 @@ nova:
       password: ${GITHUB_TOKEN}
   # 2. 디스커버리 서버(Eureka) 설정
   discovery:
-    host: ${DISCOVERY_SERVER_HOST:127.0.0.1}
+    host: ${DISCOVERY_SERVER_HOST:nova-discovery-server}
     port: ${DISCOVERY_SERVER_PORT:8761}
     user:
       name: ${DISCOVERY_ADMIN_NAME:admin}
       password: ${DISCOVERY_ADMIN_PASSWORD:admin}
 
   kafka:
-    host: ${KAFKA_SERVER_HOST:127.0.0.1}
+    host: ${KAFKA_SERVER_HOST:nova-kafka}
     port: ${KAFKA_SERVER_PORT:9092}

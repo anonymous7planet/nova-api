@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <!-- infra는 조용해야 한다 -->
+    <logger name="com.nova.anonymousplanet" level="INFO"/>
+    <logger name="org.springframework.cloud.config.server" level="INFO"/>
+    <logger name="org.eclipse.jgit" level="WARN"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</included>

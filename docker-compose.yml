@@ -1,0 +1,194 @@
+version: '3.8' # Docker Compose 파일 형식 버전
+
+# [COMMON] 모든 서비스가 공통으로 사용하는 설정 (중복 제거용)
+x-common-config: &common-config
+  # TARGET_ENV 변수로 환경 파일 동적 선택 (기본값 .env.local)
+  env_file: ./env/.env.${TARGET_ENV:-docker}
+  networks:
+    - nova-network
+
+services:
+  # --- [DATABASE] 데이터 저장소 (MySQL) ---
+  nova-mysql:
+    <<: *common-config
+    image: mysql:8.0 # 사용할 이미지 이름과 버전
+    container_name: nova-mysql # 컨테이너 이름 고정
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      # ./infra/mysql/init 폴더의 sql 파일들을 넣으면 실행 시 DB가 자동 생성됨
+      - ./infra/mysql/init:/docker-entrypoint-initdb.d
+      # 데이터가 삭제되지 않도록 내 컴퓨터(로컬) 하드에 저장
+      - ./data/mysql:/var/lib/mysql
+    healthcheck: # 이 컨테이너가 '진짜로' 준비되었는지 확인하는 로직
+      test: ["CMD", "mysqladmin", "ping", "-h", "${DB_HOST:-localhost}", "-u", "root", "-p$${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s # 10초마다 체크
+      timeout: 5s   # 5초 넘으면 실패
+      retries: 5    # 5번 실패하면 비정상으로 간주
+
+  # --- [CACHE] 세션 및 임시 데이터 (Redis) ---
+  nova-redis:
+    <<: *common-config
+    image: redis:alpine
+    container_name: nova-redis
+    ports:
+      - "${REDIS_SERVER_PORT:-6379}:6379"
+
+  # --- [MESSAGE BROKER] 서비스 간 통신 (Kafka) ---
+  zookeeper: # 카프카 관리를 위한 도구
+    <<: *common-config
+#    image: bitnami/zookeeper:3.9.1
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  nova-kafka: # 메시지 큐 (비동기 통신용)
+    <<: *common-config
+#    image: bitnami/kafka:3.7.0
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: nova-kafka
+    environment:
+      # Confluent 이미지는 이 설정값들이 필수입니다.
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://nova-kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "${KAFKA_SERVER_PORT:-9092}:9092"
+    depends_on:
+      - zookeeper
+
+  # --- [SPRING CLOUD INFRA] 설정 서버 (Config Server) ---
+  config-server:
+    <<: *common-config
+    build: # 소스코드를 직접 빌드하여 이미지 생성, 컨텍스트를 Root로 잡아 라이브러리 참조 가능하게 함
+      context: ./
+      dockerfile: infra/nova-config-server/Dockerfile
+    container_name: nova-config-server
+    ports:
+      - "${CONFIG_SERVER_PORT:-8888}:8888"
+    healthcheck: # 설정 서버가 완전히 떠야 다른 서비스들이 시작 가능함
+      test: ["CMD", "curl", "-f", "http://${CONFIG_SERVER_HOST:-localhost}:${CONFIG_SERVER_PORT:-8888}${HEALTH_CHECK_PATH:-/actuator/health}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s # 앱이 뜨는 데 시간이 걸리므로 30초 대기 후 체크 시작
+
+  # --- [SPRING CLOUD INFRA] 서비스 주소록 (Eureka Server) ---
+  discovery-server:
+    <<: *common-config
+    build: # 소스코드를 직접 빌드하여 이미지 생성, 컨텍스트를 Root로 잡아 라이브러리 참조 가능하게 함
+      context: ./
+      dockerfile: infra/nova-discovery-server/Dockerfile
+    container_name: nova-discovery-server
+    ports:
+      - "${DISCOVERY_SERVER_PORT:-8761}:8761"
+    depends_on:
+      config-server:
+        condition: service_healthy # Config Server가 'Healthy' 상태일 때만 실행
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://${DISCOVERY_SERVER_HOST:-localhost}:${DISCOVERY_SERVER_PORT:-8761}${HEALTH_CHECK_PATH:-/actuator/health}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+
+
+  # --- [BUSINESS SERVICE]
+  # --- [1] 시스템 관리 서비스 (System) ---
+  system-service:
+    <<: *common-config
+    build: # 소스코드를 직접 빌드하여 이미지 생성, 컨텍스트를 Root로 잡아 라이브러리 참조 가능하게 함
+      context: ./
+      dockerfile: services/nova-system-service/Dockerfile
+    container_name: nova-system-service
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      nova-mysql:
+        condition: service_healthy
+    healthcheck:
+      # 서비스별 포트 변수만 바꿔서 적용
+      test: [ "CMD", "curl", "-f", "http://${SYSTEM_SERVICE_HOST:-localhost}:${SYSTEM_SERVICE_PORT:-9000}${HEALTH_CHECK_PATH:-/actuator/health}" ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 40s # Spring Boot는 초기 구동 시간이 길어서 넉넉히 설정
+
+  # --- [2] 알림 관리 서비스 (Notification) ---
+  notification-service:
+    <<: *common-config
+    build: # 소스코드를 직접 빌드하여 이미지 생성, 컨텍스트를 Root로 잡아 라이브러리 참조 가능하게 함
+      context: ./
+      dockerfile: services/nova-notification-service/Dockerfile
+    container_name: nova-notification-service
+    depends_on:
+      discovery-server:
+        condition: service_healthy # 주소록 서버가 준비되어야 함
+      nova-mysql:
+        condition: service_healthy # DB가 준비되어야 함
+      system-service:
+        condition: service_healthy
+    healthcheck:
+      # 서비스별 포트 변수만 바꿔서 적용
+      test: [ "CMD", "curl", "-f", "http://${NOTIFICATION_SERVICE_HOST:-localhost}:${NOTIFICATION_SERVICE_PORT:-9001}${HEALTH_CHECK_PATH:-/actuator/health}" ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 40s # Spring Boot는 초기 구동 시간이 길어서 넉넉히 설정
+
+  # --- [3] 유저 인증 서비스 (Auth) ---
+  auth-service:
+    <<: *common-config
+    build: # 소스코드를 직접 빌드하여 이미지 생성, 컨텍스트를 Root로 잡아 라이브러리 참조 가능하게 함
+      context: ./
+      dockerfile: services/nova-auth-service/Dockerfile
+    container_name: nova-auth-service
+    depends_on:
+      discovery-server:
+        condition: service_healthy # 주소록 서버가 준비되어야 함
+      nova-mysql:
+        condition: service_healthy # DB가 준비되어야 함
+      notification-service:
+        condition: service_healthy
+    healthcheck:
+      # 서비스별 포트 변수만 바꿔서 적용
+      test: [ "CMD", "curl", "-f", "http://${AUTH_SERVICE_HOST:-localhost}:${AUTH_SERVICE_PORT:-9002}${HEALTH_CHECK_PATH:-/actuator/health}" ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 40s # Spring Boot는 초기 구동 시간이 길어서 넉넉히 설정
+
+
+  # --- [GATEWAY] 시스템 대문 (Gateway) ---
+  gateway-server:
+    <<: *common-config
+    build: # 소스코드를 직접 빌드하여 이미지 생성, 컨텍스트를 Root로 잡아 라이브러리 참조 가능하게 함
+      context: ./
+      dockerfile: infra/nova-gateway-server/Dockerfile
+    container_name: nova-gateway-server
+    ports:
+      - "${GATEWAY_SERVER_PORT:-8080}:8080" # 사용자는 오직 8080 포트로만 접속
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+#      auth-service:
+#        condition: service_started # 인증 서비스가 최소한 '시작'은 되어야 함
+#      system-service:
+#        condition: service_started
+    healthcheck:
+      # 서비스별 포트 변수만 바꿔서 적용
+      test: [ "CMD", "curl", "-f", "http://${GATEWAY_SERVER_HOST:-localhost}:${GATEWAY_SERVER_PORT:-8080}${HEALTH_CHECK_PATH:-/actuator/health}" ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 40s # Spring Boot는 초기 구동 시간이 길어서 넉넉히 설정
+
+
+# 서비스들이 서로 소통할 가상 네트워크 설정
+networks:
+  nova-network:
+    name: "${NETWORK_NAME:-nova-network}"
+    driver: bridge

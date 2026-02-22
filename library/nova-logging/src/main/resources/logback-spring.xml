@@ -17,21 +17,19 @@
     <!-- 서비스 이름 -->
     <springProperty scope="context" name="SERVICE_NAME" source="spring.application.name"/>
 
-    <if condition='property("springProfile").contains("local")'>
-        <then><property name="LOG_BASE_DIR" value="./logs"/></then>
-        <else><property name="LOG_BASE_DIR" value="/var/log/nova"/></else>
-    </if>
+<!--    <if condition='property("springProfile").contains("local") || property("springProfile").contains("docker")'>-->
+<!--        <then><property name="LOG_BASE_DIR" value="./logs"/></then>-->
+<!--        <else><property name="LOG_BASE_DIR" value="/var/log/nova"/></else>-->
+<!--    </if>-->
 
+    <property name="LOG_BASE_DIR" value="/var/log/nova"/>
     <!-- Appender 정의 -->
-<!--    <include resource="logback-appender.xml"/>-->
-
-
-
-    <!-- Appender 정의 -->
-    <springProfile name="local">
+    <springProfile name="local | docker">
+        <property name="LOG_BASE_DIR" value="./logs"/>
         <include resource="logback/appender/console-appender.xml"/>
     </springProfile>
-    <springProfile name="!local">
+
+    <springProfile name="dev | prod | stage">
         <include resource="logback/appender/file-appender.xml"/>
         <include resource="logback/appender/error-appender.xml"/>
     </springProfile>

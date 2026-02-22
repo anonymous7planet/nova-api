@@ -17,13 +17,15 @@
     <!-- 서비스 이름 -->
     <springProperty scope="context" name="SERVICE_NAME" source="spring.application.name" defaultValue="nova-gateway-server"/>
 
-    <if condition='property("springProfile").contains("local")'>
-        <then><property name="LOG_BASE_DIR" value="./logs"/></then>
-        <else><property name="LOG_BASE_DIR" value="/var/log/nova"/></else>
-    </if>
+    <property name="LOG_BASE_DIR" value="/var/log/nova"/>
 
     <!-- Appender 정의 -->
-    <include resource="logback/appender/logback-appender.xml"/>
+    <springProfile name="local | docker">
+        <property name="LOG_BASE_DIR" value="./logs"/>
+        <include resource="logback/appender/console-appender.xml"/>
+    </springProfile>
+
+    <!-- Appender 정의 -->
     <include resource="logback/appender/access-appender.xml"/>
     <include resource="logback/appender/slow-appender.xml"/>
     <include resource="logback/appender/error-appender.xml"/>

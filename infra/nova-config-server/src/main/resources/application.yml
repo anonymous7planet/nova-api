@@ -3,12 +3,8 @@ spring:
     name: nova-config-server
     group: infra
   profiles:
+    active: local # 기본 프로필
     group:
-      default:
-        - local
-      local:
-        - local
-      dev:
-        - dev
-      prod:
-        - prod
+      local: ["local"]
+      dev: ["dev"]
+      prod: ["prod"]

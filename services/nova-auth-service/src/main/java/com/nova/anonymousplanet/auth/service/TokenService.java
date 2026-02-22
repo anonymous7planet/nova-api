@@ -21,8 +21,7 @@ import com.nova.anonymousplanet.auth.dto.v1.RefreshTokenStoreDto;
 import com.nova.anonymousplanet.auth.dto.v1.TokenDto;
 import com.nova.anonymousplanet.auth.service.jwt.JwtRefreshTokenStore;
 import com.nova.anonymousplanet.auth.service.jwt.JwtTokenProvider;
-import com.nova.anonymousplanet.core.exception.token.TokenException;
-import com.nova.anonymousplanet.core.exception.token.TokenValidationException;
+import com.nova.anonymousplanet.core.exception.domain.auth.InvalidTokenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -50,13 +49,13 @@ public class TokenService {
         // 유효한 refreshToken인지 확인
         boolean tokenValid = tokenProvider.validateRefreshToken(refreshToken);
         if(!tokenValid) {
-            throw new TokenException();
+            throw new InvalidTokenException();
         }
 
         // redis에 토큰 정보 저장되어있는지 확인
         boolean storeValid = tokenStore.validate(RefreshTokenStoreDto.ValidateRequest.from(refreshToken, request));
         if(!storeValid) {
-            throw new TokenException();
+            throw new InvalidTokenException();
         }
         RefreshTokenStoreDto.GetResponse storeData = tokenStore.get(new RefreshTokenStoreDto.GetRequest(request.userUuid(), request.deviceId())).get();
         return new TokenDto.ReIssueResponse(generateToken(
@@ -68,7 +67,7 @@ public class TokenService {
         boolean valid = tokenStore.validate(new RefreshTokenStoreDto.ValidateRequest(request.userUuid(), deviceId, request.refreshToken()));
         if(!valid){
             // 검증 실패
-            throw new TokenValidationException();
+            throw new InvalidTokenException();
         }
         tokenStore.delete(new RefreshTokenStoreDto.DeleteRequest(request.userUuid(), deviceId));
     }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <property name="LOG_PATTERN"
+              value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){blue} %clr(%-5level) %clr([${SERVICE_NAME}]){cyan} %clr([%thread]){faint} %clr(%logger{36}){magenta} - %msg %clr(%replace([traceId=%X{traceId}]){'\[traceId=\]', ''}){yellow}%clr(%replace([clientIp=%X{clientIp}]){'\[clientIp=\]', ''}){green}%clr(%replace([userAgent=%X{userAgent}]){'\[userAgent=\]', ''}){green}%clr(%replace([userId=%X{userId}]){'\[userId=\]', ''}){cyan}%clr(%replace([role=%X{userRole}]){'\[role=\]', ''}){cyan}%n"/>
+
+    <!-- Console -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+</included>

@@ -44,3 +44,5 @@ Thumbs.db
 
 #Docker Data
 /docker/data
+/data
+/env/.env.docker
