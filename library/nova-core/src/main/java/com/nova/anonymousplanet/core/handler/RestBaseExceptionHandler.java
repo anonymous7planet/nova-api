@@ -1,6 +1,7 @@
 package com.nova.anonymousplanet.core.handler;
 
 
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import com.nova.anonymousplanet.core.constant.error.ErrorCode;
 import com.nova.anonymousplanet.core.dto.v1.response.ErrorSet;
 import com.nova.anonymousplanet.core.dto.v1.response.RestEmptyResponse;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -65,6 +67,35 @@ public abstract class RestBaseExceptionHandler {
         log.warn("[ConstraintViolation Error] URI: {}, Errors: {}", request.getRequestURI(), validationErrors);
 
         return buildErrorSet(request, ErrorCode.VALIDATION_ERROR, validationErrors);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<RestEmptyResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        // 1. 내부 원인(Cause)을 추적하여 NovaApplicationException이 있는지 확인
+        Throwable cause = ex.getCause();
+        while (cause != null) {
+            if (cause instanceof NovaApplicationException nex) {
+                // 우리가 정의한 예외를 찾았다면 해당 핸들러로 위임
+                return handleApplicationException(nex, request);
+            }
+            cause = cause.getCause();
+        }
+
+        // 2. 만약 우리 예외가 아니라면 일반적인 JSON 파싱 에러로 처리
+        log.warn("[HttpMessageNotReadable] URI: {}, Message: {}", request.getRequestURI(), ex.getMessage());
+        return buildErrorSet(request, ErrorCode.VALIDATION_ERROR, Collections.emptyList());
+    }
+
+    // enum
+    @ExceptionHandler(ValueInstantiationException.class)
+    public ResponseEntity<RestEmptyResponse> handleValueInstantiationException(ValueInstantiationException ex, HttpServletRequest request) {
+        // Cause가 NovaApplicationException(또는 그 자식인 InvalidEnumCodeException)인지 확인
+        if (ex.getCause() instanceof NovaApplicationException nex) {
+            return handleApplicationException(nex, request);
+        }
+
+        // 일반적인 생성 에러인 경우 상위 핸들러로 위임
+        return handleException(ex, request);
     }
 
     @ExceptionHandler(NovaApplicationException.class)

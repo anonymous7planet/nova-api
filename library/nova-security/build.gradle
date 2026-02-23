@@ -29,6 +29,29 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
+    // HTML 이스케이프 처리를 위한 유틸리티 (StringEscapeUtils 사용)
+    // 1. commons-text를 가져오되, 내부의 취약한 lang3는 제외시킵니다.
+    implementation('org.apache.commons:commons-text:1.11.0') {
+        exclude group: 'org.apache.commons', module: 'commons-lang3'
+    }
+    // 2. 전이 의존성 취약점 해결을 위해 직접 최신 버전 명시 (3.14.0 이상 필수)
+    // 2026년 기준 가장 안정적인 3.17.0 버전을 추천합니다.
+    // 2. 'strictly'를 사용하여 어떤 라이브러리가 부르든 무조건 3.17.0으로 강제 고정
+    implementation('org.apache.commons:commons-lang3') {
+        version {
+            strictly '3.17.0'
+        }
+        because 'GHSA-j288-q9x7-2f5v 취약점 해결을 위해 하위 버전 사용을 금지함'
+    }
+
+
+
+    // 웹 에디터용 HTML Sanitize (위험 태그 제거용)
+    implementation 'org.jsoup:jsoup:1.17.2'
+
+    // Jackson 설정을 위한 기본 의존성 (Spring Boot 환경이라면 포함되어 있겠지만 명시적 선언)
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+
     // 4. Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'

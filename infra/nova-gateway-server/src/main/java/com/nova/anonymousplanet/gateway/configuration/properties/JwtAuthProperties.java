@@ -25,7 +25,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
-@ConfigurationProperties(prefix = "nova.jwt.auth")
+@ConfigurationProperties(prefix = "nova.auth")
 @Getter
 @Setter
 public class JwtAuthProperties {

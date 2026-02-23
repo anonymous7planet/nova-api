@@ -159,7 +159,7 @@ public class UserAuthService {
      * - Redis에 RefreshToken 상태 저장
      */
     public UserAuthDto.LoginResponse login(UserAuthDto.LoginRequest request) {
-        UserEntity user = userRepository.findByEmailHash(request.email())
+        UserEntity user = userRepository.findByEmailHash(encryptionProvider.hashForSearch(request.email()))
             .orElseThrow(LoginFailedException::new);
 
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {

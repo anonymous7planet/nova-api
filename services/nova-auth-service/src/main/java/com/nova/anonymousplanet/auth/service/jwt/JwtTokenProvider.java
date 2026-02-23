@@ -41,10 +41,10 @@ public class JwtTokenProvider {
     private final SecretKey refreshSecretKey;
 
     public JwtTokenProvider(
-            @Value("${nova.jwt.access-token.secret}") String accessSecretKey,
-            @Value("${nova.jwt.refresh-token.secret}") String refreshSecretKey,
-            @Value("${nova.jwt.access-token.expiration}") long accessTokenExpireMillis,
-            @Value("${nova.jwt.refresh-token.expiration}") long refreshTokenExpireMillis
+            @Value("${nova.auth.jwt.access-token.secret}") String accessSecretKey,
+            @Value("${nova.auth.jwt.refresh-token.secret}") String refreshSecretKey,
+            @Value("${nova.auth.jwt.access-token.expiration}") long accessTokenExpireMillis,
+            @Value("${nova.auth.jwt.refresh-token.expiration}") long refreshTokenExpireMillis
     ) {
         this.accessTokenExpireMillis = accessTokenExpireMillis;
         this.refreshTokenExpireMillis = refreshTokenExpireMillis;

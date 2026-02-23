@@ -22,7 +22,6 @@ import lombok.Getter;
 public abstract class NovaApplicationException extends RuntimeException {
 
     private final ErrorCode errorCode;
-    private final String message; // 프론트에 보내고 싶은 메시지(미사용)
     private final String customTitle;
     private final String customDetail;
     private final String logMessage;
@@ -38,7 +37,6 @@ public abstract class NovaApplicationException extends RuntimeException {
     protected NovaApplicationException(ErrorCode errorCode, String message, String logMessage) {
         super(logMessage);
         this.errorCode = errorCode;
-        this.message = message;
         this.customTitle = errorCode.getTitleMessage();
         this.customDetail = errorCode.getDetailMessage();
         this.logMessage = logMessage;
@@ -47,7 +45,6 @@ public abstract class NovaApplicationException extends RuntimeException {
     protected NovaApplicationException(ErrorCode errorCode, String logMessage) {
         super(logMessage);
         this.errorCode = errorCode;
-        this.message = "실패";
         this.customTitle = errorCode.getTitleMessage();
         this.customDetail = errorCode.getDetailMessage();
         this.logMessage = logMessage;
@@ -64,7 +61,6 @@ public abstract class NovaApplicationException extends RuntimeException {
     protected NovaApplicationException(ErrorCode errorCode, String message, String customTitle, String customDetail, String logMessage) {
         super(logMessage);
         this.errorCode = errorCode;
-        this.message = message;
         this.customTitle = customTitle;
         this.customDetail = customDetail;
         this.logMessage = logMessage;
@@ -73,7 +69,6 @@ public abstract class NovaApplicationException extends RuntimeException {
     protected NovaApplicationException(ErrorCode errorCode, String customTitle, String customDetail, String logMessage) {
         super(logMessage);
         this.errorCode = errorCode;
-        this.message = "실패";
         this.customTitle = customTitle;
         this.customDetail = customDetail;
         this.logMessage = logMessage;
@@ -82,7 +77,6 @@ public abstract class NovaApplicationException extends RuntimeException {
     protected NovaApplicationException(ErrorCode errorCode, String message, String logMessage, Throwable cause) {
         super(logMessage, cause); // RuntimeException의 cause로 전달
         this.errorCode = errorCode;
-        this.message = message;
         this.customTitle = errorCode.getTitleMessage();
         this.customDetail = errorCode.getDetailMessage();
         this.logMessage = logMessage;
@@ -91,7 +85,6 @@ public abstract class NovaApplicationException extends RuntimeException {
     protected NovaApplicationException(ErrorCode errorCode, String logMessage, Throwable cause) {
         super(logMessage, cause); // RuntimeException의 cause로 전달
         this.errorCode = errorCode;
-        this.message = "실패";
         this.customTitle = errorCode.getTitleMessage();
         this.customDetail = errorCode.getDetailMessage();
         this.logMessage = logMessage;

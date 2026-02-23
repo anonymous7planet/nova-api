@@ -41,10 +41,10 @@ public class EmailNotificationProvider implements NotificationProvider<EmailPayl
     @Override
     @Retryable(
             retryFor = { Exception.class },
-            maxAttemptsExpression = "${nova.notification.retry.max-attempts}",
+            maxAttemptsExpression = "${nova.notification.email.retry.max-attempts:3}",
             backoff = @Backoff(
-                    delayExpression = "${nova.notification.retry.initial-delay:2000}",
-                    multiplierExpression = "${nova.notification.retry.multiplier:2.0}"
+                    delayExpression = "${nova.notification.email.retry.initial-delay:2000}",
+                    multiplierExpression = "${nova.notification.email.retry.multiplier:2.0}"
             )
     )
     public void send(SenderDto<EmailPayload> sendDto) {

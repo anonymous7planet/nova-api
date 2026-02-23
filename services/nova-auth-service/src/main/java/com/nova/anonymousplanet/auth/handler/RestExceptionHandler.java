@@ -1,6 +1,8 @@
 package com.nova.anonymousplanet.auth.handler;
 
 import com.nova.anonymousplanet.core.handler.RestBaseExceptionHandler;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
@@ -17,5 +19,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * ==============================================
  */
 @RestControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE) // 이 핸들러를 최우선으로 적용
 public class RestExceptionHandler extends RestBaseExceptionHandler {
 }
