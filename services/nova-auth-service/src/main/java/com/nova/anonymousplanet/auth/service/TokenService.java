@@ -33,10 +33,10 @@ public class TokenService {
     private final JwtTokenProvider tokenProvider;
     private final JwtRefreshTokenStore tokenStore;
 
-    @Value("${jwt.access-token.expiration}")
+    @Value("${nova.jwt.access-token.expiration}")
     private long accessTokenExpireMillis;
 
-    @Value("${jwt.refresh-token.expiration}")
+    @Value("${nova.jwt.refresh-token.expiration}")
     private long refreshTokenExpireMillis;
 
 

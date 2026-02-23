@@ -8,3 +8,4 @@ spring:
       local: ["local"]
       dev: ["dev"]
       prod: ["prod"]
+      docker: ["docker"]

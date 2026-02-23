@@ -22,7 +22,7 @@ import java.util.List;
 
 @ConfigurationProperties(prefix = "nova.security")
 public record NovaSecurityProperties (
-        String gatewaySecret,
+        String xGatewaySecret,
         List<String> serviceWhiteList
 ){
     public NovaSecurityProperties {

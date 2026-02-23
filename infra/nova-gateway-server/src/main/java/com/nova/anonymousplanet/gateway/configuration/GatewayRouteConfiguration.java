@@ -22,7 +22,7 @@ public class GatewayRouteConfiguration {
     @Value("${spring.application.name}")
     private String serviceName;
 
-    @Value("${nova.security.gateway-secret:}")
+    @Value("${nova.security.x-gateway-secret:}")
     private String gatewaySecret;
 
 

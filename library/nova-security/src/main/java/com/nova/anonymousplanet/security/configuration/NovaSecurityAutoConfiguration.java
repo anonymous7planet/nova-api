@@ -39,7 +39,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NovaSecurityAutoConfiguration implements WebMvcConfigurer {
 
-    @Value("${nova.security.gateway-secret:}")
+    @Value("${nova.security.x-gateway-secret:}")
     private String gatewaySecret;
 
     @Value("${spring.application.name}")

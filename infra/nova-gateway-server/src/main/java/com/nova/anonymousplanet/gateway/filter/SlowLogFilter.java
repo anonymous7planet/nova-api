@@ -42,7 +42,7 @@ import java.util.Map;
 public class SlowLogFilter implements GlobalFilter, Ordered {
     private static final Logger slowLog = LoggerFactory.getLogger("slow.log");
 
-    @Value("${logging.slow.threshold-ms:1000}")
+    @Value("${nova.logging.slow.threshold-ms:1000}")
     private long slowThresholdMs;
 
     @Override
