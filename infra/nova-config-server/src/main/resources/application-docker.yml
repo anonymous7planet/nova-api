@@ -33,7 +33,7 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://${nova.discovery.user.name}:${nova.discovery.user.password}@${nova.discovery.host:127.0.0.1}:${nova.discovery.port:8761}/eureka
+      defaultZone: ${nova.discovery.protocol:http}://${nova.discovery.user.name}:${nova.discovery.user.password}@${nova.discovery.host:nova-discovery-server}:${nova.discovery.port:8761}/eureka
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     lease-renewal-interval-in-seconds: 10
@@ -55,20 +55,23 @@ management:
 
 # 8. Project Nova 변수 계층 (실제 데이터 관리)
 nova:
-  # 1. GIT 설정
+  # 1. Git 설정
   git:
     repository-name: nova-api-config
     user:
       name: ${GITHUB_USERNAME}
       password: ${GITHUB_TOKEN}
-  # 2. 디스커버리 서버(Eureka) 설정
+
+  # 2. Discovery Server(Eureka) 설정
   discovery:
+    protocol: ${DISCOVERY_SERVER_PROTOCOL:http}
     host: ${DISCOVERY_SERVER_HOST:nova-discovery-server}
     port: ${DISCOVERY_SERVER_PORT:8761}
     user:
       name: ${DISCOVERY_ADMIN_NAME:admin}
       password: ${DISCOVERY_ADMIN_PASSWORD:admin}
 
+  #3. Kafka 설정
   kafka:
     host: ${KAFKA_SERVER_HOST:nova-kafka}
     port: ${KAFKA_SERVER_PORT:9092}

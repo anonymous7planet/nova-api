@@ -141,6 +141,8 @@ public class UserAuthService {
     private void validateDuplicateUser(UserAuthDto.SignupRequest request) {
         // CI 해시로 중복 가입 여부 체크 (본인인증 기반이므로 가장 확실함)
         String ciHash = encryptionProvider.hashForSearch(request.ci());
+
+        // FIXME: Exception 캐치 안됨
         if (userRepository.existsByCiHash(ciHash)) {
             throw new RuntimeException("이미 가입된 사용자입니다.");
         }

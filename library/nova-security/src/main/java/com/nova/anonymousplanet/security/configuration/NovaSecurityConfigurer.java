@@ -7,13 +7,11 @@ import com.nova.anonymousplanet.security.handler.NovaAuthenticationEntryPoint;
 import com.nova.anonymousplanet.security.provider.DiscoveryIpProvider;
 import com.nova.anonymousplanet.security.provider.GatewayIpProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
