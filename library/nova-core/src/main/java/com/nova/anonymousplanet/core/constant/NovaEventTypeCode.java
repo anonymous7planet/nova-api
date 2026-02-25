@@ -29,5 +29,4 @@ public enum NovaEventTypeCode {
     private final String groupId;
     private final String description;
 
-
 }

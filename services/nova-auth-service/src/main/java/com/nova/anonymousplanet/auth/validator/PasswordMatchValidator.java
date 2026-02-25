@@ -1,6 +1,6 @@
-package com.nova.anonymousplanet.core.validator;
+package com.nova.anonymousplanet.auth.validator;
 
-import com.nova.anonymousplanet.core.annotation.PasswordMatch;
+import com.nova.anonymousplanet.auth.annotation.PasswordMatch;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

@@ -1,9 +1,10 @@
 package com.nova.anonymousplanet.core.constant;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.nova.anonymousplanet.core.configuration.BaseEnumConverter;
 import com.nova.anonymousplanet.core.util.EnumUtils;
 import jakarta.persistence.Converter;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /*
   projectName : nova-api
@@ -18,6 +19,8 @@ import jakarta.persistence.Converter;
   2025-09-29      Jinhong Min      최초 생성
   ==============================================
  */
+@Getter
+@RequiredArgsConstructor
 public enum AdminRoleCode implements BaseEnum<String> {
 
     SYSTEM_ADMIN("ROLE_SYSTEM", "시스템관리자"),
@@ -29,36 +32,13 @@ public enum AdminRoleCode implements BaseEnum<String> {
     private final String code;
     private final String desc;
 
-    AdminRoleCode(final String code, final String desc) {
-        this.code = code;
-        this.desc = desc;
-    }
-
     @Override
     public String getName() {
         return this.name();
     }
 
-    @Override
-    public String getCode() {
-        return this.code;
-    }
-
-    @Override
-    public String getDesc() {
-        return this.desc;
-    }
-
     @JsonCreator
     public static AdminRoleCode fromCode(String code) {
         return EnumUtils.fromCode(AdminRoleCode.class, code);
-    }
-
-
-    @Converter(autoApply = false)
-    public static class AdminRoleConverter extends BaseEnumConverter<AdminRoleCode, String> {
-        public AdminRoleConverter() {
-            super(AdminRoleCode.class);
-        }
     }
 }

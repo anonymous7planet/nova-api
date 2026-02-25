@@ -93,7 +93,6 @@ public class UserProfileEntity extends BaseEntity implements Serializable {
     private ReligionCode religion;
 
     @Comment("흡연 여부")
-    @Convert(converter = YesNoCode.YesNoCodeConverter.class)
     private YesNoCode isSmoker;
 
     @Comment("일일 흡연량 (개비)")
@@ -103,7 +102,6 @@ public class UserProfileEntity extends BaseEntity implements Serializable {
     private String smokeType;   // 연초, 전자담배 등
 
     @Comment("음주 여부")
-    @Convert(converter = YesNoCode.YesNoCodeConverter.class)
     private YesNoCode isDrinker;
 
     @Comment("주량 (병/회)")

@@ -1,11 +1,13 @@
 package com.nova.anonymousplanet.core.constant;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.nova.anonymousplanet.core.configuration.BaseEnumConverter;
 import com.nova.anonymousplanet.core.util.EnumUtils;
-import jakarta.persistence.Converter;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 
+@Getter
+@RequiredArgsConstructor
 public enum YesNoCode implements BaseEnum<String> {
     YES("Y", "Yes"),
     NO("N", "No");
@@ -13,35 +15,13 @@ public enum YesNoCode implements BaseEnum<String> {
     private final String code;
     private final String desc;
 
-    YesNoCode(final String code, final String desc) {
-        this.code = code;
-        this.desc = desc;
-    }
-
     @Override
     public String getName() {
         return this.name();
     }
 
-    @Override
-    public String getCode() {
-        return this.code;
-    }
-
-    @Override
-    public String getDesc() {
-        return this.desc;
-    }
-
     @JsonCreator
     public static YesNoCode fromCode(String code) {
         return EnumUtils.fromCode(YesNoCode.class, code);
-    }
-
-    @Converter
-    public static class YesNoCodeConverter extends BaseEnumConverter<YesNoCode, String> {
-        public YesNoCodeConverter() {
-            super(YesNoCode.class);
-        }
     }
 }

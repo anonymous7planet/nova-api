@@ -1,10 +1,13 @@
 package com.nova.anonymousplanet.core.constant;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.nova.anonymousplanet.core.configuration.BaseEnumConverter;
 import com.nova.anonymousplanet.core.util.EnumUtils;
-import jakarta.persistence.Converter;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+
+@Getter
+@RequiredArgsConstructor
 public enum GenderCode implements BaseEnum<String> {
 
     MALE("M", "남성"),
@@ -15,35 +18,13 @@ public enum GenderCode implements BaseEnum<String> {
     private final String code;
     private final String desc;
 
-    GenderCode(final String code, final String desc) {
-        this.code = code;
-        this.desc = desc;
-    }
-
     @Override
     public String getName() {
         return this.name();
     }
 
-    @Override
-    public String getCode() {
-        return this.code;
-    }
-
-    @Override
-    public String getDesc() {
-        return this.desc;
-    }
-
     @JsonCreator
     public static GenderCode fromCode(String code) {
         return EnumUtils.fromCode(GenderCode.class, code);
-    }
-
-    @Converter(autoApply = true)
-    public static class GenderCodeConverter extends BaseEnumConverter<GenderCode, String> {
-        public GenderCodeConverter() {
-            super(GenderCode.class);
-        }
     }
 }

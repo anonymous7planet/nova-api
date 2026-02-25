@@ -1,9 +1,9 @@
 package com.nova.anonymousplanet.core.constant;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.nova.anonymousplanet.core.configuration.BaseEnumConverter;
 import com.nova.anonymousplanet.core.util.EnumUtils;
-import jakarta.persistence.Converter;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * projectName : nova-api
@@ -18,6 +18,9 @@ import jakarta.persistence.Converter;
  * 2026-01-06      Jinhong Min      최초 생성
  * ==============================================
  */
+
+@Getter
+@RequiredArgsConstructor
 public enum LoginProviderCode implements BaseEnum<String>{
 
     DANBY("DANBY", "DANBY를 통해 회원가입"),
@@ -26,42 +29,16 @@ public enum LoginProviderCode implements BaseEnum<String>{
     APPLE("APPLE" , "APPLE을 통해 회원가입")
     ;
 
-
     private final String code;
     private final String desc;
-
-
-    LoginProviderCode(final String code, final String desc) {
-        this.code = code;
-        this.desc = desc;
-    }
-
 
     @Override
     public String getName() {
         return this.name();
     }
 
-    @Override
-    public String getCode() {
-        return this.code;
-    }
-
-    @Override
-    public String getDesc() {
-        return this.desc;
-    }
-
-
     @JsonCreator
-    public static LoginProviderCode LoginProviderCode(String code) {
+    public static LoginProviderCode fromCode(String code) {
         return EnumUtils.fromCode(LoginProviderCode.class, code);
-    }
-
-    @Converter
-    public static class LoginProviderCodeConverter extends BaseEnumConverter<LoginProviderCode, String> {
-        protected LoginProviderCodeConverter() {
-            super(LoginProviderCode.class);
-        }
     }
 }

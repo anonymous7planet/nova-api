@@ -70,12 +70,10 @@ public class UserEntity extends BaseEntity implements Serializable {
     private String password;
 
     @Comment("로그인 제공자 (LOCAL, KAKAO, APPLE 등)")
-    @Convert(converter = LoginProviderCode.LoginProviderCodeConverter.class)
     @Column(name = "login_provider", nullable = false, length = 10)
     private LoginProviderCode loginProvider; // 소셜 로그인 확장을 위해 추가
 
     @Comment("권한 (USER, ADMIN 등)")
-    @Convert(converter = UserRoleCode.RoleCodeConverter.class)
     @Column(name = "role_code", nullable = false, length = 20)
     private UserRoleCode role;
 
@@ -86,12 +84,10 @@ public class UserEntity extends BaseEntity implements Serializable {
     private UserStatusCode status;
 
     @Comment("서비스 이용 단계 (친구모드, 맞선모드 등)")
-    @Convert(converter = ServiceModeCode.ServiceModeCodeConverter.class)
     @Column(name = "service_mode_code", nullable = false, length = 10)
     private ServiceModeCode serviceMode;
 
     @Comment("계정 활성화 여부")
-    @Convert(converter = YesNoCode.YesNoCodeConverter.class)
     @Column(name = "active_yn", nullable = false, length = 1)
     private YesNoCode isActive;
 
@@ -110,22 +106,18 @@ public class UserEntity extends BaseEntity implements Serializable {
 
     /* --- 동의 관련 컬럼 추가 --- */
     @Comment("서비스 이용약관 동의 여부")
-    @Convert(converter = YesNoCode.YesNoCodeConverter.class)
     @Column(name = "terms_agreed_yn", nullable = false, length = 1)
     private YesNoCode isTermsAgreed;
 
     @Comment("개인정보 수집 및 이용 동의 여부")
-    @Convert(converter = YesNoCode.YesNoCodeConverter.class)
     @Column(name = "privacy_agreed_yn", nullable = false, length = 1)
     private YesNoCode isPrivacyAgreed;
 
     @Comment("위치기반 서비스 이용 동의 여부")
-    @Convert(converter = YesNoCode.YesNoCodeConverter.class)
     @Column(name = "location_agreed_yn", nullable = false, length = 1)
     private YesNoCode isLocationAgreed;
 
     @Comment("마케팅 활용 동의 여부")
-    @Convert(converter = YesNoCode.YesNoCodeConverter.class)
     @Column(name = "marketing_agreed_yn", nullable = false, length = 1)
     private YesNoCode isMarketingAgreed;
 

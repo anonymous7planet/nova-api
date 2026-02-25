@@ -1,10 +1,9 @@
 package com.nova.anonymousplanet.core.constant;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.nova.anonymousplanet.core.configuration.BaseEnumConverter;
 import com.nova.anonymousplanet.core.util.EnumUtils;
-import jakarta.persistence.Converter;
-import org.aspectj.apache.bcel.classfile.Code;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * projectName : nova-api
@@ -19,6 +18,9 @@ import org.aspectj.apache.bcel.classfile.Code;
  * 2026-01-06      Jinhong Min      최초 생성
  * ==============================================
  */
+
+@Getter
+@RequiredArgsConstructor
 public enum ServiceModeCode implements BaseEnum<String> {
     NONE("NONE", "미승인 유저"),
     FRIEND("FRIEND", "친구 모드(승인완료)"),
@@ -28,35 +30,13 @@ public enum ServiceModeCode implements BaseEnum<String> {
     private final String code;
     private final String desc;
 
-    ServiceModeCode(final String code, final String desc) {
-        this.code = code;
-        this.desc = desc;
-    }
-
     @Override
     public String getName() {
         return this.name();
     }
 
-    @Override
-    public String getCode() {
-        return this.code;
-    }
-
-    @Override
-    public String getDesc() {
-        return this.desc;
-    }
-
     @JsonCreator
     public static ServiceModeCode fromCode(String code) {
         return EnumUtils.fromCode(ServiceModeCode.class, code);
-    }
-
-    @Converter
-    public static class ServiceModeCodeConverter extends BaseEnumConverter<ServiceModeCode, String> {
-        public ServiceModeCodeConverter() {
-            super(ServiceModeCode.class);
-        }
     }
 }

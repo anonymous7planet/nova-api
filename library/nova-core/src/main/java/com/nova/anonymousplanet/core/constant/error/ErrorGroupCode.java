@@ -1,6 +1,8 @@
 package com.nova.anonymousplanet.core.constant.error;
 
 import com.nova.anonymousplanet.core.constant.BaseEnum;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /*
   projectName : nova-api
@@ -15,7 +17,10 @@ import com.nova.anonymousplanet.core.constant.BaseEnum;
   2025-10-31      Jinhong Min      최초 생성
   ==============================================
  */
+@Getter
+@RequiredArgsConstructor
 public enum ErrorGroupCode implements BaseEnum<String> {
+
     // --- Technical (Status Based) ---
     BAD_REQUEST("BR", "400: 잘못된 요청"),
     VALIDATION("VAL", "400: 유효성 검증 실패"),
@@ -40,23 +45,8 @@ public enum ErrorGroupCode implements BaseEnum<String> {
     private final String code;
     private final String desc;
 
-    ErrorGroupCode(final String code, final String desc) {
-        this.code = code;
-        this.desc = desc;
-    }
-
     @Override
     public String getName() {
         return this.name();
-    }
-
-    @Override
-    public String getCode() {
-        return this.code;
-    }
-
-    @Override
-    public String getDesc() {
-        return this.desc;
     }
 }

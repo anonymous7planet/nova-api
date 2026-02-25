@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.core.configuration;
+package com.nova.anonymousplanet.persistence.converter;
 
 import com.nova.anonymousplanet.core.constant.BaseEnum;
 import com.nova.anonymousplanet.core.util.EnumUtils;

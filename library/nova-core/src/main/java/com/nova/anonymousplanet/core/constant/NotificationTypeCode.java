@@ -1,9 +1,7 @@
 package com.nova.anonymousplanet.core.constant;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.nova.anonymousplanet.core.configuration.BaseEnumConverter;
 import com.nova.anonymousplanet.core.util.EnumUtils;
-import jakarta.persistence.Converter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -41,12 +39,5 @@ public enum NotificationTypeCode implements BaseEnum<String> {
     @JsonCreator
     public static NotificationTypeCode fromCode(String code) {
         return EnumUtils.fromCode(NotificationTypeCode.class, code);
-    }
-
-    @Converter
-    public static class NotificationTypeCodeConverter extends BaseEnumConverter<NotificationTypeCode, String> {
-        public NotificationTypeCodeConverter() {
-            super(NotificationTypeCode.class);
-        }
     }
 }

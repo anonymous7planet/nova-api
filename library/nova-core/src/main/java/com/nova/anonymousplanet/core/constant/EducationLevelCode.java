@@ -1,9 +1,10 @@
 package com.nova.anonymousplanet.core.constant;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.nova.anonymousplanet.core.configuration.BaseEnumConverter;
 import com.nova.anonymousplanet.core.util.EnumUtils;
 import jakarta.persistence.Converter;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * projectName : nova-api
@@ -18,7 +19,10 @@ import jakarta.persistence.Converter;
  * 2026-01-07      Jinhong Min      최초 생성
  * ==============================================
  */
+@Getter
+@RequiredArgsConstructor
 public enum EducationLevelCode implements BaseEnum<String> {
+
     ELEMENTARY_SCHOOL("ELEMENTARY", "초등학교 졸업"),
     MIDDLE_SCHOOL("MIDDLE", "중학교 졸업"),
     HIGH_SCHOOL("HIGH", "고등학교 졸업"),
@@ -32,35 +36,13 @@ public enum EducationLevelCode implements BaseEnum<String> {
     private final String code;
     private final String desc;
 
-    EducationLevelCode(final String code, final String desc) {
-        this.code = code;
-        this.desc = desc;
-    }
-
     @Override
     public String getName() {
         return this.name();
     }
 
-    @Override
-    public String getCode() {
-        return this.code;
-    }
-
-    @Override
-    public String getDesc() {
-        return this.desc;
-    }
-
     @JsonCreator
     public static EducationLevelCode fromCode(final String code) {
         return EnumUtils.fromCode(EducationLevelCode.class, code);
-    }
-
-    @Converter(autoApply = true)
-    public static class EduCationLevelCodeConverter extends BaseEnumConverter<EducationLevelCode, String> {
-        public EduCationLevelCodeConverter() {
-            super(EducationLevelCode.class);
-        }
     }
 }

@@ -1,9 +1,7 @@
 package com.nova.anonymousplanet.core.constant;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.nova.anonymousplanet.core.configuration.BaseEnumConverter;
 import com.nova.anonymousplanet.core.util.EnumUtils;
-import jakarta.persistence.Converter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -30,7 +28,6 @@ public enum NotificationStatusCode implements BaseEnum<String> {
     SUCCESS("SUCCESS", "[발송 성공] 사용자에게 최종적으로 발송 완료"),
     FAILED("FAILED", "[발송 실패] 네트워크 오류, 인증 오류 등 외부 요인으로 인한 실패"),
     RETRYING("RETRYING", "[재시도 중] 일시적 오류로 인해 재발송을 시도하는 상태")
-
     ;
 
     private final String code;
@@ -41,16 +38,8 @@ public enum NotificationStatusCode implements BaseEnum<String> {
         return this.name();
     }
 
-
     @JsonCreator
     public static NotificationStatusCode fromCode(String code) {
         return EnumUtils.fromCode(NotificationStatusCode.class, code);
-    }
-
-    @Converter
-    public static class NotificationStatusCodeConverter extends BaseEnumConverter<NotificationStatusCode, String> {
-        public NotificationStatusCodeConverter() {
-            super(NotificationStatusCode.class);
-        }
     }
 }
