@@ -1,9 +1,9 @@
-package com.nova.anonymousplanet.core.configuration;
+package com.nova.anonymousplanet.logging.configuration;
 
-import com.nova.anonymousplanet.core.filter.MdcClearFilter;
-import com.nova.anonymousplanet.core.filter.MdcFilter;
-import com.nova.anonymousplanet.core.filter.ReactiveMdcWebFilter;
-import com.nova.anonymousplanet.core.filter.TraceAndRequestIdFilter;
+import com.nova.anonymousplanet.logging.filter.MdcClearFilter;
+import com.nova.anonymousplanet.logging.filter.MdcFilter;
+import com.nova.anonymousplanet.logging.filter.ReactiveMdcWebFilter;
+import com.nova.anonymousplanet.logging.filter.TraceAndRequestIdFilter;
 import jakarta.servlet.Filter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

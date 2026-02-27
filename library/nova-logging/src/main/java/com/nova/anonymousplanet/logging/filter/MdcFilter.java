@@ -1,21 +1,16 @@
-package com.nova.anonymousplanet.core.filter;
+package com.nova.anonymousplanet.logging.filter;
 
 import com.nova.anonymousplanet.core.constant.LogContextCode;
-import com.nova.anonymousplanet.core.util.ClientUtils;
-import com.nova.anonymousplanet.core.util.UUIDUtils;
+import com.nova.anonymousplanet.logging.util.ClientUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
-import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * MdcFilter (Servlet)

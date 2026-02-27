@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.core.util;
+package com.nova.anonymousplanet.logging.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;

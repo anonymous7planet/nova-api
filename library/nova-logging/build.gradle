@@ -17,20 +17,28 @@ jar {
 
 
 dependencies {
+    // 1. 핵심 토대 (Constants, Utils 사용)
+    implementation project(':library:nova-core')
+
+    // 2. AOP 및 Logging
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.boot:spring-boot-starter-logging'
 
+    // 3. 필터 구동을 위한 의존성 (compileOnly 또는 optional 권장)
+    // 서블릿 환경과 리액티브 환경 모두를 지원하기 위함
+    compileOnly 'jakarta.servlet:jakarta.servlet-api'
+    compileOnly 'org.springframework.boot:spring-boot-starter-web' // servlet filter 등록용 조건
+    compileOnly 'org.springframework.boot:spring-boot-starter-webflux' // reactive filter 사용시
 
+    // 4. 자동 설정을 위한 인프라
+    annotationProcessor 'org.springframework.boot:spring-boot-autoconfigure-processor'
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
-    implementation 'org.springframework.boot:spring-boot-starter-web' // servlet filter 등록용 조건
-    implementation 'org.springframework.boot:spring-boot-starter-webflux' // reactive filter 사용시
 
-    // Logback 조건부 설정(<if>)을 위한 라이브러리
-    implementation 'org.codehaus.janino:janino:3.1.12'
-    implementation 'org.codehaus.janino:commons-compiler:3.1.12'
+    // 5. Logback 조건부 설정 (<if> 조건식 사용을 위한 Janino)
+    implementation 'org.codehaus.janino:janino'
+    implementation 'org.codehaus.janino:commons-compiler'
 
-//    implementation 'org.slf4j:slf4j-api:2.0.9'
-//    implementation 'org.slf4j:slf4j-ext:2.0.9' // optional
+    // 6. Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 }

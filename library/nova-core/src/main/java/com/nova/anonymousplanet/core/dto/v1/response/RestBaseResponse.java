@@ -2,7 +2,6 @@ package com.nova.anonymousplanet.core.dto.v1.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nova.anonymousplanet.core.dto.v1.serializer.EmptyObjectSerializer;
-import com.nova.anonymousplanet.core.util.ClientUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +29,7 @@ public class RestBaseResponse {
         this.message = message;
         this.traceId = MDC.get("traceId");
         this.requestId = MDC.get("requestId");
-        this.path = ClientUtils.getCurrentRequestUri();
+        this.path = MDC.get("path");
         this.error = error;
         this.timestamp = LocalDateTime.now();
     }

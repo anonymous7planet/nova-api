@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.core.filter;
+package com.nova.anonymousplanet.logging.filter;
 
 import com.nova.anonymousplanet.core.constant.LogContextCode;
 import lombok.extern.slf4j.Slf4j;

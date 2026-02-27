@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.core.filter;
+package com.nova.anonymousplanet.logging.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
