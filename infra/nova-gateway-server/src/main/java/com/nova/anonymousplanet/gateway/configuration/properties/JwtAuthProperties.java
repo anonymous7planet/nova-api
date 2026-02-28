@@ -40,6 +40,6 @@ public class JwtAuthProperties {
 
     @PostConstruct
     public void init() {
-        log.info(">>>> [JwtAuthProperties 주입 확인] excludedPaths: {}", excludedPaths);
+//        log.info(">>>> [JwtAuthProperties 주입 확인] excludedPaths: {}", excludedPaths);
     }
 }

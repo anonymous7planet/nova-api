@@ -37,7 +37,9 @@ public enum LogContextCode {
     LANG("X-Lang", "lang", true),
     LOCALE("X-Locale", null, false), // MDC 키가 정의되지 않은 경우 대응
     APP_VERSION("X-App-Version", "appVersion", false),
-    ACCEPT_LANGUAGE("Accept-Language", null, false)
+    ACCEPT_LANGUAGE("Accept-Language", null, false),
+
+    REQUEST_PATH("X-Request-Path", "path", true),
     ;
 
     private final String headerKey;

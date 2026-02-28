@@ -2,7 +2,6 @@ package com.nova.anonymousplanet.core.constant;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.nova.anonymousplanet.core.util.EnumUtils;
-import jakarta.persistence.Converter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

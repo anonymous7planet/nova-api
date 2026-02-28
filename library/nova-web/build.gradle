@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+    id 'java-library'
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+dependencies {
+    // 1. 핵심 토대 의존성
+    implementation project(':library:nova-core')
+
+    // 2. Web MVC & Servlet (NovaLocaleResolver 등을 위해 필요)
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // 3. Validation (Controller 파라미터 검증용)
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // 4. 자동 설정 인프라
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // 5. Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+}

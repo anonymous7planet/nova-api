@@ -1,19 +1,18 @@
 package com.nova.anonymousplanet.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.nova.anonymousplanet.core.constant.error.CommonErrorCode;
+import com.nova.anonymousplanet.core.model.response.NovaErrorResponse;
+import com.nova.anonymousplanet.core.model.response.NovaResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * projectName : nova-api
@@ -31,29 +30,18 @@ import java.util.Map;
  */
 public class NovaAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // 날짜 배열화 방지;
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setStatus(CommonErrorCode.UNAUTHORIZED.getStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
-
-        // 요청하신 ErrorSet 구조를 Map으로 직접 구성
-        Map<String, Object> errorSet = new LinkedHashMap<>();
-        errorSet.put("code", "SEC-401");
-        errorSet.put("titleMessage", "인증 실패");
-        errorSet.put("detailMessage", "로그인 정보가 없거나 유효하지 않습니다.");
-        errorSet.put("validationErrors", Collections.emptyList());
-
-        // 최종 응답 형태 구성
-        Map<String, Object> rootResponse = new LinkedHashMap<>();
-        rootResponse.put("success", false);
-        rootResponse.put("data", null);
-        rootResponse.put("error", errorSet);
-        rootResponse.put("timestamp", LocalDateTime.now().toString());
-
-        response.getWriter().write(objectMapper.writeValueAsString(rootResponse));
+        response.getWriter().write(objectMapper.writeValueAsString(
+                NovaResponse.fail(NovaErrorResponse.of(CommonErrorCode.UNAUTHORIZED))
+        ));
     }
 }

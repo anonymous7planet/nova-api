@@ -1,6 +1,6 @@
 package com.nova.anonymousplanet.auth.handler;
 
-import com.nova.anonymousplanet.core.handler.RestBaseExceptionHandler;
+import com.nova.anonymousplanet.web.handler.RestBaseExceptionHandler;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

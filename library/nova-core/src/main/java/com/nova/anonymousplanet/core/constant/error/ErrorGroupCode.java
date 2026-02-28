@@ -1,5 +1,6 @@
 package com.nova.anonymousplanet.core.constant.error;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.nova.anonymousplanet.core.constant.BaseEnum;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public enum ErrorGroupCode implements BaseEnum<String> {
     FORBIDDEN("FOR", "403: 권한 부족"),
     NOT_FOUND("NF", "404: 리소스 없음"),
     CONFLICT("CON", "409: 상태 충돌/중복"),
-    SERVER_ERROR("SYS", "500: 내부 장애"),
+    SERVER_ERROR("SRV", "500: 내부 장애"),
     EXTERNAL("EXT", "외부 연동 오류"),
 
     // --- Business (Domain Based) ---
@@ -44,6 +45,13 @@ public enum ErrorGroupCode implements BaseEnum<String> {
 
     private final String code;
     private final String desc;
+
+
+    @Override
+    @JsonValue
+    public String getCode() {
+        return this.code;
+    }
 
     @Override
     public String getName() {

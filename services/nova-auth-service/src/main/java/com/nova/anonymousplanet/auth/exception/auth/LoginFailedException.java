@@ -1,8 +1,8 @@
-package com.nova.anonymousplanet.core.exception.domain.auth;
+package com.nova.anonymousplanet.auth.exception.auth;
 
+import com.nova.anonymousplanet.auth.exception.AuthErrorCode;
 import com.nova.anonymousplanet.core.constant.error.ErrorCode;
 import com.nova.anonymousplanet.core.exception.category.BusinessException;
-import lombok.Getter;
 
 /**
  * projectName : nova-api
@@ -18,13 +18,18 @@ import lombok.Getter;
  * ==============================================
  */
 
-@Getter
 public class LoginFailedException extends BusinessException {
-    public LoginFailedException() {
-        super(ErrorCode.USER_LOGIN_FAILED);
+
+    public LoginFailedException(ErrorCode errorCode, String logMessage) {
+        super(errorCode, logMessage);
     }
 
-    public LoginFailedException(final String logMessage) {
-        super(ErrorCode.USER_LOGIN_FAILED, logMessage);
+    public LoginFailedException(String logMessage) {
+        this(AuthErrorCode.LOGIN_FAILED, logMessage);
     }
+
+    public LoginFailedException() {
+        this(null);
+    }
+
 }

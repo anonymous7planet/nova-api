@@ -1,9 +1,7 @@
-package com.nova.anonymousplanet.core.exception.domain.user;
+package com.nova.anonymousplanet.auth.exception.user;
 
-import com.nova.anonymousplanet.core.constant.error.ErrorCode;
-import com.nova.anonymousplanet.core.exception.category.ResourceNotFoundException;
-import lombok.Getter;
-import org.springframework.context.annotation.Profile;
+import com.nova.anonymousplanet.auth.exception.AuthErrorCode;
+import com.nova.anonymousplanet.core.exception.category.BusinessException;
 
 /**
  * projectName : nova-api
@@ -19,9 +17,10 @@ import org.springframework.context.annotation.Profile;
  * ==============================================
  */
 
-@Getter
-public class ProfileImageNotFoundException extends ResourceNotFoundException {
+public class ProfileImageNotFoundException extends BusinessException {
+
     public ProfileImageNotFoundException() {
-        super(ErrorCode.PROFILE_IMAGE_NOT_FOUND);
+        super(AuthErrorCode.PROFILE_IMAGE_NOT_FOUND);
     }
+
 }

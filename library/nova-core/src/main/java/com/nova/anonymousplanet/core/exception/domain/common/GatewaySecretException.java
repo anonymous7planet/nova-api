@@ -1,7 +1,7 @@
 package com.nova.anonymousplanet.core.exception.domain.common;
 
-import com.nova.anonymousplanet.core.constant.error.ErrorCode;
-import com.nova.anonymousplanet.core.exception.category.SecurityAuthException;
+import com.nova.anonymousplanet.core.constant.error.CommonErrorCode;
+import com.nova.anonymousplanet.core.exception.NovaApplicationException;
 
 /**
  * projectName : nova-api
@@ -16,12 +16,12 @@ import com.nova.anonymousplanet.core.exception.category.SecurityAuthException;
  * 2026-02-14      Jinhong Min      최초 생성
  * ==============================================
  */
-public class GatewaySecretException extends SecurityAuthException {
+public class GatewaySecretException extends NovaApplicationException {
     public GatewaySecretException() {
-        super(ErrorCode.GATEWAY_SECRET_INVALID);
+        super(CommonErrorCode.GATEWAY_SECRET_INVALID);
     }
 
     public GatewaySecretException(final String logMessage){
-        super(ErrorCode.GATEWAY_SECRET_INVALID, logMessage);
+        super(CommonErrorCode.GATEWAY_SECRET_INVALID, logMessage);
     }
 }

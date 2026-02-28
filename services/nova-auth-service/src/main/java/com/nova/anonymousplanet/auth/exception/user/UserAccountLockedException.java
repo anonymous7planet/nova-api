@@ -1,8 +1,7 @@
-package com.nova.anonymousplanet.core.exception.domain.user;
+package com.nova.anonymousplanet.auth.exception.user;
 
-import com.nova.anonymousplanet.core.constant.error.ErrorCode;
+import com.nova.anonymousplanet.auth.exception.AuthErrorCode;
 import com.nova.anonymousplanet.core.exception.category.BusinessException;
-import lombok.Getter;
 
 /**
  * projectName : nova-api
@@ -18,10 +17,10 @@ import lombok.Getter;
  * ==============================================
  */
 
-@Getter
 public class UserAccountLockedException extends BusinessException {
 
     public UserAccountLockedException() {
-        super(ErrorCode.USER_INACTIVE);
+        super(AuthErrorCode.USER_INACTIVE);
     }
+
 }

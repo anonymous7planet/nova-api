@@ -1,7 +1,11 @@
 package com.nova.anonymousplanet.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.nova.anonymousplanet.core.constant.error.CommonErrorCode;
+import com.nova.anonymousplanet.core.model.response.NovaErrorResponse;
+import com.nova.anonymousplanet.core.model.response.NovaResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
@@ -9,10 +13,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * projectName : nova-api
@@ -30,29 +30,20 @@ import java.util.Map;
  */
 public class NovaAccessDeniedHandler implements AccessDeniedHandler {
 
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // 날짜 배열화 방지;
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException {
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setStatus(CommonErrorCode.FORBIDDEN.getStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
-
-        // 요청하신 ErrorSet 구조를 Map으로 직접 구성
-        Map<String, Object> errorSet = new LinkedHashMap<>();
-        errorSet.put("code", "SEC-403");
-        errorSet.put("titleMessage", "접근 거부");
-        errorSet.put("detailMessage", "해당 요청에 대한 접근 권한이 없습니다.");
-        errorSet.put("validationErrors", Collections.emptyList());
-
-        // 최종 응답 형태 구성
-        Map<String, Object> rootResponse = new LinkedHashMap<>();
-        rootResponse.put("success", false);
-        rootResponse.put("data", null);
-        rootResponse.put("error", errorSet);
-        rootResponse.put("timestamp", LocalDateTime.now().toString());
-
-        response.getWriter().write(objectMapper.writeValueAsString(rootResponse));
+        response.getWriter().write(objectMapper.writeValueAsString(
+                NovaResponse.fail(
+                        NovaErrorResponse.of(CommonErrorCode.FORBIDDEN)
+                )
+        ));
     }
 }

@@ -39,7 +39,10 @@ public enum LogContextCode {
     ACCEPT_LANGUAGE("Accept-Language", null, false),
 
     GATEWAY_SECRET("X-Gateway-Secret", null, false),
-    SERVICE_NAME("X-Service-Name", null, false)
+    SERVICE_NAME("X-Service-Name", null, false),
+
+    REQUEST_PATH("X-Request-Path", "path", true),
+
     ;
 
     private final String headerKey;

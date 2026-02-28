@@ -1,8 +1,7 @@
-package com.nova.anonymousplanet.core.exception.domain.user;
+package com.nova.anonymousplanet.auth.exception.user;
 
-import com.nova.anonymousplanet.core.constant.error.ErrorCode;
-import com.nova.anonymousplanet.core.exception.category.InvalidRequestException;
-import lombok.Getter;
+import com.nova.anonymousplanet.auth.exception.AuthErrorCode;
+import com.nova.anonymousplanet.core.exception.category.BusinessException;
 
 /**
  * projectName : nova-api
@@ -17,10 +16,11 @@ import lombok.Getter;
  * 2026-02-14      Jinhong Min      최초 생성
  * ==============================================
  */
-@Getter
-public class DuplicateEmailException extends InvalidRequestException {
+
+public class DuplicateEmailException extends BusinessException {
 
     public DuplicateEmailException() {
-        super(ErrorCode.USER_EMAIL_ALREADY_EXISTS);
+        super(AuthErrorCode.EMAIL_ALREADY_EXISTS);
     }
+
 }

@@ -36,8 +36,8 @@ public class FilterConfiguration {
     // 필터 순서 상수 관리
     public static class FilterOrder {
         public static final int TRACE_FILTER = Ordered.HIGHEST_PRECEDENCE; // 최우선
-        public static final int MDC_SETUP_FILTER = 10;                    // 로그 설정
-        public static final int MDC_CLEAR_FILTER = 9999;                  // 최하단 (정리)
+        public static final int MDC_SETUP_FILTER = TRACE_FILTER + 1;                    // 로그 설정
+        public static final int MDC_CLEAR_FILTER = Ordered.LOWEST_PRECEDENCE;                  // 최하단 (정리)
     }
 
     @Bean

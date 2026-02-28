@@ -63,7 +63,7 @@ public class MdcFilter extends OncePerRequestFilter {
         Object attr = request.getAttribute(code.getMdcKey());
         if (attr != null) return attr.toString();
 
-        // 1. IP 특수 처리
+        // 2. IP 특수 처리
         if (code == LogContextCode.CLIENT_IP) {
             return ClientUtils.getClientIp(request);
         }

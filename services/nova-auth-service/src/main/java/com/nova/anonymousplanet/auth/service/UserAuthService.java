@@ -4,16 +4,15 @@ import com.nova.anonymousplanet.auth.dto.v1.UserAuthDto;
 import com.nova.anonymousplanet.auth.dto.v1.TokenDto;
 import com.nova.anonymousplanet.auth.dto.v1.command.UserAuthCommand;
 import com.nova.anonymousplanet.auth.entity.UserEntity;
+import com.nova.anonymousplanet.auth.exception.auth.LoginFailedException;
+import com.nova.anonymousplanet.auth.exception.user.DuplicateEmailException;
 import com.nova.anonymousplanet.auth.provider.crypto.EncryptionProvider;
 import com.nova.anonymousplanet.auth.repository.UserRepository;
 import com.nova.anonymousplanet.core.constant.NovaEventTypeCode;
 import com.nova.anonymousplanet.core.constant.UserRoleCode;
-import com.nova.anonymousplanet.core.constant.error.ErrorCode;
 import com.nova.anonymousplanet.core.event.email.EmailSendEvent;
 import com.nova.anonymousplanet.core.event.NovaEvent;
 import com.nova.anonymousplanet.core.event.email.InlineImage;
-import com.nova.anonymousplanet.core.exception.domain.auth.LoginFailedException;
-import com.nova.anonymousplanet.core.exception.domain.user.DuplicateEmailException;
 import com.nova.anonymousplanet.core.util.RecordMapper;
 import com.nova.anonymousplanet.messaging.producer.NovaEventPublisher;
 import com.nova.anonymousplanet.persistence.util.crypto.EncryptionUtils;
@@ -144,13 +143,13 @@ public class UserAuthService {
 
         // FIXME: Exception 캐치 안됨
         if (userRepository.existsByCiHash(ciHash)) {
-            throw new RuntimeException("이미 가입된 사용자입니다.");
+            throw new DuplicateEmailException();
         }
 
         // 이메일 중복 체크
         String emailHash = encryptionProvider.hashForSearch(request.email());
         if (userRepository.existsByEmailHash(emailHash)) {
-            throw new RuntimeException("이미 사용 중인 이메일입니다.");
+            throw new DuplicateEmailException();
         }
     }
 

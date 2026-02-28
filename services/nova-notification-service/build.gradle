@@ -44,4 +44,6 @@ dependencies {
     // nova-security
     implementation project(path : ':library:nova-security', configuration : 'default')
 
+    // nova-web
+    implementation project(path : ':library:nova-web', configuration : 'default')
 }

@@ -1,7 +1,7 @@
 package com.nova.anonymousplanet.core.exception.domain.common;
 
-import com.nova.anonymousplanet.core.constant.error.ErrorCode;
-import com.nova.anonymousplanet.core.exception.category.InvalidRequestException;
+import com.nova.anonymousplanet.core.constant.error.CommonErrorCode;
+import com.nova.anonymousplanet.core.exception.NovaApplicationException;
 import lombok.Getter;
 
 /**
@@ -19,9 +19,9 @@ import lombok.Getter;
  */
 
 @Getter
-public class InvalidParameterException extends InvalidRequestException {
+public class InvalidParameterException extends NovaApplicationException {
 
     public InvalidParameterException() {
-        super(ErrorCode.INVALID_PARAMETER);
+        super(CommonErrorCode.INVALID_PARAMETER);
     }
 }

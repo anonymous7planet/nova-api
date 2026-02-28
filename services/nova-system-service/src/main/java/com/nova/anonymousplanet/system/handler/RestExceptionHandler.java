@@ -1,6 +1,6 @@
 package com.nova.anonymousplanet.system.handler;
 
-import com.nova.anonymousplanet.core.handler.RestBaseExceptionHandler;
+import com.nova.anonymousplanet.web.handler.RestBaseExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
