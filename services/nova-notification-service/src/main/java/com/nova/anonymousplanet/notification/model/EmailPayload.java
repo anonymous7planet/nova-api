@@ -2,8 +2,8 @@ package com.nova.anonymousplanet.notification.model;
 
 
 
-import com.nova.anonymousplanet.core.event.email.EmailAttachment;
-import com.nova.anonymousplanet.core.event.email.InlineImage;
+import com.nova.anonymousplanet.messaging.event.email.EmailAttachment;
+import com.nova.anonymousplanet.messaging.event.email.InlineImage;
 import com.nova.anonymousplanet.notification.domain.entity.EmailHistoryEntity;
 
 import java.util.List;

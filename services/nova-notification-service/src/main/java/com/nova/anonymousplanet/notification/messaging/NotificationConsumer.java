@@ -1,8 +1,8 @@
 package com.nova.anonymousplanet.notification.messaging;
 
-import com.nova.anonymousplanet.core.event.email.EmailSendEvent;
-import com.nova.anonymousplanet.core.event.NovaEvent;
 import com.nova.anonymousplanet.messaging.consumer.AbstractEventConsumer;
+import com.nova.anonymousplanet.messaging.event.NovaEvent;
+import com.nova.anonymousplanet.messaging.event.email.EmailSendEvent;
 import com.nova.anonymousplanet.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

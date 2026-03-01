@@ -1,6 +1,6 @@
-package com.nova.anonymousplanet.core.configuration;
+package com.nova.anonymousplanet.web.configuration;
 
-import com.nova.anonymousplanet.core.handler.AsyncBaseExceptionHandler;
+import com.nova.anonymousplanet.web.handler.AsyncBaseExceptionHandler;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

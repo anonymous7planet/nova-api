@@ -32,6 +32,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum CommonErrorCode implements ErrorCode {
+
     /**
      * BR / NF / CON / ATH / FOR: 기술 공통 (Technical)
      */
@@ -66,7 +67,6 @@ public enum CommonErrorCode implements ErrorCode {
      */
     EXTERNAL_API_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, ErrorGroupCode.EXTERNAL, "201-01", "외부 서비스 연동에 실패했습니다.", DisplayTypeCode.ALERT),
     GATEWAY_TIMEOUT(HttpStatus.GATEWAY_TIMEOUT, ErrorGroupCode.EXTERNAL, "504", "외부 서버 응답 대기 시간이 초과되었습니다.", DisplayTypeCode.ALERT),
-
 
     /**
      * ATH / FOR: 보안 상세 (Authentication & Access)

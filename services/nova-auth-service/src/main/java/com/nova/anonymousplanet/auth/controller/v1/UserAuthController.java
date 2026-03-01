@@ -16,9 +16,8 @@ package com.nova.anonymousplanet.auth.controller.v1;
 
 import com.nova.anonymousplanet.auth.dto.v1.UserAuthDto;
 import com.nova.anonymousplanet.auth.service.UserAuthService;
-import com.nova.anonymousplanet.core.dto.v1.request.RestSingleRequest;
-import com.nova.anonymousplanet.core.dto.v1.response.RestEmptyResponse;
-import com.nova.anonymousplanet.core.dto.v1.response.RestSingleResponse;
+import com.nova.anonymousplanet.core.model.request.NovaRequest;
+import com.nova.anonymousplanet.core.model.response.NovaResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -38,9 +37,9 @@ public class UserAuthController {
      * 회원가입
      */
     @PostMapping("/signup")
-    public ResponseEntity<RestEmptyResponse> signup(@RequestBody @Valid RestSingleRequest<UserAuthDto.SignupRequest> request) {
-        userAuthService.signup(request.getData());
-        return ResponseEntity.ok(RestEmptyResponse.success("회원 가입 성공"));
+    public ResponseEntity<NovaResponse<Void>> signup(@RequestBody @Valid NovaRequest<UserAuthDto.SignupRequest> request) {
+        userAuthService.signup(request.body());
+        return ResponseEntity.ok(NovaResponse.success("회원 가입 성공"));
     }
 
     /**
@@ -49,8 +48,8 @@ public class UserAuthController {
      * @return
      */
     @PostMapping("/login")
-    public ResponseEntity<RestSingleResponse<UserAuthDto.LoginResponse>> login(@RequestBody @Valid RestSingleRequest<UserAuthDto.LoginRequest> request) {
-        UserAuthDto.LoginResponse response = userAuthService.login(request.getData());
-        return ResponseEntity.ok(RestSingleResponse.success(response));
+    public ResponseEntity<NovaResponse<UserAuthDto.LoginResponse>> login(@RequestBody @Valid NovaRequest<UserAuthDto.LoginRequest> request) {
+        UserAuthDto.LoginResponse response = userAuthService.login(request.body());
+        return ResponseEntity.ok(NovaResponse.success(response));
     }
 }

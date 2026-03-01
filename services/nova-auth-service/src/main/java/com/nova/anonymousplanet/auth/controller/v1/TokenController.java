@@ -2,9 +2,8 @@ package com.nova.anonymousplanet.auth.controller.v1;
 
 import com.nova.anonymousplanet.auth.dto.v1.TokenDto;
 import com.nova.anonymousplanet.auth.service.TokenService;
-import com.nova.anonymousplanet.core.dto.v1.request.RestSingleRequest;
-import com.nova.anonymousplanet.core.dto.v1.response.RestEmptyResponse;
-import com.nova.anonymousplanet.core.dto.v1.response.RestSingleResponse;
+import com.nova.anonymousplanet.core.model.request.NovaRequest;
+import com.nova.anonymousplanet.core.model.response.NovaResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -47,11 +46,11 @@ public class TokenController {
      * @return
      */
     @PostMapping("/refresh")
-    public ResponseEntity<RestSingleResponse<TokenDto.ReIssueResponse>> refresh(
+    public ResponseEntity<NovaResponse<TokenDto.ReIssueResponse>> refresh(
         @CookieValue(value = "refreshToken", required = true) String refreshToken,
-        @RequestBody @Valid RestSingleRequest<TokenDto.ReIssueRequest> request) {
+        @RequestBody @Valid NovaRequest<TokenDto.ReIssueRequest> request) {
         return ResponseEntity.ok(
-            RestSingleResponse.success(tokenService.reIssue(refreshToken, request.getData())));
+            NovaResponse.success(tokenService.reIssue(refreshToken, request.body())));
     }
 
     /**
@@ -61,9 +60,9 @@ public class TokenController {
      * @return
      */
     @DeleteMapping("/refresh/{deviceId}")
-    public ResponseEntity<RestEmptyResponse> delete(@PathVariable String deviceId, @RequestBody @Valid RestSingleRequest<TokenDto.DeleteRequest> request) {
-        tokenService.deleteToken(deviceId, request.getData());
-        return ResponseEntity.ok(RestEmptyResponse.success());
+    public ResponseEntity<NovaResponse<Void>> delete(@PathVariable String deviceId, @RequestBody @Valid NovaRequest<TokenDto.DeleteRequest> request) {
+        tokenService.deleteToken(deviceId, request.body());
+        return ResponseEntity.ok(NovaResponse.success());
     }
 
     /**
@@ -72,8 +71,8 @@ public class TokenController {
      * @return
      */
     @DeleteMapping("/refresh")
-    public ResponseEntity<RestEmptyResponse> deleteAll(@RequestBody @Valid RestSingleRequest<TokenDto.DeleteRequest> request) {
-        tokenService.deleteAllToken(request.getData());
-        return ResponseEntity.ok(RestEmptyResponse.success());
+    public ResponseEntity<NovaResponse<Void>> deleteAll(@RequestBody @Valid NovaRequest<TokenDto.DeleteRequest> request) {
+        tokenService.deleteAllToken(request.body());
+        return ResponseEntity.ok(NovaResponse.success());
     }
 }

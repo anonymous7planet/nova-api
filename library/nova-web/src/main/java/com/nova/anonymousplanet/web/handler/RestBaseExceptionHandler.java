@@ -5,22 +5,16 @@ import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import com.nova.anonymousplanet.core.constant.error.CommonErrorCode;
 import com.nova.anonymousplanet.core.constant.error.ErrorCode;
 import com.nova.anonymousplanet.core.exception.NovaApplicationException;
-import com.nova.anonymousplanet.core.exception.category.BusinessException;
-import com.nova.anonymousplanet.core.exception.category.NotFoundException;
-import com.nova.anonymousplanet.core.exception.category.SecurityAuthException;
-import com.nova.anonymousplanet.core.exception.category.ServerException;
-import com.nova.anonymousplanet.core.exception.domain.common.InvalidEnumCodeException;
+import com.nova.anonymousplanet.core.exception.common.InvalidEnumCodeException;
 import com.nova.anonymousplanet.core.model.response.NovaErrorResponse;
 import com.nova.anonymousplanet.core.model.response.NovaResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 

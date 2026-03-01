@@ -1,4 +1,5 @@
-package com.nova.anonymousplanet.core.event;
+package com.nova.anonymousplanet.messaging.event;
+
 
 import com.nova.anonymousplanet.core.constant.NovaEventTypeCode;
 

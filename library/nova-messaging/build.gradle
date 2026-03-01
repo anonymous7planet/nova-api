@@ -16,6 +16,8 @@ java {
 }
 
 dependencies {
+    implementation project(':library:nova-core')
+
     // Spring Kafka (핵심 통신 도구)
     implementation 'org.springframework.kafka:spring-kafka'
 

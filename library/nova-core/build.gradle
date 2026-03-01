@@ -16,43 +16,57 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
-dependencies {
-    // SpringBootWeb을 사용하지 않기 위해서 필요한 최소한의 라이브러리들만 추가
-    implementation 'org.springframework:spring-web'  // Spring MVC 핵심 기능만 포함 (서블릿 X)
-    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0' // HttpServletRequest 사용
-    implementation 'jakarta.validation:jakarta.validation-api:3.0.2' // Validation API
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-    // JSON
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.17.0' // 최소한의 의존성
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0' // JSON 직렬화/역직렬화 지원
-
-
-    // reactive filter사용
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
-
-    // Locale설정을 위해서 사용
-    implementation 'org.springframework:spring-webmvc'
-
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
-
 //    implementation: 이 모듈 내부에서만 해당 라이브러리를 사용합니다. auth-service가 nova-core를 의존해도 Swagger 라이브러리는 보이지 않습니다.
-//
 //    api: 이 모듈을 의존하는 상위 모듈(auth, system 등)에게도 해당 라이브러리(Swagger)를 노출합니다.
-    // SpringDoc OpenAPI 3
-    api 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
 
+
+// ① api (의존성 노출)
+// 특징: A 모듈이 api로 라이브러리를 가져오고, B가 A를 의존하면, B에서도 해당 라이브러리를 바로 사용할 수 있습니다.
+// Nova 적용: nova-core에서 모든 서비스가 공통으로 써야 하는 validation-api 같은 것은 api로 선언하는 것이 편합니다.
+// 주의: 너무 많이 쓰면 한 모듈의 수정이 모든 모듈의 재빌드를 유발하여 빌드 속도가 느려집니다.
+//
+// ② implementation (의존성 숨김)
+// 특징: 내부 로직 구현을 위해서만 사용합니다. 상위 모듈에는 노출되지 않습니다.
+// Nova 적용: 기본적으로 가장 권장되는 방식입니다. 캡슐화가 유지되어 빌드 속도가 빠릅니다.
+// 설계 팁: nova-gateway-server에서만 쓰는 로직은 무조건 implementation입니다.
+//
+// ③ compileOnly (컴파일 전용)
+// 특징: 빌드된 결과물(JAR)에는 포함되지 않습니다. 런타임에 이미 해당 환경(Tomcat 등)에 라이브러리가 존재하거나, 어노테이션 프로세서일 때 사용합니다.
+// 예시: Lombok, Servlet API (서블릿 컨테이너가 제공함).
+//
+// ④ runtimeOnly (런타임 전용)
+// 특징: 코딩할 때는 클래스를 참조할 필요가 없지만, 프로그램이 돌아갈 때 로드되어야 하는 경우입니다.
+// 예시: mysql-connector-java. 코드상에서 MySQL 클래스를 직접 import 하지는 않지만, DB 연결 시 드라이버가 필요합니다.
+dependencies {
+    // 1. Core Framework (Spring context & web abstraction)
+    // webmvc나 webflux를 직접 넣지 않고, 공통 인터페이스만 포함합니다.
+    implementation 'org.springframework:spring-web'
+
+    // 2. Validation (인터페이스만 포함하여 가볍게 유지)
+    // 실제 검증 로직 구현체는 각 서비스(web-starter)에서 담당합니다.
+    implementation 'org.hibernate.validator:hibernate-validator'
+    implementation 'jakarta.validation:jakarta.validation-api'
+    // BindingResult 및 Validation 사용을 위한 설정
+    // compileOnly를 사용하여 컴파일 시에만 참조하고, 실제 포함은 각 서비스가 결정함
+    compileOnly 'org.springframework:spring-webmvc'
+
+    // 3. JSON Serialization (Jackson)
+    // DTO(Record) 정의를 위한 어노테이션 중심 설정
+    implementation 'com.fasterxml.jackson.core:jackson-annotations'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310' // Java 8 날짜/시간 지원
+
+    // 4. Utils & Boilerplate
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // 5. Common Security/Utility (Gateway와 공유할 설정이 있을 경우)
+    // HttpServletRequest나 ServerHttpRequest 처리를 위해 compileOnly로 선언
+    // 이렇게 하면 각 서비스 환경(MVC vs WebFlux)에 맞는 라이브러리를 런타임에 사용합니다.
+    compileOnly 'jakarta.servlet:jakarta.servlet-api'
+
+    // 6. Logging (SLF4J API)
+    // MDC 사용을 위해 필요합니다.
+    // 실제 로그 구현체(Logback 등)는 각 서비스 모듈에서 담당하게 됩니다.
+    implementation 'org.slf4j:slf4j-api'
 }
-
-/**
- * Lombok안쓰는 부분에서 제외할때 사용
- configurations {
- compileOnly {
- exclude group: 'org.projectlombok', module: 'lombok'
- }
- annotationProcessor {
- exclude group: 'org.projectlombok', module: 'lombok'
- }
- }
- */

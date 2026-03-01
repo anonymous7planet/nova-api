@@ -2,7 +2,7 @@ package com.nova.anonymousplanet.core.model.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nova.anonymousplanet.core.dto.v1.serializer.EmptyObjectSerializer;
+import com.nova.anonymousplanet.core.model.serializer.EmptyObjectSerializer;
 import org.slf4j.MDC;
 
 import java.io.Serializable;
@@ -21,9 +21,10 @@ import java.time.LocalDateTime;
  * 2026-02-27      Jinhong Min      최초 생성
  * ==============================================
  */
-
+// TODO: Page응답 데이터 필요
 public record NovaResponse<T>(
-        boolean success,
+        @JsonProperty("success") // JSON 응답에서는 success로 보이게 강제
+        boolean isSuccess,
         String message,
         @JsonSerialize(nullsUsing = EmptyObjectSerializer.class) // data가 null이면 {}
         T data,
@@ -63,8 +64,12 @@ public record NovaResponse<T>(
     /**
      * 데이터 없이 메시지만 포함한 성공 응답
      */
-    public static <Object> NovaResponse<Object> success(String message) {
+    public static NovaResponse<Void> success(String message) {
         return success(null, message);
+    }
+
+    public static NovaResponse<Void> success() {
+        return success(null, "성공");
     }
 
     // --- [실패 응답 팩토리 메서드] ---

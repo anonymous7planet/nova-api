@@ -1,12 +1,12 @@
 package com.nova.anonymousplanet.notification.service;
 
 import com.nova.anonymousplanet.core.constant.NotificationTypeCode;
+import com.nova.anonymousplanet.messaging.event.email.EmailAttachment;
+import com.nova.anonymousplanet.messaging.event.email.InlineImage;
 import com.nova.anonymousplanet.notification.domain.entity.EmailHistoryEntity;
 import com.nova.anonymousplanet.notification.domain.entity.EmailTemplateEntity;
 import com.nova.anonymousplanet.notification.dto.v1.SenderDto;
-import com.nova.anonymousplanet.core.event.email.EmailAttachment;
 import com.nova.anonymousplanet.notification.model.EmailPayload;
-import com.nova.anonymousplanet.core.event.email.InlineImage;
 import com.nova.anonymousplanet.notification.provider.NotificationProvider;
 import com.nova.anonymousplanet.notification.provider.NotificationProviderFactory;
 import com.nova.anonymousplanet.notification.repository.EmailHistoryRepository;

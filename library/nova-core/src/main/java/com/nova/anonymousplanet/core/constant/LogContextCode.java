@@ -28,16 +28,19 @@ public enum LogContextCode {
     USER_ROLE("X-User-Role", "userRole", true),
 
     CLIENT_IP("X-Client-IP", "clientIp", true),
-    USER_AGENT("User-Agent", null, false),
+    USER_AGENT("User-Agent", "userAgent", false),
 
     DEVICE_TYPE("X-Device-Type", "deviceType", true),
     OS_TYPE("X-Os-Type", "osType", false),
     OS_VERSION("X-Os-Version", "osVersion", false),
-
     LANG("X-Lang", "lang", true),
-    LOCALE("X-Locale", null, false), // MDC 키가 정의되지 않은 경우 대응
+    LOCALE("X-Locale", "locale", false), // MDC 키가 정의되지 않은 경우 대응
     APP_VERSION("X-App-Version", "appVersion", false),
+
     ACCEPT_LANGUAGE("Accept-Language", null, false),
+
+    GATEWAY_SECRET("X-Gateway-Secret", null, false),
+    SERVICE_NAME("X-Service-Name", null, false),
 
     REQUEST_PATH("X-Request-Path", "path", true),
     ;

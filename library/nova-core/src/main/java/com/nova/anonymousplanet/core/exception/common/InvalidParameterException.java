@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.core.exception.domain.common;
+package com.nova.anonymousplanet.core.exception.common;
 
 import com.nova.anonymousplanet.core.constant.error.CommonErrorCode;
 import com.nova.anonymousplanet.core.exception.NovaApplicationException;

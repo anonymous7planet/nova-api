@@ -1,8 +1,7 @@
 package com.nova.anonymousplanet.core.util;
 
 import com.nova.anonymousplanet.core.constant.BaseEnum;
-import com.nova.anonymousplanet.core.constant.error.CommonErrorCode;
-import com.nova.anonymousplanet.core.exception.domain.common.InvalidEnumCodeException;
+import com.nova.anonymousplanet.core.exception.common.InvalidEnumCodeException;
 
 import java.util.Arrays;
 import java.util.Objects;

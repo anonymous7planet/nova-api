@@ -1,7 +1,6 @@
-package com.nova.anonymousplanet.core.configuration;
+package com.nova.anonymousplanet.web.configuration;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

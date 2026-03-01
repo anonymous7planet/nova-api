@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.core.handler;
+package com.nova.anonymousplanet.web.handler;
 
 
 import lombok.extern.slf4j.Slf4j;

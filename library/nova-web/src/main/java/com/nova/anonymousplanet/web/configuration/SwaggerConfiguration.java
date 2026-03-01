@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.core.configuration;
+package com.nova.anonymousplanet.web.configuration;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

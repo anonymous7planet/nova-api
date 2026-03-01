@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.core.dto.v1.serializer;
+package com.nova.anonymousplanet.core.model.serializer;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
