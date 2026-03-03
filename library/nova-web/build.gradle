@@ -1,20 +1,12 @@
 plugins {
-    id 'java'
     id 'java-library'
 }
 
-bootJar {
-    enabled = false
-}
-
-jar {
-    enabled = true
-}
-
-
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    toolchain {
+        // 빌드, 테스트, 실행에 사용할 Java 버전을 21로 강제합니다.
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 dependencies {
@@ -31,9 +23,15 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
-    api 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
+    // 3. Swagger UI (SpringDoc 2.8.5)
+    // 'api' 대신 'implementation' 사용을 권장하며, 내부적으로 위에서 지정한 6.2.10 버전을 타게 됩니다.
+    compileOnly 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.8.5'
+//    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api'
+//    implementation 'io.swagger.core.v3:swagger-models:2.2.22'
 
-    // 5. Lombok
+
+    // 4. Annotation Processors
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 }

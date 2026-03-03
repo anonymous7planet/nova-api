@@ -1,19 +1,12 @@
 plugins {
-    id 'java'
     id 'java-library'
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-}
-
-bootJar {
-    enabled = false
-}
-
-jar {
-    enabled = true
+    toolchain {
+        // 빌드, 테스트, 실행에 사용할 Java 버전을 21로 강제합니다.
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 dependencies {

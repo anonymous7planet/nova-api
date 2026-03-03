@@ -73,7 +73,14 @@ public enum CommonErrorCode implements ErrorCode {
      */
     AUTH_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, ErrorGroupCode.UNAUTHORIZED, "002-01", "로그인이 필요한 서비스입니다.", DisplayTypeCode.ALERT),
     AUTH_FORBIDDEN(HttpStatus.FORBIDDEN, ErrorGroupCode.FORBIDDEN, "002-02", "해당 리소스에 접근할 권한이 없습니다.", DisplayTypeCode.ALERT),
-    GATEWAY_SECRET_INVALID(HttpStatus.FORBIDDEN, ErrorGroupCode.FORBIDDEN, "003-01", "비정상적인 접근이 감지되었습니다.", DisplayTypeCode.ALERT)
+    GATEWAY_SECRET_INVALID(HttpStatus.FORBIDDEN, ErrorGroupCode.FORBIDDEN, "003-01", "비정상적인 접근이 감지되었습니다.", DisplayTypeCode.ALERT),
+
+
+    /**
+     *  잘못된 요청
+     */
+
+    NOT_FOUND_ENDPOINT(HttpStatus.BAD_REQUEST, ErrorGroupCode.BAD_REQUEST, "002-01", "존재하지 않는 엔드포인트입니다.", DisplayTypeCode.LOG),
 
     ;
 

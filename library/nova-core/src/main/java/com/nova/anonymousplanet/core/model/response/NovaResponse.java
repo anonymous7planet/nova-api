@@ -58,7 +58,7 @@ public record NovaResponse<T>(
      * 데이터만 포함한 성공 응답 (기본 메시지 사용)
      */
     public static <T> NovaResponse<T> success(T data) {
-        return success(data, "Operation successful");
+        return success(data, "성공");
     }
 
     /**
@@ -77,7 +77,7 @@ public record NovaResponse<T>(
     /**
      * 에러 정보를 포함한 실패 응답
      */
-    public static <T> NovaResponse<T> fail(NovaErrorResponse errorResponse) {
+    public static NovaResponse<Void> fail(NovaErrorResponse errorResponse) {
         // 필드 순서는 사용자님의 NovaResponse 생성자 구조에 맞게 조정하세요.
         // 핵심은 마지막 T data 위치에 errorResponse를 넣는 것이 아니라,
         // 규격에 정의된 errorResponse 필드에 넣는 것입니다.
@@ -87,7 +87,7 @@ public record NovaResponse<T>(
     /**
      * 에러 정보와 커스텀 메시지를 포함한 실패 응답
      */
-    public static <T> NovaResponse<T> fail(NovaErrorResponse errorResponse, String message) {
+    public static NovaResponse<Void> fail(NovaErrorResponse errorResponse, String message) {
         return new NovaResponse<>(false, message, null, null, null, null, errorResponse, null);
     }
 }

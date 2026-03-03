@@ -1,12 +1,7 @@
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.4' apply false // apply false는 플러그인을 로드만 하고 적용하지는 않음
-    id 'io.spring.dependency-management' version '1.1.3' apply false
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    id 'io.spring.dependency-management' version '1.1.7' apply false
 }
 
 allprojects {
@@ -16,13 +11,22 @@ allprojects {
     repositories {
         mavenCentral()
     }
+}
 
+ext {
+    commonsLangVersion = "3.14.0"
 }
 
 subprojects {
-    apply plugin: 'java'
-    apply plugin: 'org.springframework.boot'
+    apply plugin: 'java' // library 간 의존성 최적화를 위해 java-library 권장
     apply plugin: 'io.spring.dependency-management' // ✅ root프로젝트에서만 적용하기 때문에 선언 필요
+
+    // Java 21 설정 적용
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
 
     dependencyManagement {
         imports {
@@ -31,40 +35,79 @@ subprojects {
         }
     }
 
-    // library 계열은 공통 설정 제외
-    if (!project.path.startsWith(":library")) {
-        apply from: "${rootDir}/common-dependencies.gradle"
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    dependencies {
+        // [Lombok] 전 모듈 공통
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
+
+        // [Test] 공통 테스트 라이브러리
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+        constraints {
+            implementation "org.springframework:spring-webmvc:6.1.15"
+            implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
+        }
     }
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
     }
 
-    dependencies {
-        // === Lombok 공통 적용 ===
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok'
-        testCompileOnly 'org.projectlombok:lombok'
-        testAnnotationProcessor 'org.projectlombok:lombok'
+//    afterEvaluate { project ->
+//        if (project.path.startsWith(':infra')) {
+//            apply from: "${rootDir}/common-infra.gradle"
+//        }
+//        else if (project.path.startsWith(':services')) {
+//            apply from: "${rootDir}/common-service.gradle"
+//        }
+//
+//        // library 모듈은 bootJar 비활성화 유지
+//        if (project.path.startsWith(':library')) {
+//            if (project.plugins.hasPlugin('org.springframework.boot')) {
+//                bootJar { enabled = false }
+//                jar { enabled = true }
+//            }
+//        }
+//    }
 
+
+    // library 계열은 공통 설정 제외
+    if (!project.path.startsWith(":library")) {
+        apply from: "${rootDir}/common-dependencies.gradle"
     }
+
+}
+
+// === 개별 서비스별 Spring Boot 플러그인 적용 ===
+// Infra Modules 공통
+configure(subprojects.findAll { it.path.startsWith(':infra') }) {
+    apply plugin: 'org.springframework.boot'
+}
+
+// Service Modules 공통
+configure(subprojects.findAll { it.path.startsWith(':services') }) {
+    apply plugin: 'org.springframework.boot'
 }
 
 // ✅ Spring Boot가 필요한 모듈에서 개별 적용 (예: discovery-server, gateway 등)
-/**
-project(':nova-discovery-server') {
-    apply plugin: 'org.springframework.boot'
-
-    dependencies {
-        implementation 'org.springframework.boot:spring-boot-starter'
-    }
+project(':infra:nova-config-server') {
 }
-
-project(':nova-gateway') {
-    apply plugin: 'org.springframework.boot'
-
-    dependencies {
-        implementation 'org.springframework.boot:spring-boot-starter'
-    }
+project(':infra:nova-gateway-server') {
 }
- */
+project(':infra:nova-gateway-server') {
+}
+project(':services:nova-system-service') {
+}
+project(':services:nova-notification-service') {
+}
+project(':services:nova-auth-service') {
+}

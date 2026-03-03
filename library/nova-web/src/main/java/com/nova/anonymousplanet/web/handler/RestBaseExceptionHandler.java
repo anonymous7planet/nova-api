@@ -8,12 +8,16 @@ import com.nova.anonymousplanet.core.exception.NovaApplicationException;
 import com.nova.anonymousplanet.core.exception.common.InvalidEnumCodeException;
 import com.nova.anonymousplanet.core.model.response.NovaErrorResponse;
 import com.nova.anonymousplanet.core.model.response.NovaResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,8 +66,7 @@ public class RestBaseExceptionHandler {
 
                 return ResponseEntity
                         .status(iec.getErrorCode().getStatus())
-                        .body(NovaResponse.fail(NovaErrorResponse.of(iec.getErrorCode(), refinedMessage, iec.getDisplayType())))
-                        ;
+                        .body(NovaResponse.fail(NovaErrorResponse.of(iec.getErrorCode(), refinedMessage, iec.getDisplayType())));
             }
         }
 
@@ -91,7 +94,19 @@ public class RestBaseExceptionHandler {
     }
 
     /**
-     * [Case 4] 그 외 예상치 못한 예외
+     * [Project Nova] 404 Not Found 핸들링
+     * 존재하지 않는 API 경로로 요청 시 발생
+     */
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<NovaResponse<Void>> handleNoHandlerFoundException(NoHandlerFoundException e, HttpServletRequest request) {
+        log.error("[handleNoHandlerFoundException] {} {}", e.getHttpMethod(), e.getRequestURL());
+        return ResponseEntity
+                .status(CommonErrorCode.NOT_FOUND_ENDPOINT.getStatus())
+                .body(NovaResponse.fail(NovaErrorResponse.of(CommonErrorCode.NOT_FOUND_ENDPOINT)));
+    }
+
+    /**
+     * [Case 99] 그 외 예상치 못한 예외
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<NovaResponse<Void>> handleUnexpectedException(Exception ex) {
@@ -133,6 +148,7 @@ public class RestBaseExceptionHandler {
 
         return "unknown";
     }
+
     private String extractFieldName(List<JsonMappingException.Reference> path) {
         if (path == null || path.isEmpty()) return "unknown";
 
