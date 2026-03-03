@@ -40,9 +40,15 @@ public record NovaResponse<T>(
      * Compact Constructor: MDC 정보 및 타임스탬프 자동 주입
      */
     public NovaResponse {
-        traceId = MDC.get("traceId");
-        requestId = MDC.get("requestId");
-        path = MDC.get("path");
+        if(traceId == null) {
+            traceId = MDC.get("traceId");
+        }
+        if(requestId == null) {
+            requestId = MDC.get("requestId");
+        }
+        if(path == null) {
+            path = MDC.get("path");
+        }
         timestamp = LocalDateTime.now();
     }
 
@@ -77,17 +83,22 @@ public record NovaResponse<T>(
     /**
      * 에러 정보를 포함한 실패 응답
      */
-    public static NovaResponse<Void> fail(NovaErrorResponse errorResponse) {
+    public static NovaResponse<Void> fail(NovaErrorResponse error) {
         // 필드 순서는 사용자님의 NovaResponse 생성자 구조에 맞게 조정하세요.
         // 핵심은 마지막 T data 위치에 errorResponse를 넣는 것이 아니라,
         // 규격에 정의된 errorResponse 필드에 넣는 것입니다.
-        return fail(errorResponse, "실패");
+        return fail("실패", error);
     }
 
     /**
      * 에러 정보와 커스텀 메시지를 포함한 실패 응답
      */
-    public static NovaResponse<Void> fail(NovaErrorResponse errorResponse, String message) {
-        return new NovaResponse<>(false, message, null, null, null, null, errorResponse, null);
+    public static NovaResponse<Void> fail(String message, NovaErrorResponse error) {
+        return fail(message, null, null, null, error);
+    }
+
+
+    public static NovaResponse<Void> fail(String message, String traceId, String requestId, String path, NovaErrorResponse error) {
+        return new NovaResponse<>(false, message, null, traceId, requestId, path, error, null);
     }
 }

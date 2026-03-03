@@ -48,7 +48,7 @@ public record NovaErrorResponse(
         return of(errorCode, message, displayType, Collections.emptyList());
     }
 
-    public static NovaErrorResponse of(ErrorCode errorCode,  DisplayTypeCode displayType) {
+    public static NovaErrorResponse of(ErrorCode errorCode, DisplayTypeCode displayType) {
         return of(errorCode, errorCode.getMessage(), displayType);
     }
 

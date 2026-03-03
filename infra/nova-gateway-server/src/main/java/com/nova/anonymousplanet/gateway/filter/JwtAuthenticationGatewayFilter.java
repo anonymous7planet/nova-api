@@ -1,8 +1,11 @@
 package com.nova.anonymousplanet.gateway.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nova.anonymousplanet.core.constant.error.ErrorCode;
+import com.nova.anonymousplanet.core.model.response.NovaErrorResponse;
+import com.nova.anonymousplanet.core.model.response.NovaResponse;
+import com.nova.anonymousplanet.gateway.constant.GatewayErrorCode;
 import com.nova.anonymousplanet.gateway.constant.LogContextCode;
-import com.nova.anonymousplanet.gateway.dto.response.RestGatewayResponse;
 import com.nova.anonymousplanet.gateway.dto.RefreshTokenStoreDto;
 import com.nova.anonymousplanet.gateway.filter.order.FilterOrder;
 import com.nova.anonymousplanet.gateway.service.jwt.JwtRefreshTokenStore;
@@ -15,7 +18,6 @@ import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFac
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -68,37 +70,19 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
 
             // 2. Header에 Authorization 필드 유무 확인
             if (!containsAuthorization(request)) {
-                return onError(
-                    response
-                        , HttpStatus.UNAUTHORIZED
-                        , requestPath
-                        , traceId
-                        , new RestGatewayResponse.GatewayErrorSet( "G401", "Header에 필드가 존재하지 않습니다.", "[NOVA][Gateway] Header에 Authorization 필드가 존재하지 않습니다.")
-                );
+                return onError(response, traceId, requestPath, GatewayErrorCode.UNAUTHORIZED);
             }
 
             // 3. Authorization에서 accessToken값 추출&존재유무 확인
             String accessToken = extractAccessToken(request);
             if (!StringUtils.hasText(accessToken)) {
-                return onError(
-                    response
-                        , HttpStatus.UNAUTHORIZED
-                        , requestPath
-                        , traceId
-                        , new RestGatewayResponse.GatewayErrorSet("G401", "토큰 형식이 잘못되었습니다.", "[NOVA][Gateway] Header에 AccessToken이 'Bearer '와 함께 올바르게 존재하지 않습니다.")
-                );
+                return onError(response, traceId, requestPath, GatewayErrorCode.TOKEN_NOT_FOUND);
             }
 
             // 4. accessToken값 validation (JWT 유효성 검사)
             Map<String, String> errorMap = jwtTokenProvider.validateAccessToken(accessToken);
             if (errorMap != null) {
-                return onError(
-                    response
-                        , HttpStatus.BAD_REQUEST
-                        , requestPath
-                        , traceId
-                        , new RestGatewayResponse.GatewayErrorSet("G400", "토큰이 유효하지 않습니다.", "[NOVA][GateWay] " + errorMap.getOrDefault("detailMessage", "JWT 유효성 검증 실패"))
-                );
+                return onError(response, traceId, requestPath, GatewayErrorCode.TOKEN_INVALID);
             }
 
             // 5. Redis 유효성 검증 (RefreshToken 유효성 검사)
@@ -108,13 +92,7 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
 
             boolean valid = jwtRefreshTokenStore.validate(new RefreshTokenStoreDto.ValidateRequest(userUuid, deviceId));
             if (!valid) {
-                return onError(
-                    response
-                        , HttpStatus.UNAUTHORIZED
-                        , requestPath
-                        , traceId
-                    , new RestGatewayResponse.GatewayErrorSet("G401", "토큰 정보가 만료되었거나 일치하지 않습니다.", "[NOVA][GateWay] Redis의 Refresh Token 정보 불일치 또는 만료.")
-                );
+                return onError(response, traceId, requestPath, GatewayErrorCode.TOKEN_INVALID);
             }
 
             // 6. Redis에서 추가 정보 조회 및 Header 추가
@@ -182,16 +160,16 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
     /**
      * 오류 발생 시 RestGatewayResponse DTO 형식으로 JSON 응답을 반환합니다.
      */
-    private Mono<Void> onError(ServerHttpResponse response, HttpStatus status, String path, String traceId, RestGatewayResponse.GatewayErrorSet error) {
-        response.setStatusCode(status);
+    private Mono<Void> onError(ServerHttpResponse response, String traceId, String path, ErrorCode errorCode) {
+        response.setStatusCode(errorCode.getStatus());
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
-        RestGatewayResponse errorResponse = RestGatewayResponse.error(path, traceId, error);
+        NovaResponse<Void> errorBody = NovaResponse.fail("실패", traceId, traceId, path, NovaErrorResponse.of(errorCode));
 
         DataBuffer buffer = null;
         try {
             // ObjectMapper를 사용하여 DTO를 JSON 바이트로 변환
-            byte[] bytes = objectMapper.writeValueAsBytes(errorResponse);
+            byte[] bytes = objectMapper.writeValueAsBytes(errorBody);
             buffer = response.bufferFactory().wrap(bytes);
             return response.writeWith(Mono.just(buffer));
         } catch (Exception e) {

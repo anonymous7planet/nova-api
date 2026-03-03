@@ -1,15 +1,11 @@
 package com.nova.anonymousplanet.gateway.dto.response;
 
-import com.nova.anonymousplanet.gateway.constant.LogContextCode;
-import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.slf4j.MDC;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+@Deprecated
 public record RestGatewayResponse(
         boolean isSuccess,
         String message,

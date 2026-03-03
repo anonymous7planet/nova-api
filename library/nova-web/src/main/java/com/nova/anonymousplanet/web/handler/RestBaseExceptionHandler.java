@@ -167,7 +167,7 @@ public class RestBaseExceptionHandler {
         NovaErrorResponse errorResponse = NovaErrorResponse.from(errorCode, ex.getErrorCustomMessage(), ex.getDisplayType(), bindingResult);
         return ResponseEntity
                 .status(errorCode.getStatus())
-                .body(NovaResponse.fail(errorResponse, ex.getCustomMessage()));
+                .body(NovaResponse.fail(ex.getCustomMessage(), errorResponse));
     }
 
 }
