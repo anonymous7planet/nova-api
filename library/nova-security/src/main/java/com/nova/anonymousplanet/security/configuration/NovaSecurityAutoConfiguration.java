@@ -43,6 +43,12 @@ public class NovaSecurityAutoConfiguration implements WebMvcConfigurer {
 
     @Value("${spring.application.name}")
     private String serviceName;
+
+    private final NovaSecurityProperties properties;
+
+
+
+
     /**
      * 1. 보안 설정 팩토리 빈 등록
      * 서비스의 SecurityFilterChain에서 공통 설정을 쉽게 불러올 수 있게 합니다.
@@ -97,7 +103,7 @@ public class NovaSecurityAutoConfiguration implements WebMvcConfigurer {
     @Bean
     @ConditionalOnMissingBean
     public NovaSecurityFilter novaSecurityFilter(NovaAccessDeniedHandler novaAccessDeniedHandler) {
-        return new NovaSecurityFilter(gatewaySecret, novaAccessDeniedHandler);
+        return new NovaSecurityFilter(gatewaySecret, novaAccessDeniedHandler, properties.serviceWhiteList().toArray(String[]::new));
     }
 
     /**

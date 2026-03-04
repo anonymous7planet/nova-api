@@ -1,9 +1,9 @@
 package com.nova.anonymousplanet.notification.service.sender;
 
+import com.nova.anonymousplanet.messaging.event.email.EmailAttachment;
+import com.nova.anonymousplanet.messaging.event.email.InlineImage;
 import com.nova.anonymousplanet.notification.configuration.EmailProperties;
-import com.nova.anonymousplanet.core.event.email.EmailAttachment;
 import com.nova.anonymousplanet.notification.model.EmailPayload;
-import com.nova.anonymousplanet.core.event.email.InlineImage;
 import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
 import jakarta.mail.internet.MimeMessage;

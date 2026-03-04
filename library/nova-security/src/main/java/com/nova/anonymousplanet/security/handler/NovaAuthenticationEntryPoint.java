@@ -1,11 +1,7 @@
 package com.nova.anonymousplanet.security.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nova.anonymousplanet.core.constant.error.CommonErrorCode;
-import com.nova.anonymousplanet.core.model.response.NovaErrorResponse;
-import com.nova.anonymousplanet.core.model.response.NovaResponse;
+import com.nova.anonymousplanet.core.util.NovaResponseUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
@@ -29,19 +25,9 @@ import java.io.IOException;
  * ==============================================
  */
 public class NovaAuthenticationEntryPoint implements AuthenticationEntryPoint {
-
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // 날짜 배열화 방지;
-
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-        response.setStatus(CommonErrorCode.UNAUTHORIZED.getStatus().value());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(objectMapper.writeValueAsString(
-                NovaResponse.fail(NovaErrorResponse.of(CommonErrorCode.UNAUTHORIZED))
-        ));
+        NovaResponseUtils.sendError(response, CommonErrorCode.UNAUTHORIZED, "실패");
     }
 }

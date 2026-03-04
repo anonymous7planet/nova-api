@@ -24,10 +24,7 @@ dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
     // 3. Swagger UI (SpringDoc 2.8.5)
-    // 'api' 대신 'implementation' 사용을 권장하며, 내부적으로 위에서 지정한 6.2.10 버전을 타게 됩니다.
-    compileOnly 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.8.5'
-//    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api'
-//    implementation 'io.swagger.core.v3:swagger-models:2.2.22'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
 
 
     // 4. Annotation Processors

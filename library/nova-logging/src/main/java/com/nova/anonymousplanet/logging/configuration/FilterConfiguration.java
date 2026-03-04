@@ -1,5 +1,6 @@
 package com.nova.anonymousplanet.logging.configuration;
 
+import com.nova.anonymousplanet.core.filter.FilterOrder;
 import com.nova.anonymousplanet.logging.filter.MdcClearFilter;
 import com.nova.anonymousplanet.logging.filter.MdcFilter;
 import com.nova.anonymousplanet.logging.filter.ReactiveMdcWebFilter;
@@ -32,13 +33,6 @@ public class FilterConfiguration {
 
     @Value("${spring.application.name}")
     private String serviceName;
-
-    // 필터 순서 상수 관리
-    public static class FilterOrder {
-        public static final int TRACE_FILTER = Ordered.HIGHEST_PRECEDENCE; // 최우선
-        public static final int MDC_SETUP_FILTER = TRACE_FILTER + 1;                    // 로그 설정
-        public static final int MDC_CLEAR_FILTER = Ordered.LOWEST_PRECEDENCE;                  // 최하단 (정리)
-    }
 
     @Bean
     public FilterRegistrationBean<TraceAndRequestIdFilter> traceFilterRegistration() {

@@ -7,8 +7,10 @@ import com.nova.anonymousplanet.security.handler.NovaAuthenticationEntryPoint;
 import com.nova.anonymousplanet.security.provider.DiscoveryIpProvider;
 import com.nova.anonymousplanet.security.provider.GatewayIpProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -44,13 +46,20 @@ public class NovaSecurityConfigurer {
     private static final String[] COMMON_WHITE_LIST = {
             "/health",
             "/info",
-            "/actuator/**",
-            "/v3/api-docs/**",    // Swagger/OpenAPI v3 스펙
-            "/swagger-ui/**",      // Swagger UI 리소스
+            "/nova/management/**",
+            "/v3/api-docs/**",    // Swagger/OpenAPI v3 스펙(API 명세 JSON 데이터)
+            "/swagger-ui/**",      // Swagger UI 리소스(index.css, swagger-ui-bundle.js 등 모든 정적 리소스 포함)
             "/swagger-resources/**",
+            "/swagger-ui.html",
+            "/.well-known/**",
             "/webjars/**"          // Swagger UI 내부 정적 자원
     };
 
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring()
+                .requestMatchers(COMMON_WHITE_LIST); // Swagger 등 공통 화이트리스트 제외
+    }
 
     public HttpSecurity applyCommonConfig(HttpSecurity http) throws Exception {
         return http

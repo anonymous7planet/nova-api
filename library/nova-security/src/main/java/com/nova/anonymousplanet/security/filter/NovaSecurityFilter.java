@@ -16,6 +16,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * projectName : nova-api
@@ -37,6 +38,18 @@ public class NovaSecurityFilter extends OncePerRequestFilter {
     private final String gatewaySecret;
 
     private final NovaAccessDeniedHandler accessDeniedHandler; // 추가
+
+    private final String[] commonWhiteList; // COMMON_WHITE_LIST 주입
+
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        // Swagger 및 공통 화이트리스트 경로는 필터 로직 스킵
+        return Arrays.stream(commonWhiteList).anyMatch(path::startsWith) ||
+                path.startsWith("/swagger-ui") ||
+                path.startsWith("/v3/api-docs");
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

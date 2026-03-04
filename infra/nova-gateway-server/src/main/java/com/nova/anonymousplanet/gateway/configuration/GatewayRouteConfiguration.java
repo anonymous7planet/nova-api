@@ -5,7 +5,11 @@ import com.nova.anonymousplanet.gateway.constant.LogContextCode;
 import com.nova.anonymousplanet.gateway.filter.JwtAuthenticationGatewayFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.cloud.gateway.route.builder.Buildable;
+import org.springframework.cloud.gateway.route.builder.GatewayFilterSpec;
+import org.springframework.cloud.gateway.route.builder.PredicateSpec;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class GatewayRouteConfiguration {
 
+    private final JwtAuthenticationGatewayFilter jwtAuthenticationGatewayFilter;
     @Value("${spring.application.name}")
     private String serviceName;
 
@@ -37,41 +42,66 @@ public class GatewayRouteConfiguration {
         jwtAuthConfig.setExcludedPaths(authProperties.getExcludedPaths());
 
         return builder.routes()
-                .route("system-service", r -> r
-                                .path("/api/system/**")
-                                .filters(f -> f
-                                                // /api/system/ 부분을 뒤에 오는 모든 것($1)으로 교체
-//                                                .rewritePath("/api/system/(?<segment>.*)", "/${segment}")
-                                                .stripPrefix(2)
-                                                .filter(jwtAuthenticationGatewayFilter.apply(jwtAuthConfig))
-                                                .addRequestHeader(LogContextCode.GATEWAY_SECRET.getHeaderKey(), gatewaySecret)  // 요청 헤더 추가
-                                                .addRequestHeader(LogContextCode.SERVICE_NAME.getHeaderKey(), serviceName)  // 요청 헤더 추가
-                                )
-                                .uri("lb://NOVA-SYSTEM-SERVICE")
+                .route("system-service", r -> createSystemServiceRoute(r, jwtAuthConfig))
+                .route("notification-service", r -> createNotificationServiceRoute(r, jwtAuthConfig))
+                .route("auth-service", r -> createAuthServiceRoute(r, jwtAuthConfig))
+                .build();
+    }
+
+
+    /**
+     * System Service 라우팅 정의
+     */
+    private Buildable<Route> createSystemServiceRoute(PredicateSpec r, JwtAuthenticationGatewayFilter.Config config) {
+        return r.path("/api/system/**")
+                .filters(
+                        f -> applyCommonFilters(f, config)
+                        // /api/system/ 부분을 뒤에 오는 모든 것($1)으로 교체
+//                          .rewritePath("/api/system/(?<segment>.*)", "/${segment}")
+
                 )
-                .route("notification-service", r -> r
-                                .path("/api/notification/**")
-                                .filters(f -> f
-                                                // /api/system/ 부분을 뒤에 오는 모든 것($1)으로 교체
-//                                                .rewritePath("/api/system/(?<segment>.*)", "/${segment}")
-                                                .stripPrefix(2)
-                                                .filter(jwtAuthenticationGatewayFilter.apply(jwtAuthConfig))
-                                                .addRequestHeader(LogContextCode.GATEWAY_SECRET.getHeaderKey(), gatewaySecret)  // 요청 헤더 추가
-                                                .addRequestHeader(LogContextCode.SERVICE_NAME.getHeaderKey(), serviceName)  // 요청 헤더 추가
-                                )
-                                .uri("lb://NOVA-NOTIFICATION-SERVICE")
+                .uri("lb://NOVA-SYSTEM-SERVICE");
+    }
+
+    /**
+     * Notification Service 라우팅 정의
+     */
+    private Buildable<Route> createNotificationServiceRoute(PredicateSpec r, JwtAuthenticationGatewayFilter.Config config) {
+        return r.path("/api/notification/**")
+                .filters(
+                        f -> applyCommonFilters(f, config)
+                        // /api/system/ 부분을 뒤에 오는 모든 것($1)으로 교체
+//                          .rewritePath("/api/system/(?<segment>.*)", "/${segment}")
                 )
-                .route("auth-service", r -> r
-                                .path("/api/auth/**")
-                                .filters(f -> f
-                                        .stripPrefix(2)
-                                        .filter(jwtAuthenticationGatewayFilter.apply(jwtAuthConfig))
-                                        .addRequestHeader(LogContextCode.GATEWAY_SECRET.getHeaderKey(), gatewaySecret)  // 요청 헤더 추가
-                                        .addRequestHeader(LogContextCode.SERVICE_NAME.getHeaderKey(), serviceName)  // 요청 헤더 추가
-                                )
-                                .uri("lb://NOVA-AUTH-SERVICE")
+                .uri("lb://NOVA-NOTIFICATION-SERVICE");
+    }
+
+    /**
+     * Auth Service 라우팅 정의
+     */
+    private Buildable<Route> createAuthServiceRoute(PredicateSpec r, JwtAuthenticationGatewayFilter.Config config) {
+        return r
+                .path("/api/auth/**")
+                .filters(
+                        f -> applyCommonFilters(f, config)
+                        // /api/system/ 부분을 뒤에 오는 모든 것($1)으로 교체
+//                          .rewritePath("/api/system/(?<segment>.*)", "/${segment}")
                 )
-            .build();
+                .uri("lb://NOVA-AUTH-SERVICE");
+    }
+
+
+    /**
+     * 전사 공통 필터 적용 (Project Nova 보안 전략)
+     * 1. Prefix 제거 (/api/service-name/** -> /**)
+     * 2. JWT 인증 및 UUID -> Long ID 변환 필터 적용
+     * 3. Gateway Secret 및 호출 서비스명 헤더 주입
+     */
+    private GatewayFilterSpec applyCommonFilters(GatewayFilterSpec f, JwtAuthenticationGatewayFilter.Config config) {
+        return f.stripPrefix(2)
+                .filter(jwtAuthenticationGatewayFilter.apply(config))
+                .addRequestHeader(LogContextCode.GATEWAY_SECRET.getHeaderKey(), gatewaySecret)
+                .addRequestHeader(LogContextCode.SERVICE_NAME.getHeaderKey(), serviceName);
     }
 
     /**
