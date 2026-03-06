@@ -1,6 +1,6 @@
 package com.nova.anonymousplanet.security.configuration;
 
-import com.nova.anonymousplanet.security.constant.HeaderContextCode;
+import com.nova.anonymousplanet.core.constant.LogContextCode;
 import com.nova.anonymousplanet.security.filter.NovaSecurityFilter;
 import com.nova.anonymousplanet.security.handler.NovaAccessDeniedHandler;
 import com.nova.anonymousplanet.security.handler.NovaAuthenticationEntryPoint;
@@ -14,8 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import java.util.List;
 
 /**
  * projectName : nova-api
@@ -42,18 +40,7 @@ public class NovaSecurityConfigurer {
     // application.yml에서 서비스 전용 화이트리스트를 읽어옴. 값이 없으면 빈 리스트로 초기화.
     private final String[] serviceWhiteList;
 
-    // 전사 공통 허용 경로 (IP 검증 및 인증 제외)
-    private static final String[] COMMON_WHITE_LIST = {
-            "/health",
-            "/info",
-            "/nova/management/**",
-            "/v3/api-docs/**",    // Swagger/OpenAPI v3 스펙(API 명세 JSON 데이터)
-            "/swagger-ui/**",      // Swagger UI 리소스(index.css, swagger-ui-bundle.js 등 모든 정적 리소스 포함)
-            "/swagger-resources/**",
-            "/swagger-ui.html",
-            "/.well-known/**",
-            "/webjars/**"          // Swagger UI 내부 정적 자원
-    };
+    private final String[] COMMON_WHITE_LIST;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -84,7 +71,7 @@ public class NovaSecurityConfigurer {
                     // IP 검증 로직 공통화
                     auth.anyRequest().access((authentication, context) -> {
                         String remoteAddr = context.getRequest().getRemoteAddr();
-                        String serviceId = context.getRequest().getHeader(HeaderContextCode.SERVICE_NAME.getHeaderKey());
+                        String serviceId = context.getRequest().getHeader(LogContextCode.SERVICE_NAME.getHeaderKey());
 
                         // Gateway IP이거나, 혹은 Eureka에 등록된 신뢰할 수 있는 서비스의 IP인가?
                         boolean isAllowed = gatewayIpProvider.isGatewayIp(remoteAddr) ||

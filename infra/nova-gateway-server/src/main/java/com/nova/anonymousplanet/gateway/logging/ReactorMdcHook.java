@@ -1,15 +1,12 @@
 package com.nova.anonymousplanet.gateway.logging;
 
-import com.nova.anonymousplanet.gateway.constant.LogContextCode;
-import lombok.NonNull;
+import com.nova.anonymousplanet.core.constant.LogContextCode;
 import org.reactivestreams.Subscription;
 import org.slf4j.MDC;
 import reactor.core.CoreSubscriber;
 import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Operators;
 import reactor.util.context.Context;
-
-import java.util.Map;
 
 /**
  * projectName : nova-api

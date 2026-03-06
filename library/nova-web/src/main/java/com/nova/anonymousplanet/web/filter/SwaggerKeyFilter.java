@@ -1,5 +1,6 @@
 package com.nova.anonymousplanet.web.filter;
 
+import com.nova.anonymousplanet.core.constant.SecurityConstants;
 import com.nova.anonymousplanet.core.constant.error.CommonErrorCode;
 import com.nova.anonymousplanet.core.util.NovaResponseUtils;
 import com.nova.anonymousplanet.web.properties.SwaggerProperties;
@@ -9,9 +10,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * projectName : nova-api
@@ -31,6 +34,7 @@ import java.io.IOException;
 public class SwaggerKeyFilter extends OncePerRequestFilter {
 
     private final SwaggerProperties properties;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -38,11 +42,13 @@ public class SwaggerKeyFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
+        // 1. Swagger 기능이 꺼져있거나, 검사 대상 경로가 아니면 통과
         if (!properties.enabled() || !isSwaggerPath(path)) {
             filterChain.doFilter(request, response);
             return;
         }
 
+        // 2. 보안 검증이 필요한 대상인지 확인 (API 명세 요청 등)
         if (isValidationTarget(request, path)) {
             String requestKey = request.getHeader(properties.headerName());
             if (requestKey == null || !requestKey.equals(properties.headerValue())) {
@@ -53,12 +59,21 @@ public class SwaggerKeyFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * SecurityConstants에 정의된 전사 공통 Swagger 경로인지 확인
+     */
     private boolean isSwaggerPath(String path) {
-        return path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs");
+        // 1. 브라우저가 직접 호출하는 HTML/CSS/JS 리소스는 검증에서 제외 (UI 렌더링 허용)
+        return Arrays.stream(SecurityConstants.COMMON_WHITE_LIST)
+                .anyMatch(pattern -> pathMatcher.match(pattern, path));
     }
 
+    /**
+     * 실제 보안 키 검증이 필요한 핵심 경로인지 확인
+     */
     private boolean isValidationTarget(HttpServletRequest request, String path) {
-        return path.contains("v3/api-docs") ||
+        // API 명세(JSON) 요청이거나, Referer가 Swagger UI인 경우 검증 대상
+        return path.contains("/v3/api-docs") ||
                 (request.getHeader("Referer") != null && request.getHeader("Referer").contains("swagger-ui"));
     }
 }

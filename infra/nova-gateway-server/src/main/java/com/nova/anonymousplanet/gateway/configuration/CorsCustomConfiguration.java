@@ -7,6 +7,7 @@ import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * projectName : nova-api
@@ -40,11 +41,14 @@ public class CorsCustomConfiguration {
 //            "https://nova.app"
 //        ));
 
+        config.setAllowedOriginPatterns(List.of("*"));
+
         // ✅ 허용 메서드 (필요 시 OPTIONS 추가)
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
         // ✅ 허용 헤더
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
+        config.setAllowedHeaders(List.of("*"));
+//        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
 
         // ✅ 쿠키 허용
         config.setAllowCredentials(true);

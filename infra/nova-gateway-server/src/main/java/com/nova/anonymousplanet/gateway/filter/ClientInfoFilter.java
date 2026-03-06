@@ -1,6 +1,6 @@
 package com.nova.anonymousplanet.gateway.filter;
 
-import com.nova.anonymousplanet.gateway.constant.LogContextCode;
+import com.nova.anonymousplanet.core.constant.LogContextCode;
 import com.nova.anonymousplanet.gateway.filter.order.FilterOrder;
 import com.nova.anonymousplanet.gateway.util.ClientUtils;
 import com.nova.anonymousplanet.gateway.util.LogContextUtils;

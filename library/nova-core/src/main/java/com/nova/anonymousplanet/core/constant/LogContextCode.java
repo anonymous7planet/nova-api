@@ -26,6 +26,7 @@ public enum LogContextCode {
     USER_ID("X-User-Id", "userId", true),
     USER_UUID("X-User-Uuid", "userUuid", true),
     USER_ROLE("X-User-Role", "userRole", true),
+    USER_STATUS("X-User-Status", "userStatus", false),
 
     CLIENT_IP("X-Client-IP", "clientIp", true),
     USER_AGENT("User-Agent", "userAgent", false),

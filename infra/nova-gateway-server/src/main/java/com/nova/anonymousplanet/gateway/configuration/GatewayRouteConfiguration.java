@@ -1,7 +1,8 @@
 package com.nova.anonymousplanet.gateway.configuration;
 
+import com.nova.anonymousplanet.core.constant.LogContextCode;
+import com.nova.anonymousplanet.core.constant.SecurityConstants;
 import com.nova.anonymousplanet.gateway.configuration.properties.JwtAuthProperties;
-import com.nova.anonymousplanet.gateway.constant.LogContextCode;
 import com.nova.anonymousplanet.gateway.filter.JwtAuthenticationGatewayFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,8 @@ import org.springframework.cloud.gateway.route.builder.PredicateSpec;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Arrays;
 
 /**
  * GatewayRouteConfig
@@ -30,6 +33,11 @@ public class GatewayRouteConfiguration {
     @Value("${nova.security.x-gateway-secret:}")
     private String gatewaySecret;
 
+    @Value("${nova.swagger.header-name:X-Nova-Swagger-Key}")
+    private String headerName;
+
+    @Value("${nova.swagger.header-value:}")
+    private String headerValue;
 
     @Bean
     public RouteLocator routeLocator(RouteLocatorBuilder builder,
@@ -38,6 +46,9 @@ public class GatewayRouteConfiguration {
     ) {
         // 필터에 적용할 설정 객체 생성
         JwtAuthenticationGatewayFilter.Config jwtAuthConfig = new JwtAuthenticationGatewayFilter.Config();
+
+        // 공통 화이트리스트 경로 추가
+        authProperties.getExcludedPaths().addAll(Arrays.asList(SecurityConstants.COMMON_WHITE_LIST));
         // YML에서 읽어온 제외 경로 리스트를 주입
         jwtAuthConfig.setExcludedPaths(authProperties.getExcludedPaths());
 
@@ -45,6 +56,9 @@ public class GatewayRouteConfiguration {
                 .route("system-service", r -> createSystemServiceRoute(r, jwtAuthConfig))
                 .route("notification-service", r -> createNotificationServiceRoute(r, jwtAuthConfig))
                 .route("auth-service", r -> createAuthServiceRoute(r, jwtAuthConfig))
+                .route("system-api-docs", this::createSystemServiceSwaggerRoute)
+                .route("notification-api-docs", this::createNotificationServiceSwaggerRoute)
+                .route("auth-api-docs", this::createAuthServiceSwaggerRoute)
                 .build();
     }
 
@@ -70,8 +84,6 @@ public class GatewayRouteConfiguration {
         return r.path("/api/notification/**")
                 .filters(
                         f -> applyCommonFilters(f, config)
-                        // /api/system/ 부분을 뒤에 오는 모든 것($1)으로 교체
-//                          .rewritePath("/api/system/(?<segment>.*)", "/${segment}")
                 )
                 .uri("lb://NOVA-NOTIFICATION-SERVICE");
     }
@@ -84,8 +96,6 @@ public class GatewayRouteConfiguration {
                 .path("/api/auth/**")
                 .filters(
                         f -> applyCommonFilters(f, config)
-                        // /api/system/ 부분을 뒤에 오는 모든 것($1)으로 교체
-//                          .rewritePath("/api/system/(?<segment>.*)", "/${segment}")
                 )
                 .uri("lb://NOVA-AUTH-SERVICE");
     }
@@ -102,6 +112,39 @@ public class GatewayRouteConfiguration {
                 .filter(jwtAuthenticationGatewayFilter.apply(config))
                 .addRequestHeader(LogContextCode.GATEWAY_SECRET.getHeaderKey(), gatewaySecret)
                 .addRequestHeader(LogContextCode.SERVICE_NAME.getHeaderKey(), serviceName);
+    }
+
+    private Buildable<Route> createSystemServiceSwaggerRoute(PredicateSpec r) {
+        return r
+                .path("/nova-system-service/**")
+                .filters(f -> f
+                        .rewritePath("/nova-system-service/(?<segment>.*)", "/${segment}")
+                        .addRequestHeader(LogContextCode.GATEWAY_SECRET.getHeaderKey(), gatewaySecret)
+                        .addRequestHeader(headerName, headerValue)
+                )
+                .uri("lb://NOVA-SYSTEM-SERVICE");
+    }
+
+    private Buildable<Route> createNotificationServiceSwaggerRoute(PredicateSpec r) {
+        return r
+                .path("/nova-notification-service/**")
+                .filters(f -> f
+                        .rewritePath("/nova-notification-service/(?<segment>.*)", "/${segment}")
+                        .addRequestHeader(LogContextCode.GATEWAY_SECRET.getHeaderKey(), gatewaySecret)
+                        .addRequestHeader(headerName, headerValue)
+                )
+                .uri("lb://NOVA-NOTIFICATION-SERVICE");
+    }
+
+    private Buildable<Route> createAuthServiceSwaggerRoute(PredicateSpec r) {
+        return r
+                .path("/nova-auth-service/**")
+                .filters(f -> f
+                        .rewritePath("/nova-auth-service/(?<segment>.*)", "/${segment}")
+                        .addRequestHeader(LogContextCode.GATEWAY_SECRET.getHeaderKey(), gatewaySecret)
+                        .addRequestHeader(headerName, headerValue)
+                )
+                .uri("lb://NOVA-AUTH-SERVICE");
     }
 
     /**

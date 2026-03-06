@@ -1,6 +1,6 @@
 package com.nova.anonymousplanet.security.feign;
 
-import com.nova.anonymousplanet.security.constant.HeaderContextCode;
+import com.nova.anonymousplanet.core.constant.LogContextCode;
 import com.nova.anonymousplanet.security.context.UserContext;
 import com.nova.anonymousplanet.security.context.UserInfo;
 import feign.RequestInterceptor;
@@ -30,17 +30,17 @@ public class NovaFeignInterceptor implements RequestInterceptor {
 
     @Override
     public void apply(RequestTemplate template) {
-        template.header(HeaderContextCode.GATEWAY_SECRET.getHeaderKey(), gatewaySecret);
-        template.header(HeaderContextCode.SERVICE_NAME.getHeaderKey(), clientName);
+        template.header(LogContextCode.GATEWAY_SECRET.getHeaderKey(), gatewaySecret);
+        template.header(LogContextCode.SERVICE_NAME.getHeaderKey(), clientName);
 
         UserInfo userInfo = UserContext.getUserInfo();
         if (userInfo != null) {
-            template.header(HeaderContextCode.USER_ID.getHeaderKey(), String.valueOf(userInfo.userId()));
+            template.header(LogContextCode.USER_ID.getHeaderKey(), String.valueOf(userInfo.userId()));
             if (userInfo.userUuid() != null) {
-                template.header(HeaderContextCode.USER_UUID.getHeaderKey(), userInfo.userUuid());
+                template.header(LogContextCode.USER_UUID.getHeaderKey(), userInfo.userUuid());
             }
             if (userInfo.userRole() != null) {
-                template.header(HeaderContextCode.USER_ROLE.getHeaderKey(), userInfo.userRole().getCode());
+                template.header(LogContextCode.USER_ROLE.getHeaderKey(), userInfo.userRole().getCode());
             }
         }
     }

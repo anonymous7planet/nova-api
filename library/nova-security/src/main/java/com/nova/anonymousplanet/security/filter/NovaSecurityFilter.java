@@ -1,6 +1,6 @@
 package com.nova.anonymousplanet.security.filter;
 
-import com.nova.anonymousplanet.security.constant.HeaderContextCode;
+import com.nova.anonymousplanet.core.constant.LogContextCode;
 import com.nova.anonymousplanet.security.constant.UserRoleCode;
 import com.nova.anonymousplanet.security.constant.UserStatusCode;
 import com.nova.anonymousplanet.security.context.UserContext;
@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -39,21 +40,30 @@ public class NovaSecurityFilter extends OncePerRequestFilter {
 
     private final NovaAccessDeniedHandler accessDeniedHandler; // 추가
 
+    private final String[] serviceWhiteList;
     private final String[] commonWhiteList; // COMMON_WHITE_LIST 주입
+
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        // Swagger 및 공통 화이트리스트 경로는 필터 로직 스킵
-        return Arrays.stream(commonWhiteList).anyMatch(path::startsWith) ||
-                path.startsWith("/swagger-ui") ||
-                path.startsWith("/v3/api-docs");
+
+        // 1. 서비스 전용 화이트리스트 검사
+        boolean isServiceWhiteList = Arrays.stream(serviceWhiteList)
+                .anyMatch(pattern -> pathMatcher.match(pattern, path));
+
+        // 2. 공통 화이트리스트 검사
+        boolean isCommonWhiteList = Arrays.stream(commonWhiteList)
+                .anyMatch(pattern -> pathMatcher.match(pattern, path));
+
+        return isServiceWhiteList || isCommonWhiteList;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String incomingSecret = request.getHeader(HeaderContextCode.GATEWAY_SECRET.getHeaderKey());
+        String incomingSecret = request.getHeader(LogContextCode.GATEWAY_SECRET.getHeaderKey());
 
 
         // 1. Secret 검증은 여전히 필수 (Gateway든 Feign이든 이게 없으면 차단)
@@ -66,10 +76,10 @@ public class NovaSecurityFilter extends OncePerRequestFilter {
 
         // 2. 서비스 간 직접 호출 시에는 'X-User-Id'가 없을 수도 있음 (Batch 작업 등)
         // 이럴 경우를 대비해 Null 체크 후 비어있을 때의 처리를 명확히 함
-        String userId = request.getHeader(HeaderContextCode.USER_ID.getHeaderKey());
-        String userUuid = request.getHeader(HeaderContextCode.USER_UUID.getHeaderKey());
-        String userRole = request.getHeader(HeaderContextCode.USER_ROLE.getHeaderKey());
-        String userStatus = request.getHeader(HeaderContextCode.USER_STATUS.getHeaderKey());
+        String userId = request.getHeader(LogContextCode.USER_ID.getHeaderKey());
+        String userUuid = request.getHeader(LogContextCode.USER_UUID.getHeaderKey());
+        String userRole = request.getHeader(LogContextCode.USER_ROLE.getHeaderKey());
+        String userStatus = request.getHeader(LogContextCode.USER_STATUS.getHeaderKey());
         String ipAddress = request.getRemoteAddr();
 
         try {

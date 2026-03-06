@@ -1,5 +1,6 @@
 package com.nova.anonymousplanet.web.configuration;
 
+import com.nova.anonymousplanet.core.constant.SecurityConstants;
 import com.nova.anonymousplanet.core.filter.FilterOrder;
 import com.nova.anonymousplanet.web.filter.SwaggerKeyFilter;
 import com.nova.anonymousplanet.web.properties.SwaggerProperties;
@@ -9,9 +10,11 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -48,13 +51,16 @@ public class SwaggerConfiguration {
 
     private static final String BEARER_TOKEN_NAME = "Bearer_Auth";
 
+    @Value("${spring.application.name}")
+    private String serviceName;
+
     @Bean
     public FilterRegistrationBean<SwaggerKeyFilter> swaggerKeyFilterRegistration() {
         FilterRegistrationBean<SwaggerKeyFilter> registrationBean = new FilterRegistrationBean<>();
 
         registrationBean.setFilter(swaggerKeyFilter);
         // 필터가 적용될 URL 패턴 명시 (yml 설정과 동기화)
-        registrationBean.setUrlPatterns(List.of("/swagger-ui/*", "/v3/api-docs/*", "/swagger-ui.html"));
+        registrationBean.setUrlPatterns(List.of(SecurityConstants.SERVLET_WHITE_LIST));
         // 가장 높은 우선순위로 설정하여 보안 강화
         registrationBean.setOrder(FilterOrder.SWAGGER_KEY_FILTER);
 
@@ -88,6 +94,7 @@ public class SwaggerConfiguration {
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(apiInfo())
+                .servers(List.of(new Server().url("/api/"+serviceName.split("-")[1])))
                 .addSecurityItem(new SecurityRequirement()
                         .addList(properties.headerName())
                         .addList(properties.gatewayHeader())

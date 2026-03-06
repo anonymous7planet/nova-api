@@ -1,6 +1,6 @@
 package com.nova.anonymousplanet.gateway.util;
 
-import com.nova.anonymousplanet.gateway.constant.LogContextCode;
+import com.nova.anonymousplanet.core.constant.LogContextCode;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import reactor.util.context.Context;
 

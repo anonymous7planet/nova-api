@@ -1,6 +1,6 @@
 package com.nova.anonymousplanet.gateway.filter;
 
-import com.nova.anonymousplanet.gateway.constant.LogContextCode;
+import com.nova.anonymousplanet.core.constant.LogContextCode;
 import com.nova.anonymousplanet.gateway.filter.order.FilterOrder;
 import com.nova.anonymousplanet.gateway.util.LogContextUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,6 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import reactor.util.context.Context;
 
 import java.util.UUID;
 

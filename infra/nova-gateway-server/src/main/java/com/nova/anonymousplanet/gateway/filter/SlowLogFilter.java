@@ -1,9 +1,8 @@
 package com.nova.anonymousplanet.gateway.filter;
 
-import com.nova.anonymousplanet.gateway.constant.LogContextCode;
+import com.nova.anonymousplanet.core.constant.LogContextCode;
 import com.nova.anonymousplanet.gateway.filter.order.FilterOrder;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.argument.StructuredArguments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
