@@ -3,7 +3,7 @@ package com.nova.anonymousplanet.web.configuration;
 import com.nova.anonymousplanet.core.constant.SecurityConstants;
 import com.nova.anonymousplanet.core.filter.FilterOrder;
 import com.nova.anonymousplanet.web.filter.SwaggerKeyFilter;
-import com.nova.anonymousplanet.web.properties.SwaggerProperties;
+import com.nova.anonymousplanet.web.configuration.properties.SwaggerProperties;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -60,7 +60,7 @@ public class SwaggerConfiguration {
 
         registrationBean.setFilter(swaggerKeyFilter);
         // 필터가 적용될 URL 패턴 명시 (yml 설정과 동기화)
-        registrationBean.setUrlPatterns(List.of(SecurityConstants.SERVLET_WHITE_LIST));
+        registrationBean.setUrlPatterns(SecurityConstants.SERVLET_FREE_PATH_PATTERNS);
         // 가장 높은 우선순위로 설정하여 보안 강화
         registrationBean.setOrder(FilterOrder.SWAGGER_KEY_FILTER);
 

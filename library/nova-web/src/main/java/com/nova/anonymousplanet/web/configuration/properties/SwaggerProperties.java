@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.web.properties;
+package com.nova.anonymousplanet.web.configuration.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;

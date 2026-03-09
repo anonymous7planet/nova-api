@@ -1,6 +1,7 @@
 package com.nova.anonymousplanet.security.configuration;
 
 import com.nova.anonymousplanet.core.constant.LogContextCode;
+import com.nova.anonymousplanet.core.constant.SecurityConstants;
 import com.nova.anonymousplanet.security.filter.NovaSecurityFilter;
 import com.nova.anonymousplanet.security.handler.NovaAccessDeniedHandler;
 import com.nova.anonymousplanet.security.handler.NovaAuthenticationEntryPoint;
@@ -14,6 +15,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.List;
 
 /**
  * projectName : nova-api
@@ -36,16 +39,13 @@ public class NovaSecurityConfigurer {
     private final DiscoveryIpProvider discoveryIpProvider;
     private final NovaAuthenticationEntryPoint novaAuthenticationEntryPoint;
     private final NovaAccessDeniedHandler novaAccessDeniedHandler;
+    private final List<String> FREE_PATHS;
 
-    // application.yml에서 서비스 전용 화이트리스트를 읽어옴. 값이 없으면 빈 리스트로 초기화.
-    private final String[] serviceWhiteList;
-
-    private final String[] COMMON_WHITE_LIST;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-                .requestMatchers(COMMON_WHITE_LIST); // Swagger 등 공통 화이트리스트 제외
+                .requestMatchers(FREE_PATHS.toArray(String[]::new)); // Swagger 등 공통 화이트리스트 제외
     }
 
     public HttpSecurity applyCommonConfig(HttpSecurity http) throws Exception {
@@ -61,13 +61,8 @@ public class NovaSecurityConfigurer {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(novaSecurityFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> {
-                    // 공통 화이트리스트 및 서비스별 화이트리스트 허용 (인증 & IP 체크 제외)
-                    auth.requestMatchers(COMMON_WHITE_LIST).permitAll();
-                    // 2. 서비스별 화이트리스트 적용 (null 체크 및 비어있는지 확인)
-                    if (serviceWhiteList != null && !(serviceWhiteList.length == 0)) {
-                        // 리스트를 배열로 변환하여 적용
-                        auth.requestMatchers(serviceWhiteList).permitAll();
-                    }
+                    // 인증 필요 없는 경로
+                    auth.requestMatchers(FREE_PATHS.toArray(String[]::new)).permitAll();
                     // IP 검증 로직 공통화
                     auth.anyRequest().access((authentication, context) -> {
                         String remoteAddr = context.getRequest().getRemoteAddr();

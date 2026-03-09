@@ -35,7 +35,7 @@ public class CodeController {
      * [1] 시스템 전체 Enum 코드 목록 조회
      * @return 각 카테고리별 Enum 코드 리스트 맵
      */
-    @GetMapping("/system")
+    @GetMapping("/public/system")
     public ResponseEntity<NovaResponse<Map<String, CodeResponse.EnumCodeResponse<?>>>> getAllSystemCodes() {
         // 변수명: systemCodeMap (복수형 맵)
         Map<String,CodeResponse.EnumCodeResponse<?>> systemCodes = codeService.getAllSystemCodes();
@@ -46,7 +46,7 @@ public class CodeController {
      * [2] 특정 시스템 Enum 코드 항목 조회
      * @param enumName 조회할 항목명 (예: gender, mbti)
      */
-    @GetMapping("/system/{enumName}")
+    @GetMapping("/public/system/{enumName}")
     public ResponseEntity<NovaResponse<CodeResponse.EnumCodeResponse<?>>> getSpecificSystemCodes(@PathVariable String enumName) {
         // 변수명: codes (복수형)
         CodeResponse.EnumCodeResponse<?> codes = codeService.getSpecificSystemCode(enumName);
@@ -58,7 +58,7 @@ public class CodeController {
      * [2] DB 공통 코드 그룹 조회 (트리 구조)
      * 취미, 관심사 등 관리자 페이지에서 수정이 가능한 계층형 데이터를 조회할 때 사용합니다.
      */
-    @GetMapping("/group/{groupCode}")
+    @GetMapping("/public/group/{groupCode}")
     public ResponseEntity<NovaResponse<List<CommonCodeResponse>>> getGroupCodes(
             @PathVariable String groupCode,
             @RequestHeader(name = "Accept-Language", defaultValue = "ko") String lang) {

@@ -1,6 +1,7 @@
 package com.nova.anonymousplanet.security.filter;
 
 import com.nova.anonymousplanet.core.constant.LogContextCode;
+import com.nova.anonymousplanet.security.configuration.properties.NovaServiceSecurityProperties;
 import com.nova.anonymousplanet.security.constant.UserRoleCode;
 import com.nova.anonymousplanet.security.constant.UserStatusCode;
 import com.nova.anonymousplanet.security.context.UserContext;
@@ -18,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * projectName : nova-api
@@ -37,34 +39,20 @@ import java.util.Arrays;
 public class NovaSecurityFilter extends OncePerRequestFilter {
 
     private final String gatewaySecret;
-
     private final NovaAccessDeniedHandler accessDeniedHandler; // 추가
+    private final NovaServiceSecurityProperties novaServiceSecurityProperties;
 
-    private final String[] serviceWhiteList;
-    private final String[] commonWhiteList; // COMMON_WHITE_LIST 주입
-
-    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-
-        // 1. 서비스 전용 화이트리스트 검사
-        boolean isServiceWhiteList = Arrays.stream(serviceWhiteList)
-                .anyMatch(pattern -> pathMatcher.match(pattern, path));
-
-        // 2. 공통 화이트리스트 검사
-        boolean isCommonWhiteList = Arrays.stream(commonWhiteList)
-                .anyMatch(pattern -> pathMatcher.match(pattern, path));
-
-        return isServiceWhiteList || isCommonWhiteList;
+        return novaServiceSecurityProperties.isFreePath(path);
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String incomingSecret = request.getHeader(LogContextCode.GATEWAY_SECRET.getHeaderKey());
-
 
         // 1. Secret 검증은 여전히 필수 (Gateway든 Feign이든 이게 없으면 차단)
         if (incomingSecret == null || !incomingSecret.equals(gatewaySecret)) {

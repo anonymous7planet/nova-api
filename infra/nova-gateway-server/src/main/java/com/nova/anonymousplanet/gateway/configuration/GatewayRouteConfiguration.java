@@ -1,11 +1,12 @@
 package com.nova.anonymousplanet.gateway.configuration;
 
 import com.nova.anonymousplanet.core.constant.LogContextCode;
-import com.nova.anonymousplanet.core.constant.SecurityConstants;
-import com.nova.anonymousplanet.gateway.configuration.properties.JwtAuthProperties;
+import com.nova.anonymousplanet.gateway.configuration.properties.NovaGatewaySecurityProperties;
 import com.nova.anonymousplanet.gateway.filter.JwtAuthenticationGatewayFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.Buildable;
@@ -15,18 +16,16 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Arrays;
-
 /**
  * GatewayRouteConfig
  * - Java-based routing configuration
  * - Each route applies logging and authentication filters
  */
 @Configuration
+@EnableConfigurationProperties(NovaGatewaySecurityProperties.class)
 @RequiredArgsConstructor
 public class GatewayRouteConfiguration {
 
-    private final JwtAuthenticationGatewayFilter jwtAuthenticationGatewayFilter;
     @Value("${spring.application.name}")
     private String serviceName;
 
@@ -42,20 +41,18 @@ public class GatewayRouteConfiguration {
     @Bean
     public RouteLocator routeLocator(RouteLocatorBuilder builder,
                                      JwtAuthenticationGatewayFilter jwtAuthenticationGatewayFilter,
-                                     JwtAuthProperties authProperties // 👈 위에서 만든 클래스 주입
+                                     NovaGatewaySecurityProperties novaGatewaySecurityProperties // 👈 위에서 만든 클래스 주입
     ) {
         // 필터에 적용할 설정 객체 생성
         JwtAuthenticationGatewayFilter.Config jwtAuthConfig = new JwtAuthenticationGatewayFilter.Config();
-
-        // 공통 화이트리스트 경로 추가
-        authProperties.getExcludedPaths().addAll(Arrays.asList(SecurityConstants.COMMON_WHITE_LIST));
         // YML에서 읽어온 제외 경로 리스트를 주입
-        jwtAuthConfig.setExcludedPaths(authProperties.getExcludedPaths());
+        jwtAuthConfig.setNovaGatewaySecurityProperties(novaGatewaySecurityProperties);
+        GatewayFilter jwtFilter = jwtAuthenticationGatewayFilter.apply(jwtAuthConfig);
 
         return builder.routes()
-                .route("system-service", r -> createSystemServiceRoute(r, jwtAuthConfig))
-                .route("notification-service", r -> createNotificationServiceRoute(r, jwtAuthConfig))
-                .route("auth-service", r -> createAuthServiceRoute(r, jwtAuthConfig))
+                .route("system-service", r -> createSystemServiceRoute(r, jwtFilter))
+                .route("notification-service", r -> createNotificationServiceRoute(r, jwtFilter))
+                .route("auth-service", r -> createAuthServiceRoute(r, jwtFilter))
                 .route("system-api-docs", this::createSystemServiceSwaggerRoute)
                 .route("notification-api-docs", this::createNotificationServiceSwaggerRoute)
                 .route("auth-api-docs", this::createAuthServiceSwaggerRoute)
@@ -66,10 +63,10 @@ public class GatewayRouteConfiguration {
     /**
      * System Service 라우팅 정의
      */
-    private Buildable<Route> createSystemServiceRoute(PredicateSpec r, JwtAuthenticationGatewayFilter.Config config) {
+    private Buildable<Route> createSystemServiceRoute(PredicateSpec r, GatewayFilter jwtFilter) {
         return r.path("/api/system/**")
                 .filters(
-                        f -> applyCommonFilters(f, config)
+                        f -> applyCommonFilters(f, jwtFilter)
                         // /api/system/ 부분을 뒤에 오는 모든 것($1)으로 교체
 //                          .rewritePath("/api/system/(?<segment>.*)", "/${segment}")
 
@@ -80,10 +77,10 @@ public class GatewayRouteConfiguration {
     /**
      * Notification Service 라우팅 정의
      */
-    private Buildable<Route> createNotificationServiceRoute(PredicateSpec r, JwtAuthenticationGatewayFilter.Config config) {
+    private Buildable<Route> createNotificationServiceRoute(PredicateSpec r, GatewayFilter jwtFilter) {
         return r.path("/api/notification/**")
                 .filters(
-                        f -> applyCommonFilters(f, config)
+                        f -> applyCommonFilters(f, jwtFilter)
                 )
                 .uri("lb://NOVA-NOTIFICATION-SERVICE");
     }
@@ -91,11 +88,11 @@ public class GatewayRouteConfiguration {
     /**
      * Auth Service 라우팅 정의
      */
-    private Buildable<Route> createAuthServiceRoute(PredicateSpec r, JwtAuthenticationGatewayFilter.Config config) {
+    private Buildable<Route> createAuthServiceRoute(PredicateSpec r, GatewayFilter jwtFilter) {
         return r
                 .path("/api/auth/**")
                 .filters(
-                        f -> applyCommonFilters(f, config)
+                        f -> applyCommonFilters(f, jwtFilter)
                 )
                 .uri("lb://NOVA-AUTH-SERVICE");
     }
@@ -107,9 +104,9 @@ public class GatewayRouteConfiguration {
      * 2. JWT 인증 및 UUID -> Long ID 변환 필터 적용
      * 3. Gateway Secret 및 호출 서비스명 헤더 주입
      */
-    private GatewayFilterSpec applyCommonFilters(GatewayFilterSpec f, JwtAuthenticationGatewayFilter.Config config) {
+    private GatewayFilterSpec applyCommonFilters(GatewayFilterSpec f, GatewayFilter jwtFilter) {
         return f.stripPrefix(2)
-                .filter(jwtAuthenticationGatewayFilter.apply(config))
+                .filter(jwtFilter)
                 .addRequestHeader(LogContextCode.GATEWAY_SECRET.getHeaderKey(), gatewaySecret)
                 .addRequestHeader(LogContextCode.SERVICE_NAME.getHeaderKey(), serviceName);
     }

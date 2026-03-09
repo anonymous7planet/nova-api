@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.auth.properties;
+package com.nova.anonymousplanet.auth.configuration.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

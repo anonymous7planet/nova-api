@@ -3,14 +3,14 @@ package com.nova.anonymousplanet.web.filter;
 import com.nova.anonymousplanet.core.constant.SecurityConstants;
 import com.nova.anonymousplanet.core.constant.error.CommonErrorCode;
 import com.nova.anonymousplanet.core.util.NovaResponseUtils;
-import com.nova.anonymousplanet.web.properties.SwaggerProperties;
+import com.nova.anonymousplanet.core.util.PathUtils;
+import com.nova.anonymousplanet.web.configuration.properties.SwaggerProperties;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -34,7 +34,6 @@ import java.util.Arrays;
 public class SwaggerKeyFilter extends OncePerRequestFilter {
 
     private final SwaggerProperties properties;
-    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -64,8 +63,7 @@ public class SwaggerKeyFilter extends OncePerRequestFilter {
      */
     private boolean isSwaggerPath(String path) {
         // 1. 브라우저가 직접 호출하는 HTML/CSS/JS 리소스는 검증에서 제외 (UI 렌더링 허용)
-        return Arrays.stream(SecurityConstants.COMMON_WHITE_LIST)
-                .anyMatch(pattern -> pathMatcher.match(pattern, path));
+        return SecurityConstants.SWAGGER_PATHS.stream().anyMatch(pattern -> PathUtils.match(pattern, path));
     }
 
     /**

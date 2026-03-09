@@ -5,6 +5,8 @@ import com.nova.anonymousplanet.core.constant.LogContextCode;
 import com.nova.anonymousplanet.core.constant.error.ErrorCode;
 import com.nova.anonymousplanet.core.model.response.NovaErrorResponse;
 import com.nova.anonymousplanet.core.model.response.NovaResponse;
+import com.nova.anonymousplanet.core.util.PathUtils;
+import com.nova.anonymousplanet.gateway.configuration.properties.NovaGatewaySecurityProperties;
 import com.nova.anonymousplanet.gateway.constant.GatewayErrorCode;
 import com.nova.anonymousplanet.gateway.dto.RefreshTokenStoreDto;
 import com.nova.anonymousplanet.gateway.filter.order.FilterOrder;
@@ -22,11 +24,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,8 +36,6 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtRefreshTokenStore jwtRefreshTokenStore;
     private final ObjectMapper objectMapper; // 💡 ObjectMapper를 필드로 정의하여 재사용
-
-    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     private static final String BEARER_PREFIX = "Bearer ";
 
@@ -57,7 +55,7 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
             String requestPath = exchange.getRequest().getURI().getPath();
 
             // 1. JWT검증 필요 없을 경우 (Excluded Path)
-            if (isExcluded(requestPath, config.getExcludedPaths())) {
+            if (config.getNovaGatewaySecurityProperties().isFreePath(requestPath)) {
                 log.debug("[JwtAuthenticationGatewayFilter] Excluded path: {}", requestPath);
                 return chain.filter(exchange);
             }
@@ -110,10 +108,10 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
     /**
      * URL검증 (WhiteList/ExcludedPaths)
      */
-    private boolean isExcluded(String path, List<String> excludedPaths) {
-        if (excludedPaths == null || excludedPaths.isEmpty()) return false;
+    private boolean isFreePaths(String path, List<String> freePaths) {
+        if (freePaths == null || freePaths.isEmpty()) return false;
         // 💡 AntPathMatcher를 사용하여 /** 패턴을 완벽하게 지원합니다.
-        return excludedPaths.stream().anyMatch(pattern -> pathMatcher.match(pattern, path));
+        return freePaths.stream().anyMatch(pattern -> PathUtils.match(pattern, path));
     }
 
 
@@ -183,7 +181,7 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
     @Getter
     @Setter
     public static class Config {
-        private List<String> excludedPaths = new ArrayList<>();
+        private NovaGatewaySecurityProperties novaGatewaySecurityProperties;
     }
 
     @Override

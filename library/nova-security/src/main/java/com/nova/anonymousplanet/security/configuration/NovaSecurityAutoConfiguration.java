@@ -1,6 +1,6 @@
 package com.nova.anonymousplanet.security.configuration;
 
-import com.nova.anonymousplanet.core.constant.SecurityConstants;
+import com.nova.anonymousplanet.security.configuration.properties.NovaServiceSecurityProperties;
 import com.nova.anonymousplanet.security.feign.NovaFeignInterceptor;
 import com.nova.anonymousplanet.security.filter.NovaSecurityFilter;
 import com.nova.anonymousplanet.security.handler.NovaAccessDeniedHandler;
@@ -35,7 +35,7 @@ import java.util.List;
  * ==============================================
  */
 @Configuration
-@EnableConfigurationProperties(NovaSecurityProperties.class) // 중요: 프로퍼티 활성화
+@EnableConfigurationProperties(NovaServiceSecurityProperties.class) // 중요: 프로퍼티 활성화
 @RequiredArgsConstructor
 public class NovaSecurityAutoConfiguration implements WebMvcConfigurer {
 
@@ -45,7 +45,7 @@ public class NovaSecurityAutoConfiguration implements WebMvcConfigurer {
     @Value("${spring.application.name}")
     private String serviceName;
 
-    private final NovaSecurityProperties properties;
+    private final NovaServiceSecurityProperties novaServiceSecurityProperties;
 
     /**
      * 1. 보안 설정 팩토리 빈 등록
@@ -72,17 +72,14 @@ public class NovaSecurityAutoConfiguration implements WebMvcConfigurer {
             GatewayIpProvider gatewayIpProvider,
             DiscoveryIpProvider discoveryIpProvider,
             NovaAuthenticationEntryPoint authenticationEntryPoint,
-            NovaAccessDeniedHandler accessDeniedHandler,
-            NovaSecurityProperties properties) { // 추가 주입
+            NovaAccessDeniedHandler accessDeniedHandler) { // 추가 주입
         return new NovaSecurityConfigurer(
                 filter,
                 gatewayIpProvider,
                 discoveryIpProvider,
                 authenticationEntryPoint,
                 accessDeniedHandler,
-                // List를 배열로 변환하여 전달
-                properties.serviceWhiteList().toArray(String[]::new),
-                SecurityConstants.COMMON_WHITE_LIST
+                novaServiceSecurityProperties.getFinalFreePaths()
         );
     }
 
@@ -102,7 +99,7 @@ public class NovaSecurityAutoConfiguration implements WebMvcConfigurer {
     @Bean
     @ConditionalOnMissingBean
     public NovaSecurityFilter novaSecurityFilter(NovaAccessDeniedHandler novaAccessDeniedHandler) {
-        return new NovaSecurityFilter(gatewaySecret, novaAccessDeniedHandler, properties.serviceWhiteList().toArray(String[]::new), SecurityConstants.COMMON_WHITE_LIST);
+        return new NovaSecurityFilter(gatewaySecret, novaAccessDeniedHandler, novaServiceSecurityProperties);
     }
 
     /**
