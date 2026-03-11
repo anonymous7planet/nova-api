@@ -31,47 +31,19 @@ public final class SecurityConstants {
             "/nova/management/**"
     );
 
-    // [2] Swagger 및 API 문서 관련 경로(FIXME: 중복 제거 및 수정 필요)
+    // [2] Swagger 및 API 문서 관련 경로
     public static final List<String> SWAGGER_PATHS = List.of(
-            // 1. 서비스 공통 (Root 및 서비스별 경로 대응)
-//            "/v3/api-docs/**",
-//            "/*/v3/api-docs/**",
-//
-//            // 2. UI 및 정적 리소스
-//            "/swagger-ui/**",
-//            "/*/swagger-ui/**",
-//            "/swagger-ui.html",
-//            "/*/swagger-ui.html",
-//            "/webjars/**",
-//            "/*/webjars/**",
-//
-//            // 3. 동적 구성 및 설정
-//            "/swagger-resources/**",
-//            "/*/swagger-resources/**",
-//            "/swagger-dynamic/**",
-//            "/*/swagger-dynamic/**",
-//            "/configuration/**",
-//            "/*/configuration/**"
+            // 1. 기본 API 문서 및 설정 관련 (Wildcard 통합)
             "/v3/api-docs/**",
             "/*/v3/api-docs/**",
-            "/swagger-ui/**",
-            "/swagger-resources/**",
-            "/swagger-ui.html",
-            "/webjars/**",
-            "/v3/api-docs/**",
-            "/*/v3/api-docs/**",      // 각 서비스별 api-docs (예: /auth/v3/api-docs)
-            "/swagger-ui/**",
-            "/*/swagger-ui/**",       // 서비스별 swagger-ui 경로 대응
-            "/swagger-resources/**",
             "/*/swagger-resources/**",
-            "/swagger-ui.html",
-            "/*/swagger-ui.html",
-            "/webjars/**",
-            "/*/webjars/**",
-            "/swagger-dynamic/**",    // 질문하신 에러의 직접적인 원인
             "/*/swagger-dynamic/**",
-            "/configuration/**",      // 스웨거 설정을 위한 경로
-            "/*/configuration/**"
+            "/*/configuration/**",
+            "/swagger-dynamic/**",
+            // 2. UI 및 정적 리소스 관련
+            "/swagger-ui/**",
+            "/*/swagger-ui.html",
+            "/*/webjars/**"
     );
 
     // [3] 정적 리소스 및 파비콘
