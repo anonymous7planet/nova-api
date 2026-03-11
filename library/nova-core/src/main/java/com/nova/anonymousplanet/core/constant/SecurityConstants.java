@@ -60,12 +60,25 @@ public final class SecurityConstants {
             "/v1/*/public/**"        // 각 서비스
     );
 
+    // [5] Auth PAI
+    public static final List<String> AUTH_API_PATS = List.of(
+            "/api/auth/v1/signup",
+            "/api/auth/v1/login",
+            "/api/auth/v1/token/refresh",
+            "/api/auth/v1/token/refresh/**",
+            "/v1/signup",
+            "/v1/login",
+            "/v1/token/refresh",
+            "/v1/token/refresh/**"
+    );
+
     // [최종] 전사 공통 허용 경로 통합 (Filter에서 참조)
     public static final List<String> SYSTEM_FREE_PATH_PATTERNS = Stream.of(
                     MONITORING_PATHS,
                     SWAGGER_PATHS,
                     STATIC_RESOURCE_PATHS,
-                    PUBLIC_API_PATTERNS
+                    PUBLIC_API_PATTERNS,
+                    AUTH_API_PATS
             )
             .flatMap(List::stream)
             .toList();
