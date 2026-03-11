@@ -41,9 +41,11 @@ public enum CommonErrorCode implements ErrorCode {
     FORBIDDEN(HttpStatus.FORBIDDEN, ErrorGroupCode.FORBIDDEN, "403", "접근 권한이 부족합니다.", DisplayTypeCode.ALERT),
     NOT_FOUND(HttpStatus.NOT_FOUND, ErrorGroupCode.NOT_FOUND, "404", "요청하신 정보를 찾을 수 없습니다.", DisplayTypeCode.ALERT),
     CONFLICT(HttpStatus.CONFLICT, ErrorGroupCode.CONFLICT, "409", "이미 존재하는 데이터이거나 상태가 맞지 않습니다.", DisplayTypeCode.ALERT),
+    TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, ErrorGroupCode.BAD_REQUEST, "429", "요청 횟수를 초과했습니다. 잠시 후 시도해주세요.", DisplayTypeCode.TOAST),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, ErrorGroupCode.SERVER_ERROR, "500", "서버 내부 장애가 발생했습니다.", DisplayTypeCode.ALERT),
     BAD_GATEWAY(HttpStatus.BAD_GATEWAY, ErrorGroupCode.EXTERNAL, "502", "외부 서버의 응답이 올바르지 않습니다.", DisplayTypeCode.ALERT),
     SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, ErrorGroupCode.EXTERNAL, "503", "서버 점검 중이거나 과부하 상태입니다.", DisplayTypeCode.ALERT),
+    GATEWAY_TIMEOUT(HttpStatus.GATEWAY_TIMEOUT, ErrorGroupCode.EXTERNAL, "504", "외부 서버 응답 대기 시간이 초과되었습니다.", DisplayTypeCode.ALERT),
 
     /**
      * VAL: 유효성 검증 (Validation)
@@ -66,7 +68,6 @@ public enum CommonErrorCode implements ErrorCode {
      * EXT: 외부 연동 (External)
      */
     EXTERNAL_API_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, ErrorGroupCode.EXTERNAL, "201-01", "외부 서비스 연동에 실패했습니다.", DisplayTypeCode.ALERT),
-    GATEWAY_TIMEOUT(HttpStatus.GATEWAY_TIMEOUT, ErrorGroupCode.EXTERNAL, "504", "외부 서버 응답 대기 시간이 초과되었습니다.", DisplayTypeCode.ALERT),
 
     /**
      * ATH / FOR: 보안 상세 (Authentication & Access)
@@ -79,7 +80,6 @@ public enum CommonErrorCode implements ErrorCode {
     /**
      *  잘못된 요청
      */
-
     NOT_FOUND_ENDPOINT(HttpStatus.BAD_REQUEST, ErrorGroupCode.BAD_REQUEST, "002-01", "존재하지 않는 엔드포인트입니다.", DisplayTypeCode.LOG),
 
     ;

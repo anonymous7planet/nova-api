@@ -1,6 +1,7 @@
 package com.nova.anonymousplanet.core.util;
 
 import com.nova.anonymousplanet.core.constant.BaseEnum;
+import com.nova.anonymousplanet.core.constant.error.ErrorCode;
 import com.nova.anonymousplanet.core.exception.common.InvalidEnumCodeException;
 
 import java.util.Arrays;
@@ -19,6 +20,13 @@ public class EnumUtils {
                 .orElseThrow(() -> InvalidEnumCodeException.of(enumType, code));
 //                .orElseThrow(() -> new InvalidEnumCodeException(
 //                        String.format(CommonErrorCode.INVALID_ENUM_VALUE.getMessage(), enumType.getSimpleName(), code)));
+    }
+
+    public static <E extends Enum<E> & ErrorCode, T> E fromCode(Class<E> enumType, String rawCode) {
+        return Arrays.stream(enumType.getEnumConstants())
+                .filter(e -> Objects.equals(e.getCode(), rawCode))
+                .findFirst()
+                .orElseThrow(() -> InvalidEnumCodeException.of(enumType, rawCode));
     }
 
 //    public static <E extends Enum<E> & BaseEnum<T>, T> E fromCode(Class<E> enumType, T code) {

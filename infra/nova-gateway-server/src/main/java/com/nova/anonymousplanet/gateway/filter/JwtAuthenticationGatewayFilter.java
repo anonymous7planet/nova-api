@@ -30,8 +30,9 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 @Slf4j
-@Component
+//@Component
 public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory<JwtAuthenticationGatewayFilter.Config> implements Ordered {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtRefreshTokenStore jwtRefreshTokenStore;
@@ -103,17 +104,6 @@ public class JwtAuthenticationGatewayFilter extends AbstractGatewayFilterFactory
             return chain.filter(exchange);
         });
     }
-
-
-    /**
-     * URL검증 (WhiteList/ExcludedPaths)
-     */
-    private boolean isFreePaths(String path, List<String> freePaths) {
-        if (freePaths == null || freePaths.isEmpty()) return false;
-        // 💡 AntPathMatcher를 사용하여 /** 패턴을 완벽하게 지원합니다.
-        return freePaths.stream().anyMatch(pattern -> PathUtils.match(pattern, path));
-    }
-
 
     /**
      * Authorization필드 있는지 확인

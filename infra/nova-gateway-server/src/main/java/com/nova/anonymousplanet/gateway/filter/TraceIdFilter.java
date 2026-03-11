@@ -4,12 +4,12 @@ import com.nova.anonymousplanet.core.constant.LogContextCode;
 import com.nova.anonymousplanet.gateway.filter.order.FilterOrder;
 import com.nova.anonymousplanet.gateway.util.LogContextUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -25,6 +25,7 @@ import java.util.UUID;
  * - X-Trace-Id, X-Request-Id 를 생성 및 주입
  * - 이미 헤더가 존재하면 재사용, 없으면 신규 발급
  * - MDC에 넣는 작업은 Gateway에서는 하지 않음(reactive 환경, 필요 시 ReactorContext 사용)
+ * - WebFilter는 GlobalFilter보다 무조건 우선 실행된다
  * ==============================================
  * DATE            AUTHOR          NOTE
  * ----------------------------------------------
@@ -33,11 +34,10 @@ import java.util.UUID;
  */
 @Slf4j
 @Component
-public class TraceIdFilter implements GlobalFilter, Ordered {
+public class TraceIdFilter implements WebFilter, Ordered {
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
 
         // 1. TraceId 추출 또는 생성
@@ -51,10 +51,12 @@ public class TraceIdFilter implements GlobalFilter, Ordered {
 
         // 2. [중요] Exchange Attributes에 저장하여 Gateway 내부 전역에서 공유
         exchange.getAttributes().put(LogContextCode.TRACE_ID.getMdcKey(), traceId);
+        exchange.getAttributes().put(LogContextCode.REQUEST_ID.getMdcKey(), traceId);
 
         // 3. 내부 서비스 전파를 위한 Mutated Request 생성
         ServerHttpRequest mutated = request.mutate()
                 .header(LogContextCode.TRACE_ID.getHeaderKey(), traceId)
+                .header(LogContextCode.REQUEST_ID.getHeaderKey(), traceId)
                 .build();
 
         // 4. 컨텍스트 전파 및 체인 실행

@@ -1,5 +1,6 @@
 package com.nova.anonymousplanet.gateway.service.jwt;
 
+import com.nova.anonymousplanet.gateway.constant.GatewayErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -59,28 +60,20 @@ public class JwtTokenProvider {
             return null;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.error("잘못된 JWT 서명입니다.");
-            errorMap.put("code", "C001-001");
-            errorMap.put("error", e.getClass().getSimpleName());
+            errorMap.put("code", GatewayErrorCode.TOKEN_INVALID.getCode());
             errorMap.put("message", "잘못된 JWT 서명입니다.");
-            errorMap.put("detailMessage", "잘못된 JWT 서명입니다. 다시 로그인 해주세요.");
         } catch (ExpiredJwtException e) {
             log.error("만료된 JWT 토큰입니다.");
-            errorMap.put("code", "C001-002");
-            errorMap.put("error", e.getClass().getSimpleName());
+            errorMap.put("code", GatewayErrorCode.TOKEN_EXPIRED.getCode());
             errorMap.put("message", "토큰이 만료 되었습니다.");
-            errorMap.put("detailMessage", "만료된 JWT 토큰입니다. 다시 로그인 해주세요");
         } catch (UnsupportedJwtException e) {
             log.error("지원되지 않는 JWT 토큰입니다.");
-            errorMap.put("code", "C001-003");
-            errorMap.put("error", e.getClass().getSimpleName());
-            errorMap.put("message", "지원되지 않는 JWT 토큰입니다..");
-            errorMap.put("detailMessage", "지원 되지 않는 JWT 토큰입니다.");
+            errorMap.put("code", GatewayErrorCode.TOKEN_INVALID.getCode());
+            errorMap.put("message", "지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {
             log.error("JWT 토큰이 잘못되었습니다.");
-            errorMap.put("code", "C001-004");
-            errorMap.put("error", e.getClass().getSimpleName());
-            errorMap.put("message", "JWT 토큰이 잘못 되었습니다. ");
-            errorMap.put("detailMessage", "해당 토큰은 잘못된 JWT 서명입니다.");
+            errorMap.put("code", GatewayErrorCode.TOKEN_INVALID.getCode());
+            errorMap.put("message", "JWT 토큰이 잘못 되었습니다.");
         }
         return errorMap;
     }

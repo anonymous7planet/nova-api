@@ -40,19 +40,22 @@ public class GatewayRouteConfiguration {
 
     @Bean
     public RouteLocator routeLocator(RouteLocatorBuilder builder,
-                                     JwtAuthenticationGatewayFilter jwtAuthenticationGatewayFilter,
+//                                     JwtAuthenticationGatewayFilter jwtAuthenticationGatewayFilter,
                                      NovaGatewaySecurityProperties novaGatewaySecurityProperties // 👈 위에서 만든 클래스 주입
     ) {
         // 필터에 적용할 설정 객체 생성
-        JwtAuthenticationGatewayFilter.Config jwtAuthConfig = new JwtAuthenticationGatewayFilter.Config();
+//        JwtAuthenticationGatewayFilter.Config jwtAuthConfig = new JwtAuthenticationGatewayFilter.Config();
         // YML에서 읽어온 제외 경로 리스트를 주입
-        jwtAuthConfig.setNovaGatewaySecurityProperties(novaGatewaySecurityProperties);
-        GatewayFilter jwtFilter = jwtAuthenticationGatewayFilter.apply(jwtAuthConfig);
+//        jwtAuthConfig.setNovaGatewaySecurityProperties(novaGatewaySecurityProperties);
+//        GatewayFilter jwtFilter = jwtAuthenticationGatewayFilter.apply(jwtAuthConfig);
 
         return builder.routes()
-                .route("system-service", r -> createSystemServiceRoute(r, jwtFilter))
-                .route("notification-service", r -> createNotificationServiceRoute(r, jwtFilter))
-                .route("auth-service", r -> createAuthServiceRoute(r, jwtFilter))
+//                .route("system-service", r -> createSystemServiceRoute(r, jwtFilter))
+//                .route("notification-service", r -> createNotificationServiceRoute(r, jwtFilter))
+//                .route("auth-service", r -> createAuthServiceRoute(r, jwtFilter))
+                .route("system-service", this::createSystemServiceRoute)
+                .route("notification-service", this::createNotificationServiceRoute)
+                .route("auth-service", this::createAuthServiceRoute)
                 .route("system-api-docs", this::createSystemServiceSwaggerRoute)
                 .route("notification-api-docs", this::createNotificationServiceSwaggerRoute)
                 .route("auth-api-docs", this::createAuthServiceSwaggerRoute)
@@ -63,10 +66,10 @@ public class GatewayRouteConfiguration {
     /**
      * System Service 라우팅 정의
      */
-    private Buildable<Route> createSystemServiceRoute(PredicateSpec r, GatewayFilter jwtFilter) {
+    private Buildable<Route> createSystemServiceRoute(PredicateSpec r) {
         return r.path("/api/system/**")
                 .filters(
-                        f -> applyCommonFilters(f, jwtFilter)
+                        f -> applyCommonFilters(f)
                         // /api/system/ 부분을 뒤에 오는 모든 것($1)으로 교체
 //                          .rewritePath("/api/system/(?<segment>.*)", "/${segment}")
 
@@ -77,10 +80,10 @@ public class GatewayRouteConfiguration {
     /**
      * Notification Service 라우팅 정의
      */
-    private Buildable<Route> createNotificationServiceRoute(PredicateSpec r, GatewayFilter jwtFilter) {
+    private Buildable<Route> createNotificationServiceRoute(PredicateSpec r) {
         return r.path("/api/notification/**")
                 .filters(
-                        f -> applyCommonFilters(f, jwtFilter)
+                        f -> applyCommonFilters(f)
                 )
                 .uri("lb://NOVA-NOTIFICATION-SERVICE");
     }
@@ -88,11 +91,11 @@ public class GatewayRouteConfiguration {
     /**
      * Auth Service 라우팅 정의
      */
-    private Buildable<Route> createAuthServiceRoute(PredicateSpec r, GatewayFilter jwtFilter) {
+    private Buildable<Route> createAuthServiceRoute(PredicateSpec r) {
         return r
                 .path("/api/auth/**")
                 .filters(
-                        f -> applyCommonFilters(f, jwtFilter)
+                        f -> applyCommonFilters(f)
                 )
                 .uri("lb://NOVA-AUTH-SERVICE");
     }
@@ -104,9 +107,9 @@ public class GatewayRouteConfiguration {
      * 2. JWT 인증 및 UUID -> Long ID 변환 필터 적용
      * 3. Gateway Secret 및 호출 서비스명 헤더 주입
      */
-    private GatewayFilterSpec applyCommonFilters(GatewayFilterSpec f, GatewayFilter jwtFilter) {
+    private GatewayFilterSpec applyCommonFilters(GatewayFilterSpec f) {
         return f.stripPrefix(2)
-                .filter(jwtFilter)
+//                .filter(jwtFilter)
                 .addRequestHeader(LogContextCode.GATEWAY_SECRET.getHeaderKey(), gatewaySecret)
                 .addRequestHeader(LogContextCode.SERVICE_NAME.getHeaderKey(), serviceName);
     }

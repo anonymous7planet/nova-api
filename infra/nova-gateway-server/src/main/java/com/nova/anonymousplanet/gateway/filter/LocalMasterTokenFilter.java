@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
  * fileName : LocalMasterTokenFilter
  * author : Jinhong Min
  * date : 2026-02-14
- * description :
+ * description : Local환경에서 인증없이 테스트하기 위한 필터
  * ==============================================
  * DATE            AUTHOR          NOTE
  * ----------------------------------------------

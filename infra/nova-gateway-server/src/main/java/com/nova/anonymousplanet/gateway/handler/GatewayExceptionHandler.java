@@ -40,7 +40,7 @@ import java.util.concurrent.TimeoutException;
  * 2025-11-15      Jinhong Min      최초 생성
  * ==============================================
  */
-@Order(FilterOrder.EXCEPTION_HANDLER)
+@Order(FilterOrder.GLOBAL_ERROR_HANDLER)
 @RequiredArgsConstructor
 public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
     // Logger 이름을 "error.log"로 명시해야 XML의 <logger name="error.log">와 매칭됩니다.
@@ -103,17 +103,17 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
             // 1. 특정 예외 타입 패턴 매칭
             case MethodNotAllowedException e -> GatewayErrorCode.METHOD_NOT_ALLOWED;
             case ConnectException e          -> GatewayErrorCode.SERVICE_UNAVAILABLE;
-            case TimeoutException e          -> GatewayErrorCode.GATEWAY_TIMEOUT;
+            case TimeoutException e          -> CommonErrorCode.GATEWAY_TIMEOUT;
 
             // 2. ResponseStatusException 처리
             case ResponseStatusException rse -> resolveResponseStatus(rse);
 
             // 3. Cause(원인)에 타임아웃이 포함된 경우 (Guarded Pattern 사용)
             case Throwable t when t.getCause() instanceof TimeoutException
-                    -> GatewayErrorCode.GATEWAY_TIMEOUT;
+                    -> CommonErrorCode.GATEWAY_TIMEOUT;
 
             // 4. 기본값
-            default -> GatewayErrorCode.INTERNAL_SERVER_ERROR;
+            default -> CommonErrorCode.INTERNAL_SERVER_ERROR;
         };
     }
 
@@ -124,13 +124,13 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
         return switch (rse.getStatusCode().value()) {
             case 400 -> CommonErrorCode.BAD_REQUEST;
             case 401 -> GatewayErrorCode.UNAUTHORIZED;
-            case 403 -> GatewayErrorCode.FORBIDDEN;
+            case 403 -> CommonErrorCode.FORBIDDEN;
             case 404 -> GatewayErrorCode.SERVICE_NOT_FOUND;
             case 405 -> GatewayErrorCode.METHOD_NOT_ALLOWED;
-            case 429 -> GatewayErrorCode.TOO_MANY_REQUESTS;
+            case 429 -> CommonErrorCode.TOO_MANY_REQUESTS;
             case 503 -> GatewayErrorCode.SERVICE_UNAVAILABLE;
-            case 504 -> GatewayErrorCode.GATEWAY_TIMEOUT;
-            default  -> GatewayErrorCode.INTERNAL_SERVER_ERROR;
+            case 504 -> CommonErrorCode.GATEWAY_TIMEOUT;
+            default  -> CommonErrorCode.INTERNAL_SERVER_ERROR;
         };
     }
 

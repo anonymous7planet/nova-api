@@ -50,18 +50,6 @@ public class PathUtils {
     }
 
     /**
-     * [Nova 표준] 경로가 Public API 패턴(/api/ㅁㅁ/public)에 부합하는지 확인
-     * @param path 검사할 경로
-     * @return Public 여부 (null인 경우 false)
-     */
-    public static boolean isPublicPath(String path) {
-        if (!StringUtils.hasText(path)) {
-            return false;
-        }
-        return getMatcher().match(SecurityConstants.PUBLIC_API_PATTERN, path);
-    }
-
-    /**
      * 일반적인 경로 매칭 확인
      * @param pattern Ant 패턴 (예: /api/v1/**)
      * @param path    실제 경로
