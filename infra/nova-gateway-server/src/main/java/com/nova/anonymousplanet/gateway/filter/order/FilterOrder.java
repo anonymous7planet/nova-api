@@ -41,6 +41,12 @@ public interface FilterOrder {
     int CLIENT_INFO = 5;
 
     /**
+     * 10: CustomHeader 검증 필터
+     * → public에 해당하는 API도 CustomHeader검증 필요
+     */
+    int CUSTOM_HEADER = 10;
+
+    /**
      *
      * 20: Locale Resolution Filter
      * → 헤더 기반 Locale을 정해서 downstream 서비스로 전달

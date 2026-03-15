@@ -44,6 +44,8 @@ public enum LogContextCode {
     SERVICE_NAME("X-Service-Name", null, false),
 
     REQUEST_PATH("X-Request-Path", "path", true),
+
+    NOVA_SECRET("X-Nova-Secret", null, false),
     ;
 
     private final String headerKey;
