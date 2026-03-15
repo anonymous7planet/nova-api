@@ -44,4 +44,7 @@ dependencies {
 
     // nova-web
     implementation project(path : ':library:nova-web', configuration : 'default')
+
+    // nova-client
+    implementation project(path : ':library:nova-client', configuration : 'default')
 }

@@ -1,6 +1,8 @@
 package com.nova.anonymousplanet.system.service;
 
 import com.nova.anonymousplanet.core.constant.*;
+import com.nova.anonymousplanet.core.constant.error.CommonErrorCode;
+import com.nova.anonymousplanet.core.exception.category.NotFoundException;
 import com.nova.anonymousplanet.system.dto.v1.CodeResponse;
 import com.nova.anonymousplanet.system.dto.v1.CommonCodeResponse;
 import com.nova.anonymousplanet.system.entity.CommonCodeEntity;
@@ -60,7 +62,18 @@ public class CodeService {
     }
 
     public CodeResponse.EnumCodeResponse<?> getSpecificSystemCode(String enumName) {
-        return SYSTEM_CODE_MAP.getOrDefault(enumName, null);
+        CodeResponse.EnumCodeResponse<?> response = SYSTEM_CODE_MAP.getOrDefault(enumName, null);
+
+        if (response == null) {
+            // [Nova Principle] 존재하지 않는 코드 요청 시 즉각적인 예외 전파
+            throw new NotFoundException(
+                    CommonErrorCode.NOT_FOUND, // 또는 NOT_FOUND_ENDPOINT 등 적절한 코드
+                    String.format("존재하지 않는 시스템 코드명입니다: [%s]", enumName),
+                    String.format("존재하지 않는 시스템 코드명입니다: [%s]", enumName)
+            );
+        }
+
+        return response;
     }
 
     private <T> CodeResponse.EnumCodeResponse<T> toResponseList(String title, BaseEnum<T>[] enums) {

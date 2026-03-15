@@ -6,8 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.ComponentScan;
 
 @EnableDiscoveryClient
+@ComponentScan(value = "com.nova.anonymousplanet")
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
 public class GatewayServerApplication {
 

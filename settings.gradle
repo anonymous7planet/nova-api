@@ -35,3 +35,6 @@ findProject(':library:nova-security')?.name = 'nova-security'
 include 'library:nova-web'
 findProject(':library:nova-web')?.name = 'nova-web'
 
+include 'library:nova-client'
+findProject(':library:nova-client')?.name = 'nova-client'
+

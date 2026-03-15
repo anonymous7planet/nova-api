@@ -35,15 +35,6 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
 
 
-
-
-
-
-
-
-
-
-
     // nova-core
     implementation project(path : ':library:nova-core', configuration : 'default')
 
@@ -61,4 +52,7 @@ dependencies {
 
     // nova-web
     implementation project(path : ':library:nova-web', configuration : 'default')
+
+    // nova-client
+    implementation project(path : ':library:nova-client', configuration : 'default')
 }
