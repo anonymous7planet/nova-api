@@ -8,6 +8,7 @@ import com.nova.anonymousplanet.core.constant.LogContextCode;
 import com.nova.anonymousplanet.core.constant.error.ErrorCode;
 import com.nova.anonymousplanet.core.model.response.NovaErrorResponse;
 import com.nova.anonymousplanet.core.model.response.NovaResponse;
+import com.nova.anonymousplanet.core.util.JsonUtils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,10 +36,13 @@ import java.util.Optional;
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class NovaGatewayResponseUtils {
-    private static final ObjectMapper objectMapper =new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .findAndRegisterModules()
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+    /**
+     * core에서 관리하는 표준 ObjectMapper를 참조합니다.
+     */
+    private static ObjectMapper getObjectMapper() {
+        return JsonUtils.getMapper();
+    }
 
     /**
      * 실패 응답을 JSON 형태로 전송합니다.
@@ -74,7 +78,7 @@ public class NovaGatewayResponseUtils {
 
             try {
                 // 3. JSON 직렬화 및 버퍼 생성
-                byte[] data = objectMapper.writeValueAsString(novaResponse).getBytes(StandardCharsets.UTF_8);
+                byte[] data = getObjectMapper().writeValueAsString(novaResponse).getBytes(StandardCharsets.UTF_8);
                 DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(data);
 
                 log.error(">>>> [Gateway Error] Path: {}, Error: {}", exchange.getRequest().getPath(), finalMessage);

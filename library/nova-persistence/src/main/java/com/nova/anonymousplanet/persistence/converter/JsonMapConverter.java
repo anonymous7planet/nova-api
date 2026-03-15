@@ -28,7 +28,7 @@ public class JsonMapConverter extends AbstractJsonConverter<Map<String,Object>>{
     public Map<String, Object> convertToEntityAttribute(String dbData) {
         if (dbData == null || dbData.isBlank()) return new HashMap<>();
         try {
-            return objectMapper.readValue(dbData, new TypeReference<Map<String, Object>>() {});
+            return getObjectMapper().readValue(dbData, new TypeReference<Map<String, Object>>() {});
         } catch (Exception e) {
             return new HashMap<>();
         }

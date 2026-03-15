@@ -3,6 +3,7 @@ package com.nova.anonymousplanet.persistence.converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nova.anonymousplanet.core.util.JsonUtils;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import lombok.extern.slf4j.Slf4j;
@@ -27,19 +28,14 @@ import java.util.List;
 @Slf4j
 @Converter
 public class JsonListConverter implements AttributeConverter<List<String>, String> {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public String convertToDatabaseColumn(List<String> attribute) {
         if (attribute == null || attribute.isEmpty()) {
             return "[]";
         }
-        try {
-            return objectMapper.writeValueAsString(attribute);
-        } catch (JsonProcessingException e) {
-            log.error("[nova-persistence] JSON writing error for List<String>", e);
-            return "[]";
-        }
+        String json = JsonUtils.toJson(attribute);
+        return json != null ? json : "[]";
     }
 
     @Override
@@ -48,7 +44,7 @@ public class JsonListConverter implements AttributeConverter<List<String>, Strin
             return new ArrayList<>();
         }
         try {
-            return objectMapper.readValue(dbData, new TypeReference<List<String>>() {});
+            return JsonUtils.getMapper().readValue(dbData, new TypeReference<List<String>>() {});
         } catch (JsonProcessingException e) {
             log.error("[nova-persistence]JSON reading error for List<String>", e);
             return new ArrayList<>();

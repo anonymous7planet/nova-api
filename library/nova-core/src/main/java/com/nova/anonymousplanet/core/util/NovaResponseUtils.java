@@ -28,11 +28,13 @@ import java.io.IOException;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class NovaResponseUtils {
-    // Nova의 공통 Jackson 설정을 따르기 위해 필요한 모듈 등록
-    private static final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // 날짜 배열화 방지;
 
+    /**
+     * core에서 관리하는 표준 ObjectMapper를 참조합니다.
+     */
+    private static ObjectMapper getObjectMapper() {
+        return JsonUtils.getMapper();
+    }
 
     /**
      * 에러 코드를 바탕으로 Nova 표준 실패 응답을 전송합니다.
@@ -56,7 +58,8 @@ public class NovaResponseUtils {
         response.setCharacterEncoding("UTF-8");
 
         // 4. JSON 직렬화 및 본문 작성
-        String json = objectMapper.writeValueAsString(novaResponse);
+        String json = getObjectMapper().writeValueAsString(novaResponse);
         response.getWriter().write(json);
     }
+
 }

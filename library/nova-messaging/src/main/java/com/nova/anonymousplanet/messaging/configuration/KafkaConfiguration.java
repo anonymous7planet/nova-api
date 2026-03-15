@@ -1,9 +1,7 @@
 package com.nova.anonymousplanet.messaging.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -11,13 +9,11 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.converter.RecordMessageConverter;
 import org.springframework.kafka.support.converter.StringJsonMessageConverter;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import java.util.HashMap;
@@ -38,27 +34,26 @@ import java.util.Map;
  */
 @Configuration
 @EnableKafka
+@RequiredArgsConstructor // 생성자 주입을 위한 추가
 public class KafkaConfiguration {
+
     @Value("${spring.kafka.bootstrap-servers:localhost:9092}")
     private String bootstrapServers;
 
-    @Bean
-    @Primary
-    public ObjectMapper kafkaObjectMapper() {
-        return new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-                .findAndRegisterModules()
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-    }
+    /**
+     * 핵심: core에서 등록한 rawObjectMapper를 주입받음
+     * @Primary가 설정되어 있으므로 별도 Qualifier 없이도 rawObjectMapper가 들어옴
+     */
+    private final ObjectMapper objectMapper;
 
     @Bean
-    public ProducerFactory<String, Object> producerFactory(ObjectMapper kafkaObjectMapper) {
+    public ProducerFactory<String, Object> producerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
-        return new DefaultKafkaProducerFactory<>(config, new StringSerializer(), new JsonSerializer<>(kafkaObjectMapper));
+        return new DefaultKafkaProducerFactory<>(config, new StringSerializer(), new JsonSerializer<>(objectMapper));
     }
 
     @Bean
@@ -93,7 +88,7 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public RecordMessageConverter messageConverter(ObjectMapper kafkaObjectMapper) {
-        return new StringJsonMessageConverter(kafkaObjectMapper);
+    public RecordMessageConverter messageConverter() {
+        return new StringJsonMessageConverter(objectMapper);
     }
 }

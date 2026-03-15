@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.nova.anonymousplanet.core.util.JsonUtils;
 import jakarta.persistence.AttributeConverter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,10 +25,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class AbstractJsonConverter<T> implements AttributeConverter<T, String> {
 
-    // Thread-safe한 ObjectMapper 공유 및 Java 8 날짜 타입 지원 설정
-    protected static final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    // 직접 생성(new ObjectMapper)을 지우고 JsonUtils의 표준 매퍼를 참조
+    protected ObjectMapper getObjectMapper() {
+        return JsonUtils.getMapper();
+    }
 
     @Override
     public String convertToDatabaseColumn(T attribute) {
@@ -35,7 +36,7 @@ public abstract class AbstractJsonConverter<T> implements AttributeConverter<T, 
             return null;
         }
         try {
-            return objectMapper.writeValueAsString(attribute);
+            return getObjectMapper().writeValueAsString(attribute);
         } catch (JsonProcessingException e) {
             log.error("JSON Serialization Error: Object to String failed. Target: {}", attribute.getClass().getSimpleName(), e);
             throw new IllegalArgumentException("객체를 JSON 문자열로 변환하는데 실패했습니다.");

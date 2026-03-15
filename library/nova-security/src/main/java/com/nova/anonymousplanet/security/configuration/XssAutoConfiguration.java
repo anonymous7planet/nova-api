@@ -24,7 +24,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
  */
 
 @AutoConfiguration
-@ConditionalOnClass(ObjectMapper.class)
+@ConditionalOnClass(HtmlCharacterEscapes.class) // HtmlCharacterEscapes가 있을 때만 활성화
 public class XssAutoConfiguration {
 
     @Bean(name = "xssObjectMapper")
