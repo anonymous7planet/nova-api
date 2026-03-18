@@ -67,4 +67,8 @@ dependencies {
 
     // 7. openFeign
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    // 8. jasypt
+    api 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+//    implementation 'org.jasypt:jasypt:1.9.3'
 }
