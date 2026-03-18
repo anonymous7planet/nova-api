@@ -1,8 +1,8 @@
 package com.nova.anonymousplanet.notification.service;
 
 import com.nova.anonymousplanet.core.constant.NotificationTypeCode;
-import com.nova.anonymousplanet.messaging.event.email.EmailAttachment;
-import com.nova.anonymousplanet.messaging.event.email.InlineImage;
+import com.nova.anonymousplanet.messaging.schema.email.EmailAttachment;
+import com.nova.anonymousplanet.messaging.schema.email.InlineImage;
 import com.nova.anonymousplanet.notification.domain.entity.EmailHistoryEntity;
 import com.nova.anonymousplanet.notification.domain.entity.EmailTemplateEntity;
 import com.nova.anonymousplanet.notification.dto.v1.SenderDto;
@@ -36,6 +36,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
+
     private final NotificationProviderFactory providerFactory;
     private final EmailHistoryRepository emailHistoryRepository;
     private final EmailTemplateRepository emailTemplateRepository;

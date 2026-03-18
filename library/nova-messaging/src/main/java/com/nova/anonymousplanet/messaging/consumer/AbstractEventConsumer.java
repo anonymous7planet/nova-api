@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
  * author : Jinhong Min
  * date : 2026-02-03
  * description :
+ * 파일 하나에 한개의 컨슈머(기능기준)
  * ==============================================
  * DATE            AUTHOR          NOTE
  * ----------------------------------------------

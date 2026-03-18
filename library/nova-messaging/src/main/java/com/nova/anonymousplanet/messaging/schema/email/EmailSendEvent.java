@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.messaging.event.email;
+package com.nova.anonymousplanet.messaging.schema.email;
 
 
 import java.util.List;

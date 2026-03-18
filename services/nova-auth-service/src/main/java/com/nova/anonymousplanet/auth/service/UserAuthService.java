@@ -6,15 +6,13 @@ import com.nova.anonymousplanet.auth.dto.v1.command.UserAuthCommand;
 import com.nova.anonymousplanet.auth.entity.UserEntity;
 import com.nova.anonymousplanet.auth.exception.auth.LoginFailedException;
 import com.nova.anonymousplanet.auth.exception.user.DuplicateEmailException;
+import com.nova.anonymousplanet.auth.messaging.producer.UserEventProducer;
 import com.nova.anonymousplanet.auth.provider.crypto.EncryptionProvider;
 import com.nova.anonymousplanet.auth.repository.UserRepository;
-import com.nova.anonymousplanet.core.constant.NovaEventTypeCode;
 import com.nova.anonymousplanet.core.constant.UserRoleCode;
 import com.nova.anonymousplanet.core.util.RecordMapper;
-import com.nova.anonymousplanet.messaging.event.NovaEvent;
-import com.nova.anonymousplanet.messaging.event.email.EmailSendEvent;
-import com.nova.anonymousplanet.messaging.event.email.InlineImage;
-import com.nova.anonymousplanet.messaging.producer.NovaEventPublisher;
+import com.nova.anonymousplanet.messaging.schema.email.EmailSendEvent;
+import com.nova.anonymousplanet.messaging.schema.email.InlineImage;
 import com.nova.anonymousplanet.persistence.util.crypto.EncryptionUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +48,7 @@ public class UserAuthService {
     private final PasswordEncoder passwordEncoder;
     private final EncryptionProvider encryptionProvider;
 
-    private final NovaEventPublisher novaEventPublisher;
+    private final UserEventProducer userEventProducer;
 
     // 이메일 중복 검사
     @Transactional
@@ -71,12 +69,7 @@ public class UserAuthService {
 
         // 3. 회원 가입 축하 이메일발송 - 이메일 발송은 내 소관이 아님. 이벤트만 던짐!
         EmailSendEvent payload = new EmailSendEvent(null, request.email(), "WELCOME_CONFIRM", RecordMapper.toMap(request), null, List.of(new InlineImage("logo.png", "logo")));
-
         // NovaEvent라는 전사 표준 규격으로 감싸서
-        NovaEvent<EmailSendEvent> event = NovaEvent.of(NovaEventTypeCode.EMAIL_SEND_REQUESTED, payload);
-
-        // 공통 발행기(Publisher)를 통해 카프카로 툭 던짐
-        novaEventPublisher.publish(event.type().getTopic(), event);
 
     }
 

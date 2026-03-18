@@ -3,18 +3,25 @@ rootProject.name = 'nova-api'
 // Infrastructure
 include 'infra:nova-config-server'
 findProject(':infra:nova-config-server')?.name = 'nova-config-server'
+
 include 'infra:nova-discovery-server'
 findProject(':infra:nova-discovery-server')?.name = 'nova-discovery-server'
+
 include 'infra:nova-gateway-server'
 findProject(':infra:nova-gateway-server')?.name = 'nova-gateway-server'
 
 // services
-include 'services:nova-auth-service'
-findProject(':services:nova-auth-service')?.name = 'nova-auth-service'
 include 'services:nova-system-service'
 findProject(':services:nova-system-service')?.name = 'nova-system-service'
+
 include 'services:nova-notification-service'
 findProject(':services:nova-notification-service')?.name = 'nova-notification-service'
+
+include 'services:nova-auth-service'
+findProject(':services:nova-auth-service')?.name = 'nova-auth-service'
+
+include 'services:nova-user-service'
+findProject(':services:nova-user-service')?.name = 'nova-user-service'
 
 // library
 include 'library:nova-core'
@@ -37,4 +44,3 @@ findProject(':library:nova-web')?.name = 'nova-web'
 
 include 'library:nova-client'
 findProject(':library:nova-client')?.name = 'nova-client'
-

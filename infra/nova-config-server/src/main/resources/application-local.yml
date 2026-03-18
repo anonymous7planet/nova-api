@@ -14,7 +14,7 @@ spring:
           uri: https://github.com/${nova.git.user.name}/${nova.git.repository-name}.git
           username: ${nova.git.user.name}
           password: ${nova.git.user.password}
-          search-paths: nova-discovery-server, nova-gateway-server, nova-auth-service, nova-system-service, nova-notification-service
+          search-paths: nova-discovery-server, nova-gateway-server, nova-system-service, nova-notification-service, nova-auth-service, nova-user-service
           default-label: main
           skip-ssl-validation: true
           ignore-local-ssh-settings: true

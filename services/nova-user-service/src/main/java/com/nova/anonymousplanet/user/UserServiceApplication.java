@@ -1,4 +1,4 @@
-package com.nova.anonymousplanet.auth;
+package com.nova.anonymousplanet.user;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,8 +12,8 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(value = "com.nova.anonymousplanet")
 @EntityScan(value = "com.nova.anonymousplanet") // entity 스캔 범위 설정
 @SpringBootApplication
-public class AuthServiceApplication {
+public class UserServiceApplication {
     public static void main(String[] args) {
-        SpringApplication.run(AuthServiceApplication.class, args);
+        SpringApplication.run(UserServiceApplication.class, args);
     }
 }
