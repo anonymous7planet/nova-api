@@ -48,7 +48,7 @@ public class NovaSecurityConfigurer {
                 .requestMatchers(FREE_PATHS.toArray(String[]::new)); // Swagger 등 공통 화이트리스트 제외
     }
 
-    public HttpSecurity applyCommonConfig(HttpSecurity http) throws Exception {
+    public HttpSecurity applyCommonConfig(HttpSecurity http, String[] serviceFreePaths) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(conf -> conf
@@ -63,6 +63,9 @@ public class NovaSecurityConfigurer {
                 .authorizeHttpRequests(auth -> {
                     // 인증 필요 없는 경로
                     auth.requestMatchers(FREE_PATHS.toArray(String[]::new)).permitAll();
+                    if(serviceFreePaths != null && serviceFreePaths.length > 0 ) {
+                        auth.requestMatchers(serviceFreePaths).permitAll();
+                    }
                     // IP 검증 로직 공통화
                     auth.anyRequest().access((authentication, context) -> {
                         String remoteAddr = context.getRequest().getRemoteAddr();

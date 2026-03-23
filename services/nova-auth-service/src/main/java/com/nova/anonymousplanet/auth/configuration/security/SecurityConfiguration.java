@@ -42,12 +42,6 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // 1. 라이브러리가 제공하는 공통 설정(CSRF, Session, Filter) 적용
-        return novaConfigurer.applyCommonConfig(http)
-                .authorizeHttpRequests(auth -> {
-                    if (SERVICE_FREE_PATHS.length > 0) {
-                        auth.requestMatchers(SERVICE_FREE_PATHS).permitAll();
-                    }
-                })
-                .build();
+        return novaConfigurer.applyCommonConfig(http, SERVICE_FREE_PATHS).build();
     }
 }
